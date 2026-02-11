@@ -1,0 +1,139 @@
+/* Global Body */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg,#667eea,#764ba2);
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Login / Register Cards */
+.login-container, .register-container {
+  width: 400px;
+}
+
+.login-card, .register-card, .dashboard-card {
+  background: rgba(255,255,255,0.95);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s;
+}
+
+.login-card:hover, .register-card:hover, .dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+}
+
+h1 {
+  font-size: 26px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+input, select {
+  margin-bottom: 15px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+button {
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(to right,#667eea,#764ba2);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.switch-text, .register-message, .message {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.switch-link {
+  color: #667eea;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.social-login {
+  margin: 15px 0;
+  text-align: center;
+}
+
+.social-icons svg {
+  margin: 0 8px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #667eea;
+  transition: 0.3s;
+}
+
+.social-icons svg:hover {
+  color: #764ba2;
+  transform: scale(1.2);
+}
+
+/* Dashboard */
+.dashboard-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg,#764ba2,#667eea);
+}
+
+.dashboard-card {
+  width: 500px;
+  padding: 40px;
+  border-radius: 25px;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.profile-pic {
+  font-size: 70px;
+  margin: 20px 0;
+  background: #667eea;
+  color: white;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}

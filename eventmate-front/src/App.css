@@ -1,0 +1,84 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 40px;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.logo span {
+  font-size: 14px;
+  font-weight: 400;
+  margin-left: 8px;
+  opacity: 0.9;
+}
+
+.signup-btn {
+  padding: 10px 22px;
+  border: none;
+  border-radius: 25px;
+  background-color: white;
+  color: #4f46e5;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.signup-btn:hover {
+  background-color: #e0e7ff;
+}
+
+/* HOME PAGE */
+.home {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 80px;
+  min-height: 90vh;
+  background: linear-gradient(120deg, #eef2ff, #f8fafc);
+}
+
+.home-text {
+  width: 50%;
+}
+
+.home-text h1 {
+  font-size: 42px;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+.home-text p {
+  font-size: 18px;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.home-img {
+  width: 40%;
+}
+
+.home-img img {
+  width: 100%;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+  100% { transform: translateY(0); }
+}
