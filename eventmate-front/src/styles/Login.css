@@ -18,13 +18,16 @@
 /* MAIN BOX */
 .login-box {
   width: 900px;
+  max-width: 95%;
   height: 520px;
+  max-height: 90%;
   background: white;
   display: flex;
   border-radius: 25px;
   overflow: hidden;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
   animation: zoomIn 1s ease;
+  margin: auto; /* CENTER */
 }
 
 /* LEFT SIDE */
@@ -105,12 +108,12 @@
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
 }
 
-/* BUTTON */
+/* BUTTON (BLUE) */
 .login-right button {
   padding: 14px;
   border-radius: 30px;
   border: none;
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  background: linear-gradient(135deg, #4f46e5, #6366f1); /* BLUE gradient */
   color: white;
   font-size: 16px;
   font-weight: bold;
@@ -173,45 +176,23 @@
 
 /* ANIMATIONS */
 @keyframes zoomIn {
-  from {
-    opacity: 0;
-    transform: scale(0.85);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes slideRight {
-  from {
-    opacity: 0;
-    transform: translateX(60px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(60px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slowZoom {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.1);
-  }
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
 }
 
 /* RESPONSIVE */

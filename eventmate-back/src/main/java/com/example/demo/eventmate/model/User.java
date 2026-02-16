@@ -22,12 +22,11 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private Role role = Role.USER; // default USER
 
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
 
-    // 🔥 auto set created_at
     @PrePersist
     public void onCreate() {
         this.createdAt = new Timestamp(System.currentTimeMillis());
@@ -35,6 +34,7 @@ public class User {
 
     public User() {}
 
+    // Getters & setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

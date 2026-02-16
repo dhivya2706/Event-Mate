@@ -3,6 +3,7 @@ import axios from "axios";
 import "../styles/Register.css";
 
 export default function Register({ switchToLogin }) {
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -15,7 +16,10 @@ export default function Register({ switchToLogin }) {
 
   // Handle input change
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
   };
 
   // Handle register
@@ -25,19 +29,27 @@ export default function Register({ switchToLogin }) {
     setMessage("");
 
     try {
-      const res = await axios.post("http://localhost:8080/api/register", form);
+      const res = await axios.post(
+        "http://localhost:8080/api/register",
+        form
+      );
+
       setMessage(res.data.message);
 
-      // Clear form on success
+      // Clear form after success
       setForm({
         name: "",
         email: "",
         password: "",
-        role: "USER",
+        role: "USER"
       });
+
     } catch (err) {
-      console.error(err.response || err);
-      setMessage(err.response?.data?.message || "Registration failed! Server error.");
+      if (err.response && err.response.data.message) {
+        setMessage(err.response.data.message);
+      } else {
+        setMessage("Registration failed! Server error.");
+      }
     }
 
     setLoading(false);
@@ -46,35 +58,44 @@ export default function Register({ switchToLogin }) {
   return (
     <div className="register-container">
       <div className="register-card">
+
         <h1>EventMate AI Scheduler</h1>
-        <p className="subtitle">Register your account</p>
+        <p className="subtitle">Create your account</p>
 
         <form onSubmit={handleRegister}>
+
           <input
+            type="text"
             name="name"
-            placeholder="Name"
+            placeholder="Enter your name"
             value={form.name}
             onChange={handleChange}
             required
           />
+
           <input
-            name="email"
-            placeholder="Email"
             type="email"
+            name="email"
+            placeholder="Enter your email"
             value={form.email}
             onChange={handleChange}
             required
           />
+
           <input
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder="Enter your password"
             value={form.password}
             onChange={handleChange}
             required
           />
 
-          <select name="role" value={form.role} onChange={handleChange}>
+          <select
+            name="role"
+            value={form.role}
+            onChange={handleChange}
+          >
             <option value="USER">USER</option>
             <option value="ORGANISER">ORGANISER</option>
             <option value="ADMIN">ADMIN</option>
@@ -83,14 +104,21 @@ export default function Register({ switchToLogin }) {
           <button type="submit" disabled={loading}>
             {loading ? "Registering..." : "Register"}
           </button>
+
         </form>
 
         {message && <p className="register-message">{message}</p>}
 
         <p className="switch-text">
           Already have an account?{" "}
-          <span className="switch-link" onClick={switchToLogin}>Login</span>
+          <span
+            className="switch-link"
+            onClick={switchToLogin}
+          >
+            Login
+          </span>
         </p>
+
       </div>
     </div>
   );
