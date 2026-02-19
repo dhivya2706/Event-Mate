@@ -18,16 +18,26 @@ function OrganizerDashboard() {
   const [bookings, setBookings] = useState([]);
   const [totalBookings, setTotalBookings] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
+  const [confirmed, setConfirmed] = useState(0);
+  const [pending, setPending] = useState(0);
+  const [cancelled, setCancelled] = useState(0);
+
 
   const fetchData = async () => {
     try {
       const bookingsRes = await axios.get(`http://localhost:8080/api/bookings`);
       const totalRes = await axios.get(`http://localhost:8080/api/bookings/total`);
       const revenueRes = await axios.get(`http://localhost:8080/api/bookings/revenue`);
+      const confirmedRes = await axios.get(`http://localhost:8080/api/bookings/confirmed`);
+      const pendingRes = await axios.get(`http://localhost:8080/api/bookings/pending`);
+      const cancelledRes = await axios.get(`http://localhost:8080/api/bookings/cancelled`);
 
       setBookings(bookingsRes.data);
       setTotalBookings(totalRes.data);
       setTotalRevenue(revenueRes.data);
+      setConfirmed(confirmedRes.data);
+      setPending(pendingRes.data);
+      setCancelled(cancelledRes.data);
     } catch (error) {
       console.error("Error fetching dashboard data", error);
     }
@@ -73,7 +83,6 @@ function OrganizerDashboard() {
         <h1>Booking Monitoring</h1>
       </div>
 
-      {/* Summary */}
       <div className="summary-container">
         <div className="summary-card">
           <h3>Total Bookings</h3>
@@ -81,10 +90,21 @@ function OrganizerDashboard() {
         </div>
 
         <div className="summary-card">
-          <h3>Total Revenue</h3>
-          <p>₹{totalRevenue}</p>
+          <h3>Confirmed</h3>
+          <p>{confirmed}</p>
+        </div>
+
+        <div className="summary-card">
+          <h3>Pending</h3>
+          <p>{pending}</p>
+        </div>
+
+        <div className="summary-card">
+          <h3>Cancelled</h3>
+          <p>{cancelled}</p>
         </div>
       </div>
+
 
       <div className="charts-row">
 
@@ -128,26 +148,36 @@ function OrganizerDashboard() {
 
       </div>
 
-      {/* Table */}
       <h2>Booking Details</h2>
       <table className="booking-table">
         <thead>
           <tr>
             <th>Booking ID</th>
-            <th>Event ID</th>
-            <th>Seats Booked</th>
-            <th>Total Amount</th>
-            <th>Booking Date</th>
+            <th>User</th>
+            <th>Event</th>
+            <th>Seats</th>
+            <th>Payment Mode</th>
+            <th>Payment Status</th>
+            <th>Booking Status</th>
+            <th>Date</th>
           </tr>
         </thead>
+
         <tbody>
           {bookings.map((booking) => (
             <tr key={booking.id}>
               <td>{booking.id}</td>
-              <td>{booking.eventId ?? "N/A"}</td>
+              <td>{booking.userName}</td>
+              <td>{booking.event?.eventName}</td>
               <td>{booking.seatsBooked}</td>
-              <td>₹{booking.totalAmount}</td>
-              <td>{new Date(booking.bookingDate).toLocaleString()}</td>
+              <td>{booking.paymentMode}</td>
+              <td>{booking.paymentStatus}</td>
+              <td>{booking.bookingStatus}</td>
+              <td>
+                {booking.bookingDate
+                  ? new Date(booking.bookingDate).toLocaleString()
+                  : ""}
+              </td>
             </tr>
           ))}
         </tbody>

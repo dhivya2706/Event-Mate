@@ -21,5 +21,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT SUM(b.totalAmount) FROM Booking b")
     Double sumAllRevenue();
+
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.bookingStatus = 'Confirmed'")
+     Long countConfirmed();
+
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.bookingStatus = 'Pending'")
+    Long countPending();
+
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.bookingStatus = 'Cancelled'")
+    Long countCancelled();
+
 }
 

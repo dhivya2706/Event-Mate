@@ -1,7 +1,6 @@
 package com.eventmate.entity;
-import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,7 +11,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
 
 @Entity
 @Getter
@@ -25,12 +23,13 @@ public class Booking {
     private Long id;
 
     private Integer seatsBooked;
-
     private Double totalAmount;
-
     private LocalDateTime bookingDate;
-    
-    @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+    private String userName;       
+    private String paymentMode;    
+    private String paymentStatus;   
+    private String bookingStatus;   
+
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;

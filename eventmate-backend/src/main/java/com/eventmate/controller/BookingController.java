@@ -34,4 +34,19 @@ public Double getTotalRevenue() {
     return bookingService.getTotalRevenue();
 }
 
+@GetMapping("/confirmed")
+public Long getConfirmedBookings() {
+    return bookingService.getConfirmedBookings();
+}
+
+@GetMapping("/pending")
+public Long getPendingBookings() {
+    return bookingService.getPendingBookings();
+}
+
+@GetMapping("/cancelled")
+public Long getCancelledBookings() {
+    return bookingService.getCancelledBookings();
+}
+
 }

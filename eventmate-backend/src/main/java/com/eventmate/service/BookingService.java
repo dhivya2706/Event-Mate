@@ -27,4 +27,17 @@ public Double getTotalRevenue() {
     return revenue != null ? revenue : 0.0;
 }
 
+public Long getConfirmedBookings() {
+    return bookingRepository.countConfirmed();
+}
+
+public Long getPendingBookings() {
+    return bookingRepository.countPending();
+}
+
+public Long getCancelledBookings() {
+    return bookingRepository.countCancelled();
+}
+
+
 }
