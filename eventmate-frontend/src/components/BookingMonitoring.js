@@ -14,7 +14,7 @@ import { Bar } from "react-chartjs-2";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-function OrganizerDashboard() {
+function BookingMonitoring() {
   const [bookings, setBookings] = useState([]);
   const [totalBookings, setTotalBookings] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
@@ -187,4 +187,4 @@ function OrganizerDashboard() {
   );
 }
 
-export default OrganizerDashboard;
+export default BookingMonitoring;

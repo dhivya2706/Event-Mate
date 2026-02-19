@@ -1,11 +1,17 @@
 import React from "react";
-import OrganizerDashboard from "./components/OrganizerDashboard";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import OrganizerHome from "./components/OrganizerHome";
+import BookingMonitoring from "./components/BookingMonitoring";
 
 function App() {
   return (
-    <div>
-      <OrganizerDashboard />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<OrganizerHome />} />
+        <Route path="/booking-monitoring" element={<BookingMonitoring />} />
+      </Routes>
+    </Router>
   );
 }
 

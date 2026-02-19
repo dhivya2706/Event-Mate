@@ -10,7 +10,6 @@
   --text-light: #6b7280;
 }
 
-/* Dark Mode */
 body.dark {
   background-color: #111827;
 }
@@ -24,10 +23,12 @@ body {
 
 
 .dashboard-container {
+  min-height: 100vh;
   padding: 40px;
+  background: linear-gradient(to right, #eef2ff, #e0e7ff);
 }
 
-/* Top Bar */
+
 .top-bar {
   display: flex;
   justify-content: space-between;
@@ -41,7 +42,6 @@ body {
   color: var(--primary);
 }
 
-/* Summary Cards */
 .summary-container {
   display: flex;
   gap: 20px;
@@ -61,6 +61,28 @@ body {
 .summary-card:hover {
   transform: translateY(-6px);
 }
+
+.summary-card2 {
+  width: 180px;        
+  height: 180px;      
+  padding: 15px;
+  border-radius: 15px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-left: 6px solid var(--secondary);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  transition: 0.3s;
+}
+
+.summary-card2:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
 
 .summary-card h3 {
   margin: 0;
@@ -107,8 +129,6 @@ body {
 }
 
 
-
-
 .chart-header {
   display: flex;
   justify-content: space-between;
@@ -128,7 +148,6 @@ body {
 }
 
 
-/* Table */
 .booking-table {
   width: 100%;
   border-collapse: collapse;
@@ -155,7 +174,6 @@ body {
   background-color: #f1f5ff;
 }
 
-/* Status Badges */
 .badge {
   padding: 5px 10px;
   border-radius: 20px;
@@ -168,7 +186,6 @@ body {
 .badge.warning { background: var(--warning); }
 .badge.danger  { background: var(--danger); }
 
-/* Toggle Switch */
 .switch {
   position: relative;
   display: inline-block;
