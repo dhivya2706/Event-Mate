@@ -1,5 +1,6 @@
 import "../styles/Dashboard.css";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import {
@@ -15,6 +16,7 @@ import { Bar } from "react-chartjs-2";
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 function BookingMonitoring() {
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [totalBookings, setTotalBookings] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
@@ -81,6 +83,12 @@ function BookingMonitoring() {
 
       <div className="dashboard-header">
         <h1>Booking Monitoring</h1>
+        <button
+          className="back-btn"
+          onClick={() => navigate("/")}
+        >
+          ← Back to Home
+        </button>
       </div>
 
       <div className="summary-container">

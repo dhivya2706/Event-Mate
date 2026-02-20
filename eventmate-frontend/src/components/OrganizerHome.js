@@ -1,24 +1,15 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import Layout from "./Layout";
 import "../styles/Dashboard.css";
 
 function OrganizerHome() {
-  const navigate = useNavigate();
-
   return (
-    <div className="dashboard-container">
-      <h1>Organizer Panel</h1>
-
-      <div className="summary-container">
-        <div 
-          className="summary-card2"
-          style={{ cursor: "pointer" }}
-          onClick={() => navigate("/booking-monitoring")}
-        >
-          <h3>Booking Monitoring</h3>
-        </div>
+    <Layout>
+      <div className="welcome-card">
+        <h1>Welcome Back 👋</h1>
+        <p>Manage your events and bookings easily from here.</p>
       </div>
-    </div>
+    </Layout>
   );
 }
 
