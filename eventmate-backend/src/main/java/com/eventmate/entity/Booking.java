@@ -37,4 +37,8 @@ public class Booking {
     public Long getEventId() {
         return event != null ? event.getId() : null;
     }
+
+    public String getEventName() {
+    return event != null ? event.getEventName() : null;
+}
 }

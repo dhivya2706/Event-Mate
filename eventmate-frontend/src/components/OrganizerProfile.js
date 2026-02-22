@@ -11,7 +11,6 @@ function OrganizerProfile() {
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // ---------------- FETCH PROFILE ----------------
   useEffect(() => {
     if (!email) return;
 
@@ -31,7 +30,6 @@ function OrganizerProfile() {
     fetchProfile();
   }, [email]);
 
-  // ---------------- FETCH EVENTS ----------------
   useEffect(() => {
     if (!email) return;
 
@@ -51,7 +49,6 @@ function OrganizerProfile() {
     fetchEvents();
   }, [email]);
 
-  // ---------------- UPDATE PROFILE ----------------
   const handleUpdate = async () => {
     if (!organizer) return;
 
@@ -71,7 +68,6 @@ function OrganizerProfile() {
     }
   };
 
-  // ---------------- STATES ----------------
   if (!email)
     return <p style={{ padding: "20px" }}>No login session. Please login again.</p>;
 
@@ -81,12 +77,10 @@ function OrganizerProfile() {
   if (!organizer)
     return <p style={{ padding: "20px" }}>Organizer not found.</p>;
 
-  // ---------------- UI ----------------
   return (
     <div style={{ padding: "20px" }}>
       <h2>Organizer Dashboard</h2>
 
-      {/* PROFILE SECTION */}
       <section style={{ marginBottom: "30px" }}>
         <h3>Update Profile</h3>
 
@@ -125,7 +119,6 @@ function OrganizerProfile() {
         </button>
       </section>
 
-      {/* EVENTS SECTION */}
       <section>
         <h3>My Events</h3>
 
@@ -145,7 +138,6 @@ function OrganizerProfile() {
   );
 }
 
-// styles
 const inputStyle = {
   display: "block",
   marginBottom: "10px",

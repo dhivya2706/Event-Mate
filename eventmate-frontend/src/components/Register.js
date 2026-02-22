@@ -12,7 +12,7 @@ export default function Register() {
     password: "",
     phone: "",
     companyName: "",
-    role: "ORGANISER", // default role
+    role: "ORGANISER", 
   });
 
   const [message, setMessage] = useState("");
@@ -28,7 +28,6 @@ export default function Register() {
     setMessage("");
 
     try {
-      // Only send the fields your backend expects
       const res = await axios.post(
         "http://localhost:8080/api/organizer/register",
         {
@@ -41,8 +40,6 @@ export default function Register() {
       );
 
       setMessage(res.data.message);
-
-      // After successful registration → go to login
       setTimeout(() => {
         navigate("/");
       }, 1500);

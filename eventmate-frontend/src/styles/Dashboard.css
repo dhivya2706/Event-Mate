@@ -280,7 +280,6 @@ input:checked + .slider:before {
   box-shadow: 0 8px 20px rgba(0,0,0,0.05);
 }
 
-/* ===== Modal ===== */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -341,20 +340,17 @@ input:checked + .slider:before {
   opacity: 0.85;
 }
 
-/* ===== App Background ===== */
 .app-wrapper {
   background: #e5e7eb;
   min-height: 100vh;
   padding: 20px;
 }
 
-/* ===== Layout ===== */
 .layout {
   display: flex;
   gap: 20px;
 }
 
-/* ===== Sidebar (Floating Rounded Card) ===== */
 .sidebar {
   width: 250px;
   background: linear-gradient(to bottom, #1e3a8a, #1e40af);
@@ -391,7 +387,6 @@ input:checked + .slider:before {
   transform: translateX(5px);
 }
 
-/* ===== Main Section ===== */
 .main {
   flex: 1;
   display: flex;
@@ -399,7 +394,6 @@ input:checked + .slider:before {
   gap: 20px;
 }
 
-/* ===== Top Navbar (Floating Rounded Card) ===== */
 .top-navbar {
   background: white;
   border-radius: 20px;
@@ -410,7 +404,6 @@ input:checked + .slider:before {
   box-shadow: 0 10px 25px rgba(0,0,0,0.05);
 }
 
-/* Profile Button */
 .profile-btn {
   background: #2563eb;
   color: white;
@@ -426,11 +419,59 @@ input:checked + .slider:before {
   background: #1e40af;
 }
 
-/* ===== Content Area ===== */
 .content-area {
   background: #f9fafb;
   border-radius: 20px;
   padding: 40px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.04);
   flex: 1;
+}
+
+.event-form {
+  max-width: 600px;
+  margin-top: 20px;
+}
+
+.event-form input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  transition: 0.3s;
+  background: white;
+}
+
+.event-form input:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+.event-form button {
+  width: 100%;
+  padding: 12px;
+  background: var(--success);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.event-form button:hover {
+  background: #15803d;
+  transform: translateY(-2px);
+}
+
+.sidebar li{
+  cursor: pointer;
+  padding: 12px;
+}
+
+.sidebar li:hover{
+  background-color: rgba(255,255,255,0.2);
 }

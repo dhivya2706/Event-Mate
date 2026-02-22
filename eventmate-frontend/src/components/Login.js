@@ -32,12 +32,11 @@ export default function Login() {
 
             if (res.data.message === "Login successful") {
 
-                // ✅ SAVE USER SESSION
+                localStorage.setItem("organizer", JSON.stringify(res.data));
                 localStorage.setItem("email", res.data.email);
                 localStorage.setItem("name", res.data.name);
                 localStorage.setItem("role", res.data.role);
 
-                // redirect
                 navigate("/organizer");
 
             } else {

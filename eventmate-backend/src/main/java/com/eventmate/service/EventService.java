@@ -18,4 +18,8 @@ public class EventService {
     public List<Event> findByOrganizer(Organizer organizer) {
         return eventRepository.findByOrganizer(organizer);
     }
+
+    public Event save(Event event) {
+      return eventRepository.save(event);
+    }
 }

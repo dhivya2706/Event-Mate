@@ -26,11 +26,18 @@ public class Event {
     @Column(name = "total_seats")
     private Integer totalSeats;
 
+    @Column(name = "event_date")
+    private String eventDate;
+
+    @Column(name = "venue")
+    private String venue;
+
+    @Column(name = "image_name")
+    private String imageName;
+    
     @ManyToOne
     @JoinColumn(name = "organizer_id")
     private Organizer organizer;
-
-    // Getters and setters
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -46,4 +53,13 @@ public class Event {
 
     public Organizer getOrganizer() { return organizer; }
     public void setOrganizer(Organizer organizer) { this.organizer = organizer; }
+
+    public String getEventDate() { return eventDate; }
+public void setEventDate(String eventDate) { this.eventDate = eventDate; }
+
+public String getVenue() { return venue; }
+public void setVenue(String venue) { this.venue = venue; }
+
+public String getImageName() { return imageName; }
+public void setImageName(String imageName) { this.imageName = imageName; }
 }

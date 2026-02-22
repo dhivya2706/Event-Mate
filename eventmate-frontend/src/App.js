@@ -1,24 +1,25 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import Login from "./components/Login";
 import Register from "./components/Register";
 import OrganizerHome from "./components/OrganizerHome";
+import AddEvent from "./components/AddEvent";
 import BookingMonitoring from "./components/BookingMonitoring";
+import Layout from "./components/Layout";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Authentication */}
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+    <Routes>
 
-        {/* Organizer Dashboard */}
-        <Route path="/organizer" element={<OrganizerHome />} />
-        <Route path="/booking-monitoring" element={<BookingMonitoring />} />
-      </Routes>
-    </Router>
+      <Route path="/" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/organizer" element={<Layout />}>
+        <Route index element={<OrganizerHome />} />
+        <Route path="add-event" element={<AddEvent />} />
+        <Route path="booking-monitor" element={<BookingMonitoring />} />
+      </Route>
+
+    </Routes>
   );
 }
 

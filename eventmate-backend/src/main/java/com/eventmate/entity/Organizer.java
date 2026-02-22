@@ -27,8 +27,6 @@ public class Organizer {
     @Column(name = "company_name")
     private String companyName;
 
-    // Getters and Setters
-
     public Long getId() { return id; }
 
     public void setId(Long id) { this.id = id; }

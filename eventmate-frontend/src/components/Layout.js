@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import { Outlet } from "react-router-dom";
 import "../styles/Dashboard.css";
 
 function Layout({ children }) {
@@ -20,15 +21,17 @@ function Layout({ children }) {
     companyName: ""
   });
 
-  // 🚫 block access if not logged in
   useEffect(() => {
-    if (!email) {
+    if (
+      !email &&
+      location.pathname !== "/" &&
+      location.pathname !== "/register"
+    ) {
       navigate("/login");
       return;
     }
   }, [email, navigate]);
 
-  // ✅ fetch organizer profile
   useEffect(() => {
     if (!email) return;
 
@@ -48,7 +51,6 @@ function Layout({ children }) {
     fetchProfile();
   }, [email]);
 
-  // ✅ update profile
   const handleUpdate = async (e) => {
     e.preventDefault();
 
@@ -65,54 +67,44 @@ function Layout({ children }) {
     }
   };
 
-  // ✅ logout
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("email");
     navigate("/login");
   };
 
-  if (loading) return <p style={{ padding: 20 }}>Loading profile...</p>;
+  if (loading)
+    return <div className="loader">Loading...</div>;
 
   return (
     <div className="app-wrapper">
       <div className="layout">
 
-        {/* SIDEBAR */}
         <div className="sidebar">
           <h2 className="logo">EventMate AI</h2>
 
           <ul>
-            <li
-              className={location.pathname === "/" ? "active" : ""}
-              onClick={() => navigate("/")}
-            >
+
+            <li onClick={() => navigate("/organizer")}>
               Home
             </li>
 
-            <li
-              className={location.pathname === "/add-event" ? "active" : ""}
-              onClick={() => navigate("/add-event")}
-            >
+            <li onClick={() => navigate("/organizer/add-event")}>
               Add Events
             </li>
 
-            <li
-              className={location.pathname === "/booking-monitoring" ? "active" : ""}
-              onClick={() => navigate("/booking-monitoring")}
-            >
+            <li onClick={() => navigate("/organizer/booking-monitor")}>
               Booking Monitoring
             </li>
 
             <li onClick={handleLogout} style={{ color: "red" }}>
               Logout
             </li>
+
           </ul>
         </div>
 
-        {/* MAIN */}
         <div className="main">
 
-          {/* TOP BAR */}
           <div className="top-navbar">
             <h2>Organizer Dashboard</h2>
 
@@ -124,11 +116,11 @@ function Layout({ children }) {
             </button>
           </div>
 
-          {/* PAGE CONTENT */}
-          <div className="content-area">{children}</div>
+          <div className="content-area">
+            <Outlet />
+          </div>
         </div>
 
-        {/* PROFILE MODAL */}
         {showProfile && (
           <div className="modal-overlay">
             <div className="modal">

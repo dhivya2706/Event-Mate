@@ -14,7 +14,6 @@ public class OrganizerService {
     @Autowired
     private OrganizerRepository organizerRepository;
 
-    // REGISTER
     public String register(Organizer organizer) {
 
         if (organizerRepository.findByEmail(organizer.getEmail()).isPresent()) {
@@ -40,9 +39,8 @@ public class OrganizerService {
                 return organizerRepository.save(existing);
             })
             .orElse(null);
-}
+    }
 
-    // LOGIN
     public Organizer login(String email, String password) {
 
         Optional<Organizer> organizer = organizerRepository.findByEmail(email);

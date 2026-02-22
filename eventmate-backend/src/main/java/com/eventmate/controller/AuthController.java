@@ -30,7 +30,6 @@ public class AuthController {
     @Autowired
     private EventService eventService;
 
-    // REGISTER
     @PostMapping("/register")
     public Map<String, String> register(@RequestBody Organizer organizer) {
         String message = organizerService.register(organizer);
@@ -39,31 +38,29 @@ public class AuthController {
         return response;
     }
 
-   @GetMapping("/profile")
-public Organizer getProfile(@RequestParam String email) {
+    @GetMapping("/profile")
+    public Organizer getProfile(@RequestParam String email) {
 
-    System.out.println("REQUESTED EMAIL = " + email);
+        System.out.println("REQUESTED EMAIL = " + email);
 
-    return organizerService.findByEmail(email);
-}
+        return organizerService.findByEmail(email);
+    }
 
-    // UPDATE PROFILE
+   
     @PutMapping("/profile")
     public Organizer updateProfile(@RequestBody Organizer organizer) {
         return organizerService.updateOrganizer(organizer);
     }
 
-    // ORGANIZER EVENTS
     @GetMapping("/events")
     public List<Event> getOrganizerEvents(@RequestParam String email) {
         Organizer organizer = organizerService.findByEmail(email);
         if (organizer != null) {
             return eventService.findByOrganizer(organizer);
         }
-        return List.of(); // return empty list if organizer not found
+        return List.of(); 
     }
 
-    // LOGIN
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody Organizer organizer) {
         Organizer existing =

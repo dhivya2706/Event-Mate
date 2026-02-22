@@ -27,12 +27,32 @@ function BookingMonitoring() {
 
   const fetchData = async () => {
     try {
-      const bookingsRes = await axios.get(`http://localhost:8080/api/bookings`);
-      const totalRes = await axios.get(`http://localhost:8080/api/bookings/total`);
-      const revenueRes = await axios.get(`http://localhost:8080/api/bookings/revenue`);
-      const confirmedRes = await axios.get(`http://localhost:8080/api/bookings/confirmed`);
-      const pendingRes = await axios.get(`http://localhost:8080/api/bookings/pending`);
-      const cancelledRes = await axios.get(`http://localhost:8080/api/bookings/cancelled`);
+
+      const email = localStorage.getItem("email");
+
+      const bookingsRes = await axios.get(
+        `http://localhost:8080/api/bookings/organizer?email=${email}`
+      );
+
+      const totalRes = await axios.get(
+        `http://localhost:8080/api/bookings/organizer/total?email=${email}`
+      );
+
+      const revenueRes = await axios.get(
+        `http://localhost:8080/api/bookings/organizer/revenue?email=${email}`
+      );
+
+      const confirmedRes = await axios.get(
+        `http://localhost:8080/api/bookings/organizer/confirmed?email=${email}`
+      );
+
+      const pendingRes = await axios.get(
+        `http://localhost:8080/api/bookings/organizer/pending?email=${email}`
+      );
+
+      const cancelledRes = await axios.get(
+        `http://localhost:8080/api/bookings/organizer/cancelled?email=${email}`
+      );
 
       setBookings(bookingsRes.data);
       setTotalBookings(totalRes.data);
@@ -40,6 +60,7 @@ function BookingMonitoring() {
       setConfirmed(confirmedRes.data);
       setPending(pendingRes.data);
       setCancelled(cancelledRes.data);
+
     } catch (error) {
       console.error("Error fetching dashboard data", error);
     }
@@ -50,15 +71,15 @@ function BookingMonitoring() {
   }, []);
 
   const grouped = bookings.reduce((acc, b) => {
-    const id = b.eventId ?? "N/A";
+  const name = b.eventName ?? "Unknown Event";
 
-    if (!acc[id]) acc[id] = { revenue: 0, seats: 0 };
+  if (!acc[name]) acc[name] = { revenue: 0, seats: 0 };
 
-    acc[id].revenue += b.totalAmount;
-    acc[id].seats += b.seatsBooked;
+  acc[name].revenue += b.totalAmount;
+  acc[name].seats += b.seatsBooked;
 
-    return acc;
-  }, {});
+  return acc;
+}, {});
 
   const events = Object.keys(grouped);
   const revenueData = Object.values(grouped).map(g => g.revenue);
@@ -79,17 +100,9 @@ function BookingMonitoring() {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="content-card">
 
-      <div className="dashboard-header">
-        <h1>Booking Monitoring</h1>
-        <button
-          className="back-btn"
-          onClick={() => navigate("/")}
-        >
-          ← Back to Home
-        </button>
-      </div>
+      <h1>Booking Monitoring</h1>
 
       <div className="summary-container">
         <div className="summary-card">
@@ -112,7 +125,6 @@ function BookingMonitoring() {
           <p>{cancelled}</p>
         </div>
       </div>
-
 
       <div className="charts-row">
 
@@ -157,6 +169,7 @@ function BookingMonitoring() {
       </div>
 
       <h2>Booking Details</h2>
+
       <table className="booking-table">
         <thead>
           <tr>
@@ -176,7 +189,7 @@ function BookingMonitoring() {
             <tr key={booking.id}>
               <td>{booking.id}</td>
               <td>{booking.userName}</td>
-              <td>{booking.event?.eventName}</td>
+              <td>{booking.eventName}</td>
               <td>{booking.seatsBooked}</td>
               <td>{booking.paymentMode}</td>
               <td>{booking.paymentStatus}</td>
@@ -191,7 +204,7 @@ function BookingMonitoring() {
         </tbody>
       </table>
 
-    </div>
+    </div >
   );
 }
 

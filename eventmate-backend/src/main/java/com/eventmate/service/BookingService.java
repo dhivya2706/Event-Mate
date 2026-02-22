@@ -15,29 +15,59 @@ public class BookingService {
     private BookingRepository bookingRepository;
 
     public List<Booking> getAllBookings() {
-    return bookingRepository.findAll();
-}
+        return bookingRepository.findAll();
+    }
 
-public Long getTotalBookings() {
-    return bookingRepository.count();
-}
+    public Booking save(Booking booking){
+        return bookingRepository.save(booking);
+    }
 
-public Double getTotalRevenue() {
-    Double revenue = bookingRepository.sumAllRevenue();
-    return revenue != null ? revenue : 0.0;
-}
+    public List<Booking> getBookingsByOrganizer(Long organizerId){
+        return bookingRepository.findBookingsByOrganizer(organizerId);
+    }
 
-public Long getConfirmedBookings() {
-    return bookingRepository.countConfirmed();
-}
+    public List<Booking> getOrganizerBookings(String email){
+        return bookingRepository.findBookingsByOrganizerEmail(email);
+    }
+    public Long getTotalBookings() {
+        return bookingRepository.count();
+    }
 
-public Long getPendingBookings() {
-    return bookingRepository.countPending();
-}
+    public Double getTotalRevenue() {
+        Double revenue = bookingRepository.sumAllRevenue();
+        return revenue != null ? revenue : 0.0;
+    }
 
-public Long getCancelledBookings() {
-    return bookingRepository.countCancelled();
-}
+    public Long getConfirmedBookings() {
+        return bookingRepository.countConfirmed();
+    }
 
+    public Long getPendingBookings() {
+        return bookingRepository.countPending();
+    }   
+
+    public Long getCancelledBookings() {
+        return bookingRepository.countCancelled();
+    }
+    public Long getTotalBookingsByOrganizer(String email){
+        return bookingRepository.countByOrganizerEmail(email);
+    }
+
+    public Double getRevenueByOrganizer(String email){
+        Double r = bookingRepository.sumRevenueByOrganizerEmail(email);
+        return r != null ? r : 0.0;
+    }
+
+    public Long getConfirmedByOrganizer(String email){
+        return bookingRepository.countConfirmedByOrganizer(email);
+    }
+
+    public Long getPendingByOrganizer(String email){
+        return bookingRepository.countPendingByOrganizer(email);
+    }
+
+    public Long getCancelledByOrganizer(String email){
+        return bookingRepository.countCancelledByOrganizer(email);
+    }
 
 }
