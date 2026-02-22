@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import axios from "axios";
-import { Outlet } from "react-router-dom";
 import "../styles/Dashboard.css";
 
-function Layout({ children }) {
+function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -18,19 +17,14 @@ function Layout({ children }) {
     name: "",
     email: "",
     phone: "",
-    companyName: ""
+    companyName: "",
   });
 
   useEffect(() => {
-    if (
-      !email &&
-      location.pathname !== "/" &&
-      location.pathname !== "/register"
-    ) {
+    if (!email && location.pathname !== "/" && location.pathname !== "/register") {
       navigate("/login");
-      return;
     }
-  }, [email, navigate]);
+  }, [email, navigate, location.pathname]);
 
   useEffect(() => {
     if (!email) return;
@@ -55,10 +49,7 @@ function Layout({ children }) {
     e.preventDefault();
 
     try {
-      await axios.put(
-        "http://localhost:8080/api/organizer/profile",
-        organizer
-      );
+      await axios.put("http://localhost:8080/api/organizer/profile", organizer);
       alert("Profile Updated Successfully!");
       setShowProfile(false);
     } catch (err) {
@@ -66,48 +57,33 @@ function Layout({ children }) {
       alert("Failed to update profile");
     }
   };
-
   const handleLogout = () => {
-    localStorage.removeItem("email");
+    localStorage.clear();
     navigate("/login");
   };
 
-  if (loading)
-    return <div className="loader">Loading...</div>;
+  if (loading) return <div className="loader">Loading...</div>;
 
   return (
     <div className="app-wrapper">
       <div className="layout">
 
+        {/* Sidebar */}
         <div className="sidebar">
           <h2 className="logo">EventMate AI</h2>
-
           <ul>
-
-            <li onClick={() => navigate("/organizer")}>
-              Home
-            </li>
-
-            <li onClick={() => navigate("/organizer/add-event")}>
-              Add Events
-            </li>
-
-            <li onClick={() => navigate("/organizer/booking-monitor")}>
-              Booking Monitoring
-            </li>
-
-            <li onClick={handleLogout} style={{ color: "red" }}>
-              Logout
-            </li>
-
+            <li onClick={() => navigate("/organizer")}>Home</li>
+            <li onClick={() => navigate("/organizer/add-event")}>Add Events</li>
+            <li onClick={() => navigate("/organizer/booking-monitor")}>Booking Monitoring</li>
+            <li onClick={() => navigate("/organizer/manage-events")}>Manage Events</li>
+            <li onClick={handleLogout} style={{ color: "red", cursor: "pointer" }}>Logout</li>
           </ul>
         </div>
 
+        {/* Main Content */}
         <div className="main">
-
           <div className="top-navbar">
             <h2>Organizer Dashboard</h2>
-
             <button
               className="profile-btn"
               onClick={() => setShowProfile(true)}
@@ -121,6 +97,7 @@ function Layout({ children }) {
           </div>
         </div>
 
+        {/* Profile Modal */}
         {showProfile && (
           <div className="modal-overlay">
             <div className="modal">
@@ -134,6 +111,7 @@ function Layout({ children }) {
                     setOrganizer({ ...organizer, name: e.target.value })
                   }
                   placeholder="Name"
+                  required
                 />
 
                 <input
@@ -149,6 +127,7 @@ function Layout({ children }) {
                     setOrganizer({ ...organizer, phone: e.target.value })
                   }
                   placeholder="Phone"
+                  required
                 />
 
                 <input
@@ -158,13 +137,11 @@ function Layout({ children }) {
                     setOrganizer({ ...organizer, companyName: e.target.value })
                   }
                   placeholder="Company"
+                  required
                 />
 
                 <div className="modal-buttons">
-                  <button type="submit" className="save-btn">
-                    Save
-                  </button>
-
+                  <button type="submit" className="save-btn">Save</button>
                   <button
                     type="button"
                     className="cancel-btn"
@@ -177,6 +154,7 @@ function Layout({ children }) {
             </div>
           </div>
         )}
+
       </div>
     </div>
   );

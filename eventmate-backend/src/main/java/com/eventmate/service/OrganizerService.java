@@ -34,8 +34,8 @@ public class OrganizerService {
                 existing.setName(organizer.getName());
                 existing.setPhone(organizer.getPhone());
                 existing.setCompanyName(organizer.getCompanyName());
-                existing.setEmail(organizer.getEmail()); // optional
-                existing.setPassword(organizer.getPassword()); // optional
+                existing.setEmail(organizer.getEmail()); 
+                existing.setPassword(organizer.getPassword()); 
                 return organizerRepository.save(existing);
             })
             .orElse(null);
