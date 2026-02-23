@@ -71,15 +71,15 @@ function BookingMonitoring() {
   }, []);
 
   const grouped = bookings.reduce((acc, b) => {
-  const name = b.eventName ?? "Unknown Event";
+    const name = b.eventName ?? "Unknown Event";
 
-  if (!acc[name]) acc[name] = { revenue: 0, seats: 0 };
+    if (!acc[name]) acc[name] = { revenue: 0, seats: 0 };
 
-  acc[name].revenue += b.totalAmount;
-  acc[name].seats += b.seatsBooked;
+    acc[name].revenue += b.totalAmount;
+    acc[name].seats += b.seatsBooked;
 
-  return acc;
-}, {});
+    return acc;
+  }, {});
 
   const events = Object.keys(grouped);
   const revenueData = Object.values(grouped).map(g => g.revenue);
@@ -100,7 +100,7 @@ function BookingMonitoring() {
   };
 
   return (
-    <div className="content-card">
+    <div >
 
       <h1>Booking Monitoring</h1>
 
@@ -193,7 +193,9 @@ function BookingMonitoring() {
               <td>{booking.seatsBooked}</td>
               <td>{booking.paymentMode}</td>
               <td>{booking.paymentStatus}</td>
-              <td>{booking.bookingStatus}</td>
+              <td className={booking.bookingStatus.toLowerCase()}>
+                {booking.bookingStatus}
+              </td>
               <td>
                 {booking.bookingDate
                   ? new Date(booking.bookingDate).toLocaleString()

@@ -1,0 +1,223 @@
+/* Full page with colorful light theme */
+.home {
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+
+  background: linear-gradient(
+    120deg,
+    #f8f7ff 0%,
+    #eef2ff 30%,
+    #f0f9ff 60%,
+    #ffffff 100%
+  );
+}
+
+
+/* Animated background circles */
+
+.home::before,
+.home::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.6;
+  animation: float 12s infinite ease-in-out alternate;
+}
+
+.home::before {
+  width: 400px;
+  height: 400px;
+  background: #7c3aed;
+  top: -100px;
+  left: -100px;
+}
+
+.home::after {
+  width: 400px;
+  height: 400px;
+  background: #06b6d4;
+  bottom: -120px;
+  right: -120px;
+}
+
+
+/* Floating animation */
+
+@keyframes float {
+  from {
+    transform: translateY(0px) translateX(0px);
+  }
+  to {
+    transform: translateY(40px) translateX(40px);
+  }
+}
+
+
+/* Navbar */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 60px;
+  border-bottom: 1px solid #e5e7eb;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(10px);
+}
+
+
+/* Logo */
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+
+/* Right side */
+
+.nav-right {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+
+/* Sign in button */
+
+.signin-btn {
+  background: linear-gradient(
+    to right,
+    #7c3aed,
+    #9333ea
+  );
+  border: none;
+  color: white;
+  padding: 10px 22px;
+  font-size: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.signin-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(124,58,237,0.3);
+}
+
+
+/* Hero section */
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  margin-top: 140px;
+
+  animation: fadeUp 1s ease;
+}
+
+
+/* Badge */
+
+.badge {
+
+  background: rgba(124,58,237,0.1);
+
+  color: #6d28d9;
+
+  padding: 12px 26px;
+
+  border-radius: 30px;
+
+  font-size: 16px;
+
+  font-weight: 500;
+
+  margin-bottom: 35px;
+
+  letter-spacing: 0.5px;
+
+  animation: fadeUp 1s ease;
+
+}
+
+
+/* Title */
+
+.title {
+
+  font-size: 78px;
+
+  font-weight: 800;
+
+  line-height: 1.05;
+
+  margin-top: -20px;
+
+  margin-bottom: 30px;
+
+  letter-spacing: -1px;
+
+  animation: fadeUp 1.3s ease;
+
+}
+
+
+/* Gradient text */
+
+.gradient {
+
+  background: linear-gradient(
+    to right,
+    #7c3aed,
+    #06b6d4
+  );
+
+  -webkit-background-clip: text;
+
+  color: transparent;
+
+}
+
+
+/* Subtitle */
+
+.subtitle {
+
+  margin-top: -20px;
+
+  font-size: 20px;
+
+  color: #6b7280;
+
+  max-width: 750px;
+
+  line-height: 1.6;
+
+  animation: fadeUp 1.6s ease;
+
+}
+
+
+/* Fade up animation */
+
+@keyframes fadeUp {
+
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}

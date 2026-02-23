@@ -4,10 +4,12 @@ import axios from "axios";
 import "../styles/Dashboard.css";
 
 function Layout() {
-  const navigate = useNavigate();
-  const location = useLocation();
 
-  const email = localStorage.getItem("email");
+  const navigate = useNavigate();
+
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const role = localStorage.getItem("role");
+  const email = storedUser?.email;
 
   const [showProfile, setShowProfile] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -21,12 +23,13 @@ function Layout() {
   });
 
   useEffect(() => {
-    if (!email && location.pathname !== "/" && location.pathname !== "/register") {
+    if (!storedUser || role !== "ORGANIZER") {
       navigate("/login");
     }
-  }, [email, navigate, location.pathname]);
+  }, [navigate]);
 
   useEffect(() => {
+
     if (!email) return;
 
     const fetchProfile = async () => {
@@ -36,27 +39,34 @@ function Layout() {
         );
         setOrganizer(res.data);
       } catch (err) {
-        console.error("Profile fetch error:", err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
+
   }, [email]);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.put("http://localhost:8080/api/organizer/profile", organizer);
-      alert("Profile Updated Successfully!");
+      const res = await axios.put(
+        "http://localhost:8080/api/organizer/profile",
+        organizer
+      );
+
+      setOrganizer(res.data);   // 🔥 update everywhere
       setShowProfile(false);
+      alert("Profile Updated Successfully!");
+
     } catch (err) {
-      console.error(err);
-      alert("Failed to update profile");
+      alert("Update failed");
     }
   };
+
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
@@ -68,7 +78,6 @@ function Layout() {
     <div className="app-wrapper">
       <div className="layout">
 
-        {/* Sidebar */}
         <div className="sidebar">
           <h2 className="logo">EventMate AI</h2>
           <ul>
@@ -76,28 +85,24 @@ function Layout() {
             <li onClick={() => navigate("/organizer/add-event")}>Add Events</li>
             <li onClick={() => navigate("/organizer/booking-monitor")}>Booking Monitoring</li>
             <li onClick={() => navigate("/organizer/manage-events")}>Manage Events</li>
-            <li onClick={handleLogout} style={{ color: "red", cursor: "pointer" }}>Logout</li>
+            <li onClick={handleLogout} style={{ color: "red" }}>Logout</li>
           </ul>
         </div>
 
-        {/* Main Content */}
         <div className="main">
           <div className="top-navbar">
             <h2>Organizer Dashboard</h2>
-            <button
-              className="profile-btn"
-              onClick={() => setShowProfile(true)}
-            >
-              {organizer.name || "Profile"}
+            <button className="profile-btn" onClick={() => setShowProfile(true)}>
+              {organizer.name}
             </button>
           </div>
 
+          {/* 🔥 PASS ORGANIZER HERE */}
           <div className="content-area">
-            <Outlet />
+            <Outlet context={{ organizer, setOrganizer }} />
           </div>
         </div>
 
-        {/* Profile Modal */}
         {showProfile && (
           <div className="modal-overlay">
             <div className="modal">
@@ -114,11 +119,7 @@ function Layout() {
                   required
                 />
 
-                <input
-                  type="email"
-                  value={organizer.email}
-                  readOnly
-                />
+                <input type="email" value={organizer.email} readOnly />
 
                 <input
                   type="text"

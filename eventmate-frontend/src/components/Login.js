@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
-import { FaGoogle, FaGithub, FaLinkedin } from "react-icons/fa";
-
 export default function Login() {
+
     const navigate = useNavigate();
+
+    const [role, setRole] = useState("USER");
 
     const [form, setForm] = useState({
         email: "",
-        password: "",
+        password: ""
     });
 
     const [message, setMessage] = useState("");
@@ -20,44 +21,98 @@ export default function Login() {
     };
 
     const handleLogin = async (e) => {
+
         e.preventDefault();
-        setMessage("");
+
         setLoading(true);
 
         try {
-            const res = await axios.post(
-                "http://localhost:8080/api/organizer/login",
-                form
-            );
+
+            const url =
+                role === "ORGANIZER"
+                    ? "http://localhost:8080/api/organizer/login"
+                    : "http://localhost:8080/api/user/login";
+
+
+            const res = await axios.post(url, form);
 
             if (res.data.message === "Login successful") {
 
-                localStorage.setItem("organizer", JSON.stringify(res.data));
-                localStorage.setItem("email", res.data.email);
-                localStorage.setItem("name", res.data.name);
-                localStorage.setItem("role", res.data.role);
+                localStorage.setItem("user", JSON.stringify(res.data));
+                localStorage.setItem("role", role);
 
-                navigate("/organizer");
+                // ✅ ADD THIS LINE
+                localStorage.setItem("email", form.email);
 
-            } else {
-                setMessage(res.data.message);
+                if (role === "ORGANIZER")
+                    navigate("/organizer");
+                else
+                    navigate("/user");
+
             }
 
-        } catch (err) {
-            console.error(err);
-            setMessage("Invalid email or password");
+            else {
+
+                setMessage(res.data.message);
+
+            }
+
+        }
+
+        catch {
+
+            setMessage("Invalid Email or Password");
+
         }
 
         setLoading(false);
+
     };
 
+
     return (
+
         <div className="login-container">
+
             <div className="login-card">
-                <h1>EventMate AI Scheduler</h1>
-                <p className="subtitle">Smart AI Event Planner</p>
+
+                <div className="logo">✦</div>
+
+                <h1>Welcome Back</h1>
+
+                <p className="subtitle">
+                    Sign in to your EventMate account
+                </p>
+
+
+                {/* ROLE SELECTION */}
+
+                <div className="role-container">
+
+                    <div
+                        className={`role-box ${role === "USER" && "active"}`}
+                        onClick={() => setRole("USER")}
+                    >
+                        <h3>User</h3>
+                        <p>Browse & book events</p>
+                    </div>
+
+
+                    <div
+                        className={`role-box ${role === "ORGANIZER" && "active"}`}
+                        onClick={() => setRole("ORGANIZER")}
+                    >
+                        <h3>Organizer</h3>
+                        <p>Create & manage events</p>
+                    </div>
+
+                </div>
+
+
+                {/* FORM */}
 
                 <form onSubmit={handleLogin}>
+
                     <input
                         type="email"
                         name="email"
@@ -74,32 +129,39 @@ export default function Login() {
                         required
                     />
 
-                    <button type="submit" disabled={loading}>
-                        {loading ? "Logging in..." : "Login"}
+
+                    <button>
+
+                        {loading ? "Signing in..." : "Sign In"}
+
                     </button>
+
                 </form>
 
-                <div className="social-login">
-                    <p>Or login with</p>
-                    <div className="social-icons">
-                        <FaGoogle />
-                        <FaGithub />
-                        <FaLinkedin />
-                    </div>
-                </div>
 
                 <p className="switch-text">
-                    Don't have an account?{" "}
+
+                    Don't have an account?
                     <span
-                        className="switch-link"
-                        onClick={() => navigate("/register")}
+                        onClick={() =>
+                            role === "ORGANIZER"
+                                ? navigate("/register")
+                                : navigate("/user-register")
+                        }
                     >
                         Register
                     </span>
+
                 </p>
 
-                {message && <p className="message">{message}</p>}
+
+                <p className="message">{message}</p>
+
+
             </div>
+
         </div>
+
     );
+
 }

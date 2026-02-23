@@ -1,5 +1,5 @@
 package com.eventmate.controller;
-
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +30,8 @@ public class AuthController {
     @Autowired
     private EventService eventService;
 
-    @PostMapping("/register")
-    public Map<String, String> register(@RequestBody Organizer organizer) {
+   @PostMapping("/register")
+public Map<String, String> register(@Valid @RequestBody Organizer organizer) {
         String message = organizerService.register(organizer);
         Map<String, String> response = new HashMap<>();
         response.put("message", message);
@@ -62,7 +62,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody Organizer organizer) {
+    public Map<String, String> login(@Valid @RequestBody Organizer organizer) {
         Organizer existing =
                 organizerService.login(organizer.getEmail(), organizer.getPassword());
 

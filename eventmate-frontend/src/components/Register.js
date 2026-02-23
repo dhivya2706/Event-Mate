@@ -4,30 +4,72 @@ import { useNavigate } from "react-router-dom";
 import "../styles/Register.css";
 
 export default function Register() {
+
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     phone: "",
     companyName: "",
-    role: "ORGANISER", 
+    role: "ORGANIZER",
   });
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
+  const handleChange = (e) => {
+
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
+
+  };const handleRegister = async (e) => {
+  e.preventDefault();
+
+  const nameRegex = /^[A-Za-z ]{3,30}$/;
+  const phoneRegex = /^[6-9]\d{9}$/;
+  const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+  const passwordRegex =
+    /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
+  if (!nameRegex.test(form.name)) {
+    setMessage("❌ Name must be 3-30 letters only");
+    return;
+  }
+
+  if (!gmailRegex.test(form.email)) {
+    setMessage("❌ Email must be a valid Gmail address");
+    return;
+  }
+
+  if (!phoneRegex.test(form.phone)) {
+    setMessage("❌ Phone number must be 10 digits and start with 6-9");
+    return;
+  }
+
+  if (!passwordRegex.test(form.password)) {
+    setMessage(
+      "❌ Password must contain 8+ characters, 1 uppercase, 1 lowercase, 1 number & 1 special character"
+    );
+    return;
+  }
+
+  if (form.password !== form.confirmPassword) {
+    setMessage("❌ Password and Confirm Password do not match");
+    return;
+  }
+
+
     setLoading(true);
     setMessage("");
 
     try {
+
       const res = await axios.post(
         "http://localhost:8080/api/organizer/register",
         {
@@ -39,29 +81,46 @@ export default function Register() {
         }
       );
 
-      setMessage(res.data.message);
+      setMessage("✅ Registration Successful");
+
       setTimeout(() => {
-        navigate("/");
+
+        navigate("/login");
+
       }, 1500);
 
-    } catch (err) {
+    }
+
+    catch (err) {
+
       setMessage(
         err.response?.data?.message ||
         "Registration failed! Server error."
       );
+
     }
 
     setLoading(false);
+
   };
 
+
+
   return (
+
     <div className="register-container">
+
       <div className="register-card">
 
         <h1>EventMate AI Scheduler</h1>
-        <p className="subtitle">Register your account</p>
+
+        <p className="subtitle">
+          Register your account
+        </p>
+
 
         <form onSubmit={handleRegister}>
+
           <input
             name="name"
             placeholder="Name"
@@ -79,6 +138,7 @@ export default function Register() {
             required
           />
 
+
           <input
             type="password"
             name="password"
@@ -87,6 +147,17 @@ export default function Register() {
             onChange={handleChange}
             required
           />
+
+
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+
 
           <input
             name="phone"
@@ -97,6 +168,7 @@ export default function Register() {
             required
           />
 
+
           <input
             name="companyName"
             placeholder="Company Name"
@@ -105,26 +177,47 @@ export default function Register() {
             required
           />
 
+
           <button type="submit" disabled={loading}>
+
             {loading ? "Registering..." : "Register"}
+
           </button>
+
         </form>
 
+
+
         {message && (
-          <p className="register-message">{message}</p>
+
+          <p className="register-message">
+            {message}
+          </p>
+
         )}
 
+
+
         <p className="switch-text">
-          Already have an account?{" "}
+
+          Already have an account?
+
           <span
             className="switch-link"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/login")}
           >
+
             Login
+
           </span>
+
         </p>
 
+
       </div>
+
     </div>
+
   );
+
 }

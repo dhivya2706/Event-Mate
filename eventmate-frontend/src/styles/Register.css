@@ -1,67 +1,160 @@
 .register-container {
+
   min-height: 100vh;
+
   display: flex;
+
   justify-content: center;
+
   align-items: center;
-  background: linear-gradient(135deg, #36b9cc, #1cc88a);
+
+  position: relative;
+
+  overflow: hidden;
+
+  background: linear-gradient(
+    120deg,
+    #f8f7ff,
+    #eef2ff,
+    #f0f9ff,
+    #ffffff
+  );
+
 }
+
+
+.register-container::before,
+.register-container::after {
+
+  content: "";
+
+  position: absolute;
+
+  width: 400px;
+
+  height: 400px;
+
+  border-radius: 50%;
+
+  filter: blur(120px);
+
+  opacity: 0.6;
+
+  animation: float 10s infinite alternate;
+
+}
+
+
+.register-container::before {
+
+  background: #7c3aed;
+
+  top: -100px;
+
+  left: -100px;
+
+}
+
+
+.register-container::after {
+
+  background: #06b6d4;
+
+  bottom: -100px;
+
+  right: -100px;
+
+}
+
+
+/* Register card */
 
 .register-card {
-  width: 380px;
-  background: white;
+
+  width: 420px;
+
+  background: rgba(255,255,255,0.85);
+
+  backdrop-filter: blur(20px);
+
   padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  text-align: center;
+
+  border-radius: 20px;
+
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+
+  animation: fadeUp 0.8s ease;
+
 }
 
-.register-card h1 {
-  margin-bottom: 5px;
-  color: #333;
-}
+
+/* Register inputs */
 
 .register-card input {
+
   width: 100%;
-  padding: 12px;
+
+  padding: 13px;
+
   margin-bottom: 15px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  font-size: 14px;
+
+  border-radius: 10px;
+
+  border: 1px solid #e5e7eb;
+
 }
 
-.register-card input:focus {
-  outline: none;
-  border-color: #1cc88a;
-}
+
+/* Register button */
 
 .register-card button {
+
   width: 100%;
-  padding: 12px;
-  background: #1cc88a;
+
+  padding: 13px;
+
+  background: linear-gradient(
+    to right,
+    #7c3aed,
+    #06b6d4
+  );
+
   border: none;
-  border-radius: 6px;
+
   color: white;
+
+  border-radius: 10px;
+
   font-weight: bold;
+
   cursor: pointer;
-  transition: 0.3s;
-}
 
-.register-card button:hover {
-  background: #17a673;
-}
-
-.register-message {
-  margin-top: 10px;
-  color: red;
 }
 
 .switch-text {
-  margin-top: 15px;
-  font-size: 14px;
+
+margin-top: 15px;
+
 }
 
 .switch-link {
-  color: #1cc88a;
-  cursor: pointer;
-  font-weight: bold;
+
+color: #7c3aed;
+
+font-weight: 600;
+
+cursor: pointer;
+
+margin-left: 5px;
+
+transition: 0.3s;
+
+}
+
+.switch-link:hover {
+
+text-decoration: underline;
+
+color: #9333ea;
+
 }

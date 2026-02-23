@@ -4,73 +4,86 @@ import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.css";
 
 function ManageEvents() {
-    const [events, setEvents] = useState([]);
-    const navigate = useNavigate();
+  const [events, setEvents] = useState([]);
+  const navigate = useNavigate();
 
-    const fetchEvents = async () => {
-        try {
-            const email = localStorage.getItem("email");
+  const fetchEvents = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const email = user?.email;
 
-            const res = await axios.get(
-                `http://localhost:8080/api/events/organizer?email=${email}`
-            );
+      const res = await axios.get(
+        `http://localhost:8080/api/events/organizer?email=${email}`
+      );
 
-            setEvents(res.data);
-        } catch (err) {
-            console.error("Fetch events error:", err);
-        }
-    };
+      setEvents(res.data);
+    } catch (err) {
+      console.error("Fetch events error:", err);
+    }
+  };
 
-    useEffect(() => {
-        fetchEvents();
-    }, []);
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
-    const deleteEvent = async (id) => {
-        if (!window.confirm("Delete this event?")) return;
+  const deleteEvent = async (id) => {
+    if (!window.confirm("Delete this event?")) return;
 
-        try {
-            await axios.delete(`http://localhost:8080/api/events/${id}`);
-            fetchEvents();
-        } catch (err) {
-            console.error("Delete error:", err);
-        }
-    };
+    try {
+      await axios.delete(`http://localhost:8080/api/events/${id}`);
+      fetchEvents();
+    } catch (err) {
+      console.error("Delete error:", err);
+    }
+  };
 
-    return (
-        <div className="content-card">
-            <h1>Manage Events</h1>
+  return (
+    <div>
+      <h2 style={{ marginBottom: "20px" }}>Manage Events</h2>
 
-            <div className="event-card-container">
-                {events.length === 0 ? (
-                    <p>No events created yet.</p>
-                ) : (
-                    events.map((e) => (
-                        <div className="event-card" key={e.id}>
-                            <h3>{e.eventName}</h3>
+      <div className="event-card-container">
+        {events.length === 0 ? (
+          <p>No events created yet.</p>
+        ) : (
+          events.map((e) => (
+            <div className="event-row" key={e.id}>
+              
+              {/* LEFT SIDE */}
+              <div className="event-left">
+                <div className="event-title">{e.eventName}</div>
+                <div className="event-sub">
+                  {e.eventDate || "Upcoming"} • {e.totalSeats} seats
+                </div>
+              </div>
 
-                            <p>Total Seats: {e.totalSeats}</p>
+              {/* RIGHT SIDE */}
+              <div className="event-actions">
+                
+                <span className="status-badge">
+                  Upcoming
+                </span>
 
-                            <div className="event-actions">
-                                <button
-                                    className="edit-btn"
-                                    onClick={() => navigate(`edit/${e.id}`)} 
-                                >
-                                    Edit
-                                </button>
+                <button
+                  className="action-btn edit-btn"
+                  onClick={() => navigate(`edit/${e.id}`)}
+                >
+                  ✏
+                </button>
 
-                                <button
-                                    className="delete-btn"
-                                    onClick={() => deleteEvent(e.id)}
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    ))
-                )}
+                <button
+                  className="action-btn delete-btn"
+                  onClick={() => deleteEvent(e.id)}
+                >
+                  🗑
+                </button>
+
+              </div>
             </div>
-        </div>
-    );
+          ))
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default ManageEvents;
