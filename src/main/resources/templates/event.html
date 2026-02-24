@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Event Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #141e30, #243b55);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .main-container {
+      display: flex;
+      gap: 40px;
+      width: 1100px;
+    }
+
+    .event-section {
+      flex: 2;
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .event-section:hover {
+      transform: scale(1.02);
+    }
+
+    .event-poster {
+      height: 300px;
+      background-image: url("https://images.unsplash.com/photo-1506157786151-b8491531f063");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .event-content {
+      padding: 25px;
+    }
+
+    .event-content h2 {
+      margin-bottom: 15px;
+      color: #243b55;
+    }
+
+    .event-content p {
+      margin-bottom: 10px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .payment-section {
+      flex: 1;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+      height: fit-content;
+      text-align: center;
+    }
+
+    .payment-section h3 {
+      margin-bottom: 20px;
+      color: #243b55;
+    }
+
+    .price {
+      font-size: 22px;
+      font-weight: 600;
+      color: #28a745;
+      margin-top: 15px;
+    }
+
+    .seat-input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    .pay-btn {
+      margin-top: 20px;
+      padding: 14px;
+      width: 100%;
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .pay-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="main-container">
+
+  <div class="event-section">
+    <div class="event-poster"></div>
+
+    <div class="event-content">
+      <h2> Music Concert 2026</h2>
+
+      <p>
+        Experience a spectacular night of electrifying music and live performances
+        from top artists. Enjoy immersive sound, vibrant lighting, and unforgettable moments.
+      </p>
+
+      <p><strong>Date:</strong> 25 March 2026</p>
+      <p><strong>Venue:</strong> City Auditorium</p>
+      <p><strong>Category:</strong> Music</p>
+    </div>
+  </div>
+
+  <div class="payment-section">
+    <h3>Ticket Summary</h3>
+
+    <p><strong>Price per Seat:</strong>Rs.500</p>
+
+    <label><strong>Enter Number of Seats:</strong></label>
+    <input type="number" id="seats" class="seat-input" min="1" value="1" oninput="calculateTotal()">
+
+    <p class="price" id="totalPrice">Rs.500</p>
+
+    <button class="pay-btn" onclick="goToPayment()">
+      Pay Now
+    </button>
+  </div>
+
+</div>
+
+<script>
+  function calculateTotal() {
+    let seats = document.getElementById("seats").value;
+    let total = seats * 500;
+    document.getElementById("totalPrice").innerText = "Rs." + total;
+  }
+
+  function goToPayment() {
+    let seats = document.getElementById("seats").value;
+    if(seats < 1){
+      alert("Please enter valid seat number");
+      return;
+    }
+    window.location.href = "/payment?seats=" + seats;
+  }
+</script>
+
+</body>
+</html>
