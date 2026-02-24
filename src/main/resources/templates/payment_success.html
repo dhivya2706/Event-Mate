@@ -5,39 +5,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
-
     body {
+      font-family: 'Poppins', sans-serif;
       background: linear-gradient(to right, #11998e, #38ef7d);
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    .success-card {
+    .card {
       background: white;
       padding: 40px;
       width: 500px;
       text-align: center;
       border-radius: 20px;
       box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-    }
-
-    .success-icon {
-      font-size: 60px;
-      color: #28a745;
-      margin-bottom: 15px;
-    }
-
-    h2 {
-      margin-bottom: 20px;
-      color: #333;
     }
 
     .info-box {
@@ -48,73 +31,63 @@
       margin-top: 15px;
     }
 
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      font-size: 14px;
-      color: #444;
-    }
-
-    .info-row strong {
-      color: #000;
-    }
-
     .btn {
-      margin-top: 25px;
-      padding: 12px 25px;
+      margin-top: 20px;
+      padding: 10px 20px;
       border: none;
-      border-radius: 25px;
+      border-radius: 20px;
       background: #11998e;
       color: white;
-      font-weight: 600;
       cursor: pointer;
-      width: 100%;
+      font-weight: 600;
     }
 
     .btn:hover {
       background: #0f766e;
+    }
+
+    #qrContainer {
+      display: none;
+      margin-top: 20px;
     }
   </style>
 </head>
 
 <body>
 
-<div class="success-card">
-  <div class="success-icon"></div>
+<div class="card">
+
   <h2>Payment Successful!</h2>
 
   <div class="info-box">
-
-    <div class="info-row">
-      <span>Payment Method</span>
-      <strong th:text="${method}"></strong>
-    </div>
-
-    <div class="info-row">
-      <span>Amount Paid</span>
-      <strong>
-        $<span th:text="${amount}"></span>
-      </strong>
-    </div>
-
-    <div class="info-row">
-      <span>Transaction ID</span>
-      <strong th:text="${txn}"></strong>
-    </div>
-
-    <div class="info-row">
-      <span>Date</span>
-      <strong th:text="${date}"></strong>
-    </div>
-
+    <p><strong>Payment Method:</strong> <span th:text="${method}"></span></p>
+    <p><strong>Amount Paid:</strong> ₹<span th:text="${amount}"></span></p>
+    <p><strong>Transaction ID:</strong> <span th:text="${txn}"></span></p>
+    <p><strong>Date:</strong> <span th:text="${date}"></span></p>
   </div>
+
+  <!-- BUTTON TO SHOW QR -->
+  <button class="btn" onclick="showQR()">Show QR Code</button>
+
+  <!-- QR IMAGE (Hidden Initially) -->
+  <div id="qrContainer">
+    <h3>Your Ticket QR Code</h3>
+    <img th:src="@{${qrImage}}" width="220"/>
+  </div>
+
+  <br>
 
   <a th:href="@{/payment}">
     <button class="btn">Make Another Payment</button>
   </a>
 
 </div>
+
+<script>
+  function showQR() {
+    document.getElementById("qrContainer").style.display = "block";
+  }
+</script>
 
 </body>
 </html>

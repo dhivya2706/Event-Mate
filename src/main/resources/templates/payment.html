@@ -5,6 +5,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
+   
     * {
       margin: 0;
       padding: 0;
@@ -101,6 +102,20 @@
       transform: translateY(-3px);
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
+
+   
+    .extra-fields {
+      display: none;
+      margin-top: 15px;
+    }
+
+    .extra-fields input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
   </style>
 </head>
 
@@ -112,16 +127,28 @@
 
     <h3>Payment Method</h3>
 
+    
     <label class="method">
       <span>Credit Card</span>
-      <input type="radio" name="paymentMethod" value="Credit Card">
+      <input type="radio" name="paymentMethod" value="Credit Card" checked>
     </label>
 
+    <div class="extra-fields" id="cardFields">
+      <input type="text" name="cardNumber" placeholder="Card Number">
+      <input type="text" name="expiry" placeholder="MM/YY">
+    </div>
+
+  
     <label class="method">
       <span>PayPal</span>
       <input type="radio" name="paymentMethod" value="PayPal">
     </label>
 
+    <div class="extra-fields" id="paypalFields">
+      <input type="email" name="paypalEmail" placeholder="PayPal Email">
+    </div>
+
+   
     <label class="method">
       <span>Apple Pay</span>
       <input type="radio" name="paymentMethod" value="Apple Pay">
@@ -147,7 +174,6 @@
         <span>Total</span>
         <span>Rs.<span th:text="${amount}"></span></span>
       </div>
-
     </div>
 
     <button type="submit" class="pay-btn">
@@ -155,22 +181,40 @@
     </button>
 
   </form>
-
 </div>
 
 <script>
   const methods = document.querySelectorAll(".method");
+  const cardFields = document.getElementById("cardFields");
+  const paypalFields = document.getElementById("paypalFields");
+
+  function hideAllFields() {
+    cardFields.style.display = "none";
+    paypalFields.style.display = "none";
+  }
 
   methods.forEach(method => {
     method.addEventListener("click", function () {
       methods.forEach(m => m.classList.remove("active"));
       this.classList.add("active");
       this.querySelector("input").checked = true;
+
+      hideAllFields();
+
+      const value = this.querySelector("input").value;
+
+      if (value === "Credit Card") {
+        cardFields.style.display = "block";
+      } else if (value === "PayPal") {
+        paypalFields.style.display = "block";
+      }
     });
   });
 
+  // Default selection
   methods[0].classList.add("active");
   methods[0].querySelector("input").checked = true;
+  cardFields.style.display = "block";
 </script>
 
 </body>

@@ -14,17 +14,77 @@ public class Payment {
     private String transactionId;
     private String paymentDate;
 
-    public Long getId() { return id; }
+  
+    private String cardNumber;
+    private String expiry;
+    private String paypalEmail;
 
-    public String getPaymentMethod() { return paymentMethod; }
-    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+   
 
-    public double getAmount() { return amount; }
-    public void setAmount(double amount) { this.amount = amount; }
+    public Long getId() { 
+        return id; 
+    }
 
-    public String getTransactionId() { return transactionId; }
-    public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getPaymentDate() { return paymentDate; }
-    public void setPaymentDate(String paymentDate) { this.paymentDate = paymentDate; }
+    public String getPaymentMethod() { 
+        return paymentMethod; 
+    }
+
+    public void setPaymentMethod(String paymentMethod) { 
+        this.paymentMethod = paymentMethod; 
+    }
+
+    public double getAmount() { 
+        return amount; 
+    }
+
+    public void setAmount(double amount) { 
+        this.amount = amount; 
+    }
+
+    public String getTransactionId() { 
+        return transactionId; 
+    }
+
+    public void setTransactionId(String transactionId) { 
+        this.transactionId = transactionId; 
+    }
+
+    public String getPaymentDate() { 
+        return paymentDate; 
+    }
+
+    public void setPaymentDate(String paymentDate) { 
+        this.paymentDate = paymentDate; 
+    }
+
+   
+    public String getCardNumber() { 
+        return cardNumber; 
+    }
+
+    public void setCardNumber(String cardNumber) { 
+        this.cardNumber = cardNumber; 
+    }
+
+  
+    public String getExpiry() { 
+        return expiry; 
+    }
+
+    public void setExpiry(String expiry) { 
+        this.expiry = expiry; 
+    }
+
+
+    public String getPaypalEmail() { 
+        return paypalEmail; 
+    }
+
+    public void setPaypalEmail(String paypalEmail) { 
+        this.paypalEmail = paypalEmail; 
+    }
 }
