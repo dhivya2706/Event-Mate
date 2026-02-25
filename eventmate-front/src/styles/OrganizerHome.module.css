@@ -1,0 +1,106 @@
+/* Full screen premium background */
+.dashboard {
+  min-height: 100vh;
+  padding: 60px;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  font-family: 'Segoe UI', sans-serif;
+  color: white;
+}
+
+/* Header */
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 60px;
+}
+
+.topBar h1 {
+  font-size: 38px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #00f5ff, #ff00c8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Logout button */
+.topBar button {
+  padding: 12px 26px;
+  border-radius: 30px;
+  border: none;
+  background: linear-gradient(135deg, #ff4b2b, #ff416c);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.topBar button:hover {
+  transform: scale(1.08);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+/* GRID FULL WIDTH */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 35px;
+  width: 100%;
+}
+
+/* Premium Glass Cards */
+.card {
+  padding: 30px;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+  transition: all 0.4s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle glowing border */
+.card::before {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background: radial-gradient(circle, rgba(0,255,255,0.2), transparent 60%);
+  opacity: 0;
+  transition: 0.4s;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.card:hover {
+  transform: translateY(-12px) scale(1.04);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.card h3 {
+  font-size: 22px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.card p {
+  font-size: 14px;
+  opacity: 0.85;
+  margin: 6px 0;
+}
+
+/* Highlight Booking Monitoring */
+.highlight {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.highlight:hover {
+  background: linear-gradient(135deg, #764ba2, #667eea);
+}

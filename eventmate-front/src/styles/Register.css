@@ -1,102 +1,154 @@
-body {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg,#667eea,#764ba2);
-  height: 100vh;
-  margin: 0;
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+.register-body {
+  flex: 1;
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: center;
+  padding: 40px 20px;
+  min-height: calc(100vh - 72px);
+  background-color: #eef2f7;
 }
 
-.login-container, .register-container {
-  width: 400px;
-}
-
-.login-card, .register-card, .dashboard-card {
-  background: rgba(255,255,255,0.95);
-  padding: 30px;
+.register-card {
+  background: #ffffff;
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
-  text-align: center;
-  color: #333;
-}
-
-.subtitle {
-  font-size: 14px;
-  margin-bottom: 20px;
-  color: #666;
-  text-align: center;
-}
-
-form {
+  box-shadow: 0 8px 40px rgba(30, 58, 138, 0.12);
+  padding: 48px 40px;
   width: 100%;
+  max-width: 420px;
   display: flex;
   flex-direction: column;
+  gap: 20px;
 }
 
-input, select {
-  margin-bottom: 15px;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
-
-button {
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(to right,#667eea,#764ba2);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-
-.switch-text, .register-message, .message {
-  margin-top: 10px;
-  font-size: 14px;
-  color: #333;
-}
-
-.switch-link {
-  color: #667eea;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.social-login {
-  margin: 15px 0;
+.register-logo {
   text-align: center;
 }
 
-.social-icons span, .social-icons svg {
-  margin: 0 8px;
-  font-size: 24px;
+.register-logo h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1e3a8a;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: -0.5px;
+}
+
+.register-logo p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 4px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.register-card input,
+.register-card select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  color: #1f2937;
+  background: #f9fafb;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.register-card input:focus,
+.register-card select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background: #ffffff;
+}
+
+.register-card input::placeholder {
+  color: #9ca3af;
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper::after {
+  content: '▾';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  pointer-events: none;
+  font-size: 14px;
+}
+
+.register-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #4f46e5, #2563eb);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
   cursor: pointer;
-  color: #667eea;
-  transition: 0.3s;
+  transition: opacity 0.2s, transform 0.2s;
+  letter-spacing: 0.02em;
 }
 
-.social-icons svg:hover {
-  color: #764ba2;
-  transform: scale(1.2);
+.register-btn:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
 }
 
-.profile-pic {
-  font-size: 60px;
-  margin: 15px 0;
+.register-btn:active {
+  transform: translateY(0);
+}
+
+.register-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.register-footer {
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.register-footer span {
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.register-footer span:hover {
+  text-decoration: underline;
+}
+
+.register-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  text-align: center;
+}
+
+.register-success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #16a34a;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  text-align: center;
 }

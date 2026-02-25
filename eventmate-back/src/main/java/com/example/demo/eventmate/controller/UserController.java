@@ -22,112 +22,109 @@ public class UserController {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
-    // ✅ REGISTER
+    // REGISTER
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
+    public ResponseEntity<?> register(@RequestBody User user) {
 
-        Map<String, String> res = new HashMap<>();
-
-        try {
-            // check duplicate email
-            if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-                res.put("message", "Email already exists!");
-                return ResponseEntity.badRequest().body(res);
-            }
-
-            // Safe role mapping
-            if (user.getRole() == null) {
-                user.setRole(Role.USER);
-            } else {
-                try {
-                    user.setRole(Role.valueOf(user.getRole().name().toUpperCase()));
-                } catch (Exception e) {
-                    user.setRole(Role.USER);
-                }
-            }
-
-            // Encode password
-            user.setPassword(encoder.encode(user.getPassword()));
-
-            // Save user
-            userRepository.save(user);
-
-            res.put("message", "Registration successful!");
-            return ResponseEntity.ok(res);
-
-        } catch (Exception e) {
-            e.printStackTrace(); // console log
-            res.put("message", "Server error! Registration failed.");
-            return ResponseEntity.status(500).body(res);
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            return ResponseEntity.badRequest().body("Email already exists!");
         }
+
+        if (user.getRole() == null) {
+            user.setRole(Role.USER);
+        }
+
+        user.setPassword(encoder.encode(user.getPassword()));
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Registration successful!");
     }
 
-    // ✅ LOGIN
+    // LOGIN
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody User data) {
+    public ResponseEntity<?> login(@RequestBody User data) {
 
-        Map<String, String> res = new HashMap<>();
         Optional<User> opt = userRepository.findByEmail(data.getEmail());
 
         if (opt.isEmpty()) {
-            res.put("message", "Email not found!");
-            return ResponseEntity.status(401).body(res);
+            return ResponseEntity.status(401).body(Map.of("message","Email not found"));
         }
 
         User user = opt.get();
 
         if (!encoder.matches(data.getPassword(), user.getPassword())) {
-            res.put("message", "Incorrect password!");
-            return ResponseEntity.status(401).body(res);
+            return ResponseEntity.status(401).body(Map.of("message","Incorrect password"));
         }
 
-        res.put("message", "Login successful");
-        res.put("role", user.getRole().name());
-        res.put("name", user.getName());
-
-        return ResponseEntity.ok(res);
+        return ResponseEntity.ok(Map.of(
+                "role", user.getRole().name(),
+                "token", user.getEmail()   // email as token
+        ));
     }
 
-    // ✅ GET all users or organizers
-    @GetMapping("/admin/users")
-    public ResponseEntity<List<User>> getUsers(@RequestParam(required = false) String role) {
-        List<User> users;
-        if (role == null) {
-            users = userRepository.findAll();
-        } else {
-            users = userRepository.findAll().stream()
-                    .filter(u -> u.getRole().name().equalsIgnoreCase(role))
-                    .toList();
+    // ADMIN PROFILE
+    @GetMapping("/admin/profile")
+    public ResponseEntity<?> getAdminProfile(
+            @RequestHeader("Authorization") String header) {
+
+        String token = header.substring(7); // remove Bearer
+
+        Optional<User> opt = userRepository.findByEmail(token);
+
+        if (opt.isEmpty()) {
+            return ResponseEntity.status(404).body("Admin not found");
         }
+
+        User user = opt.get();
+
+        if (user.getRole() != Role.ADMIN) {
+            return ResponseEntity.status(403).body("Access denied");
+        }
+
+        return ResponseEntity.ok(user);
+    }
+
+    // USERS BY ROLE
+    @GetMapping("/admin/users")
+    public ResponseEntity<?> getUsers(@RequestParam String role) {
+
+        List<User> users = userRepository.findAll()
+                .stream()
+                .filter(u -> u.getRole().name().equalsIgnoreCase(role))
+                .toList();
+
         return ResponseEntity.ok(users);
     }
 
-    // ✅ DELETE user by ID
+    // DELETE USER
     @DeleteMapping("/admin/users/{id}")
-    public ResponseEntity<Map<String, String>> deleteUser(@PathVariable Long id) {
-        Map<String, String> res = new HashMap<>();
-        try {
-            if (!userRepository.existsById(id)) {
-                res.put("message", "User not found!");
-                return ResponseEntity.badRequest().body(res);
-            }
-            userRepository.deleteById(id);
-            res.put("message", "User deleted successfully!");
-            return ResponseEntity.ok(res);
-        } catch (Exception e) {
-            e.printStackTrace();
-            res.put("message", "Server error! Could not delete.");
-            return ResponseEntity.status(500).body(res);
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.badRequest().body("User not found");
         }
+
+        userRepository.deleteById(id);
+        return ResponseEntity.ok("Deleted successfully");
     }
 
-    // ✅ GET counts
+    // STATS
     @GetMapping("/admin/stats")
-    public ResponseEntity<Map<String, Long>> getStats() {
-        Map<String, Long> stats = new HashMap<>();
-        stats.put("users", userRepository.findAll().stream().filter(u -> u.getRole() == Role.USER).count());
-        stats.put("organisers", userRepository.findAll().stream().filter(u -> u.getRole() == Role.ORGANISER).count());
-        stats.put("admins", userRepository.findAll().stream().filter(u -> u.getRole() == Role.ADMIN).count());
-        return ResponseEntity.ok(stats);
+    public ResponseEntity<?> getStats() {
+
+        long users = userRepository.findAll().stream()
+                .filter(u -> u.getRole() == Role.USER).count();
+
+        long organisers = userRepository.findAll().stream()
+                .filter(u -> u.getRole() == Role.ORGANISER).count();
+
+        long admins = userRepository.findAll().stream()
+                .filter(u -> u.getRole() == Role.ADMIN).count();
+
+        return ResponseEntity.ok(Map.of(
+                "users", users,
+                "organisers", organisers,
+                "admins", admins
+        ));
     }
 }

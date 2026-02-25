@@ -2,124 +2,128 @@ import React, { useState } from "react";
 import axios from "axios";
 import "../styles/Register.css";
 
-export default function Register({ switchToLogin }) {
-
+function Register({ switchToLogin }) {
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     role: "USER",
   });
-
-  const [message, setMessage] = useState("");
+  const [error, setError]     = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Handle input change
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
+    setError("");
+    setSuccess("");
   };
 
-  // Handle register
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
+  const handleRegister = async () => {
+    const { name, email, password, role } = form;
 
-    try {
-      const res = await axios.post(
-        "http://localhost:8080/api/register",
-        form
-      );
-
-      setMessage(res.data.message);
-
-      // Clear form after success
-      setForm({
-        name: "",
-        email: "",
-        password: "",
-        role: "USER"
-      });
-
-    } catch (err) {
-      if (err.response && err.response.data.message) {
-        setMessage(err.response.data.message);
-      } else {
-        setMessage("Registration failed! Server error.");
-      }
+    if (!name || !email || !password) {
+      setError("Please fill in all fields.");
+      return;
     }
 
-    setLoading(false);
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      await axios.post("http://localhost:8080/api/users/register", {
+        name,
+        email,
+        password,
+        role,
+      });
+
+      setSuccess("Account created! Redirecting to login...");
+      setTimeout(() => switchToLogin(), 1500);
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Registration failed. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") handleRegister();
   };
 
   return (
-    <div className="register-container">
+    <div className="register-body">
       <div className="register-card">
 
-        <h1>EventMate AI Scheduler</h1>
-        <p className="subtitle">Create your account</p>
+        {/* Logo / Title */}
+        <div className="register-logo">
+          <h2>EVENTMATE</h2>
+          <p>Create your account</p>
+        </div>
 
-        <form onSubmit={handleRegister}>
+        {/* Feedback */}
+        {error   && <div className="register-error">{error}</div>}
+        {success && <div className="register-success">{success}</div>}
 
-          <input
-            type="text"
-            name="name"
-            placeholder="Enter your name"
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
+        {/* Inputs */}
+        <input
+          type="text"
+          name="name"
+          placeholder="Full Name"
+          value={form.name}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password (min 6 characters)"
+          value={form.password}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+        />
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
-
-          <select
-            name="role"
-            value={form.role}
-            onChange={handleChange}
-          >
-            <option value="USER">USER</option>
-            <option value="ORGANISER">ORGANISER</option>
-            <option value="ADMIN">ADMIN</option>
+        {/* Role Dropdown */}
+        <div className="select-wrapper">
+          <select name="role" value={form.role} onChange={handleChange}>
+            <option value="USER">User</option>
+            <option value="ORGANISER">Organiser</option>
           </select>
+        </div>
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Registering..." : "Register"}
-          </button>
+        {/* Register Button */}
+        <button
+          className="register-btn"
+          onClick={handleRegister}
+          disabled={loading}
+        >
+          {loading ? "Creating Account..." : "Register"}
+        </button>
 
-        </form>
-
-        {message && <p className="register-message">{message}</p>}
-
-        <p className="switch-text">
+        {/* Login Link */}
+        <div className="register-footer">
           Already have an account?{" "}
-          <span
-            className="switch-link"
-            onClick={switchToLogin}
-          >
-            Login
-          </span>
-        </p>
+          <span onClick={switchToLogin}>Login</span>
+        </div>
 
       </div>
     </div>
   );
 }
+
+export default Register;

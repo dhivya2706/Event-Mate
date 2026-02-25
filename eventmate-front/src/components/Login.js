@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "../styles/Login.css";
-import { FaGoogle, FaGithub, FaLinkedin } from "react-icons/fa";
 
-export default function Login({ switchToRegister, setCurrentUser }) {
+export default function Login({ switchToRegister, setCurrentUser, setPage }) {
+
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
   const [message, setMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -17,20 +18,30 @@ export default function Login({ switchToRegister, setCurrentUser }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     try {
-      const res = await axios.post(
-        "http://localhost:8080/api/login",
-        form
-      );
+      // Login request
+      const res = await axios.post("http://localhost:8080/api/login", form);
+
+      const role = res.data.role?.toUpperCase().trim();
+
+      // Save token and role in localStorage for future API calls
+      localStorage.setItem("adminToken", res.data.token || "temp-token"); // token from backend
+      localStorage.setItem("adminRole", role);
+      localStorage.setItem("adminEmail", form.email);
 
       setCurrentUser({
         email: form.email,
-        role: res.data.role,
+        role: role,
       });
+
+      // Navigate based on role
+      if (role === "ADMIN") setPage("ADMIN");
+      else if (role === "ORGANISER" || role === "ORGANIZER") setPage("ORGANIZER_HOME");
+      else setPage("USER");
+
     } catch (err) {
-      setMessage(
-        err.response?.data?.message || "Login failed!"
-      );
+      setMessage(err.response?.data?.message || "Login failed!");
     }
   };
 
@@ -38,51 +49,49 @@ export default function Login({ switchToRegister, setCurrentUser }) {
     <div className="login-container">
       <div className="login-card">
 
-        <h1>EventMate AI Scheduler</h1>
+        <h1 className="login-title">EventMate AI Scheduler</h1>
         <p className="subtitle">Smart AI Event Planner</p>
 
         <form onSubmit={handleLogin}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            onChange={handleChange}
-            required
-          />
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={handleChange}
-            required
-          />
-
-          <button type="submit">Login</button>
-        </form>
-
-        <div className="social-login">
-          <p>Or login with</p>
-          <div className="social-icons">
-            <FaGoogle />
-            <FaGithub />
-            <FaLinkedin />
+          <div className="input-group">
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              onChange={handleChange}
+              required
+            />
           </div>
-        </div>
+
+          <div className="input-group password-group">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              onChange={handleChange}
+              required
+            />
+            <span
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "Hide" : "Show"}
+            </span>
+          </div>
+
+          <button className="login-btn" type="submit">
+            Login
+          </button>
+
+        </form>
 
         <p className="switch-text">
           Don't have an account?{" "}
-          <span
-            className="switch-link"
-            onClick={switchToRegister}
-          >
-            Register
-          </span>
+          <span onClick={switchToRegister}>Register</span>
         </p>
 
-        {message && (
-          <p className="message">{message}</p>
-        )}
+        {message && <p className="error-msg">{message}</p>}
 
       </div>
     </div>
