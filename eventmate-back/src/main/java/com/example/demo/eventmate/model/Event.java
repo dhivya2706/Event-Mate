@@ -20,6 +20,11 @@ public class Event {
     private int capacity;
     private double price;
 
+    // ✅ ADD THIS
+    @Lob
+    @Column(name = "image")
+    private byte[] image;
+
     // ---------------- GETTERS ----------------
 
     public String getEventId() {
@@ -46,6 +51,10 @@ public class Event {
         return price;
     }
 
+    public byte[] getImage() {
+        return image;
+    }
+
     // ---------------- SETTERS ----------------
 
     public void setEventId(String eventId) {
@@ -70,5 +79,9 @@ public class Event {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 }

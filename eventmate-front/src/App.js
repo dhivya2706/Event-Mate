@@ -9,15 +9,15 @@ import Dashboard from "./components/Dashboard";
 import AdminDashboard from "./components/AdminDashboard";
 import OrganizerHome from "./components/OrganizerHome";
 import Organizer from "./components/Organizer";
+import AddEvent from "./components/AddEvent";
+import EventList from "./components/EventList"; // ✅ NEW
 
 import "./App.css";
 
 function App() {
-
-  const [page, setPage] = useState("HOME"); // 🔥 Always HOME first
+  const [page, setPage] = useState("HOME");
   const [currentUser, setCurrentUser] = useState(null);
 
-  // ✅ Restore login ONLY if isLoggedIn true
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
 
@@ -36,7 +36,6 @@ function App() {
         setCurrentUser(userData);
 
         const role = savedRole.toUpperCase();
-
         if (role === "ADMIN") setPage("ADMIN");
         else if (role === "ORGANISER" || role === "ORGANIZER")
           setPage("ORGANIZER_HOME");
@@ -48,68 +47,61 @@ function App() {
   const handleLogout = () => {
     localStorage.clear();
     setCurrentUser(null);
-    setPage("HOME"); // 🔥 Go back to HOME after logout
+    setPage("HOME");
   };
 
-  // 🔥 ROLE BASED RENDER
+  // ================= ROLE BASED RENDER =================
   if (currentUser) {
-
     const role = currentUser.role?.toUpperCase().trim();
 
     // ADMIN
     if (role === "ADMIN") {
-      return (
-        <AdminDashboard
-          user={currentUser}
-          onLogout={handleLogout}
-        />
-      );
+      return <AdminDashboard user={currentUser} onLogout={handleLogout} />;
     }
 
     // ORGANIZER FLOW
     if (role === "ORGANISER" || role === "ORGANIZER") {
 
+      // Organizer Home
       if (page === "ORGANIZER_HOME") {
         return (
           <OrganizerHome
             user={currentUser}
             onLogout={handleLogout}
+            goToAddEvent={() => setPage("ADD_EVENT")}
             goToBooking={() => setPage("BOOKING")}
+            goToEventList={() => setPage("EVENT_LIST")} // ✅ NEW
           />
         );
       }
 
+      // Add Event
+      if (page === "ADD_EVENT") {
+        return <AddEvent user={currentUser} goBack={() => setPage("ORGANIZER_HOME")} />;
+      }
+
+      // Event List (Image & Media Upload + Edit/Delete)
+      if (page === "EVENT_LIST") {
+        return <EventList goBack={() => setPage("ORGANIZER_HOME")} />;
+      }
+
+      // Booking
       if (page === "BOOKING") {
-        return (
-          <Organizer
-            user={currentUser}
-            onLogout={handleLogout}
-            goBack={() => setPage("ORGANIZER_HOME")}
-          />
-        );
+        return <Organizer user={currentUser} onLogout={handleLogout} goBack={() => setPage("ORGANIZER_HOME")} />;
       }
     }
 
     // USER
     if (role === "USER") {
-      return (
-        <Dashboard
-          user={currentUser}
-          onLogout={handleLogout}
-        />
-      );
+      return <Dashboard user={currentUser} onLogout={handleLogout} />;
     }
   }
 
-  // ❌ NOT LOGGED IN
+  // NOT LOGGED IN
   return (
     <>
       <Navbar onLogin={() => setPage("LOGIN")} />
-
-      {page === "HOME" && (
-        <Home onLogin={() => setPage("LOGIN")} />
-      )}
-
+      {page === "HOME" && <Home onLogin={() => setPage("LOGIN")} />}
       {page === "LOGIN" && (
         <Login
           switchToRegister={() => setPage("REGISTER")}
@@ -120,10 +112,7 @@ function App() {
           setPage={setPage}
         />
       )}
-
-      {page === "REGISTER" && (
-        <Register switchToLogin={() => setPage("LOGIN")} />
-      )}
+      {page === "REGISTER" && <Register switchToLogin={() => setPage("LOGIN")} />}
     </>
   );
 }

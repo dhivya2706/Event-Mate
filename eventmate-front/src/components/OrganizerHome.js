@@ -1,8 +1,7 @@
 import React from "react";
-import OrganizerDashboard from './Organizer';
 import styles from "../styles/OrganizerHome.module.css";
 
-function OrganizerHome({ goToBooking, onLogout }) {
+function OrganizerHome({ goToBooking, goToAddEvent, goToEventList, onLogout }) {
   return (
     <div className={styles.dashboard}>
 
@@ -13,19 +12,30 @@ function OrganizerHome({ goToBooking, onLogout }) {
 
       <div className={styles.grid}>
 
-        <div className={styles.card}>
+        {/* Event Creation */}
+        <div
+          className={styles.card}
+          onClick={goToAddEvent}
+          style={{ cursor: "pointer" }}
+        >
           <h3>Event Creation & Management</h3>
           <p>Create, update, cancel events</p>
           <p>Title, Date, Venue, Category</p>
           <p>Capacity & Pricing</p>
         </div>
 
-        <div className={styles.card}>
+        {/* Image & Media Upload */}
+        <div
+          className={styles.card}
+          onClick={goToEventList} // ✅ Navigate to EventList
+          style={{ cursor: "pointer" }}
+        >
           <h3>Image & Media Upload</h3>
           <p>Upload banners & posters</p>
           <p>Display event images</p>
         </div>
 
+        {/* Booking & Attendee */}
         <div className={styles.card}>
           <h3>Booking & Attendee Management</h3>
           <p>View bookings</p>
@@ -33,6 +43,7 @@ function OrganizerHome({ goToBooking, onLogout }) {
           <p>Attendee details</p>
         </div>
 
+        {/* Booking Monitoring */}
         <div
           className={`${styles.card} ${styles.highlight}`}
           onClick={goToBooking}
