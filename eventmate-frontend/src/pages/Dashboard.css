@@ -1,0 +1,326 @@
+/* Dashboard.css */
+
+:root {
+  /* Modern Professional Color Palette */
+  --bg-main: #f0f2f5;
+  --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  --sidebar-white: #ffffff;
+  --header-blue: #1a365d;
+  --accent-teal: #00d2ff;
+  --primary-indigo: #4f46e5;
+  --text-dark: #1e293b;
+  --text-muted: #64748b;
+  --shadow-sm: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+  /* softer, less bright background */
+  background:
+    radial-gradient(900px 500px at 18% 12%, rgba(59,130,246,.12), transparent 60%),
+    radial-gradient(800px 450px at 85% 18%, rgba(99,102,241,.10), transparent 60%),
+    linear-gradient(180deg, #e9eff8 0%, #dde7f3 45%, #d7e3f0 100%);
+
+  color: #0f172a;
+}
+
+.app-shell {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER - Clean and Elevated */
+.app-header {
+  background: rgba(26, 54, 93, 0.98);
+  backdrop-filter: blur(10px);
+  color: white;
+  padding: 12px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  z-index: 1000;
+}
+
+.brand {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.brand span {
+  color: var(--accent-teal);
+  font-weight: 900;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.welcome-text {
+  font-weight: 500;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* AVATAR & DROPDOWN */
+.avatar-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px; /* Modern squircle shape */
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(45deg, var(--primary-indigo), var(--accent-teal));
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.avatar-btn:hover {
+  transform: scale(1.05);
+  border-color: #fff;
+}
+
+.profile-menu {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  min-width: 180px;
+  padding: 6px;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.profile-menu-username {
+  padding: 12px;
+  font-weight: 700;
+  color: var(--text-dark);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-menu-item {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-dark);
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.profile-menu-item:hover {
+  background: #f1f5f9;
+  color: var(--primary-indigo);
+}
+
+/* MAIN LAYOUT */
+.app-main {
+  display: flex;
+  flex: 1;
+  padding: 20px;
+  gap: 20px;
+  background: transparent;
+}
+
+/* SIDEBAR - Clean White look */
+.sidebar {
+  width: 240px;
+  background: var(--sidebar-white);
+  padding: 24px 16px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h3 {
+  color: var(--text-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  padding-left: 10px;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  border: none;
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.nav-btn.active {
+  background: #eff6ff;
+  color: var(--primary-indigo);
+}
+
+.nav-btn:hover {
+  background: #f8fafc;
+  transform: translateX(5px);
+}
+
+/* CONTENT AREA */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-card {
+  background: white;
+  padding: 30px;
+  border-radius: 24px;
+  box-shadow: var(--shadow-sm);
+  height: 100%;
+}
+
+.content-card h2 {
+  font-size: 24px;
+  font-weight: 800;
+  margin-top: 0;
+  color: var(--text-dark);
+}
+
+/* SLIDER */
+.slider-container {
+  position: relative;
+  margin-top: 24px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.slider-image {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+  filter: brightness(0.8);
+}
+
+.slider-overlay {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  color: white;
+}
+
+.slider-overlay h1 {
+  font-size: 42px;
+  font-weight: 900;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.live-btn {
+  background: #ef4444;
+  color: white;
+  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+/* EVENTS */
+.calendar-box {
+  background: #f8fafc;
+  padding: 15px 20px;
+  border-radius: 15px;
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.date-input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  outline: none;
+  font-weight: 600;
+}
+
+.events-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.event-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.event-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+}
+
+.event-card p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.book-btn {
+  background: linear-gradient(135deg, var(--primary-indigo), var(--primary-indigo));
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.book-btn:hover {
+  opacity: 0.9;
+}
+
+/* Scrollbar styling for a cleaner look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
