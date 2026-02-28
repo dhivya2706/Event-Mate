@@ -70,6 +70,7 @@ public Map<String, String> register(@Valid @RequestBody Organizer organizer) {
 
         if (existing != null) {
             response.put("message", "Login successful");
+            response.put("id", String.valueOf(existing.getId()));
             response.put("name", existing.getName());
             response.put("email", existing.getEmail());
             response.put("role", "ORGANISER");

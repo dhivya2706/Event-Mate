@@ -26,4 +26,22 @@ public class UserService {
 
         return repo.findByEmailAndPassword(email, password);
     }
+
+    public User getProfile(String email){
+    return repo.findByEmail(email);
+}
+
+public User updateProfile(User user){
+
+    User existing = repo.findByEmail(user.getEmail());
+
+    if(existing == null){
+        return null;
+    }
+
+    existing.setName(user.getName());
+    existing.setPhone(user.getPhone());
+
+    return repo.save(existing);
+}
 }

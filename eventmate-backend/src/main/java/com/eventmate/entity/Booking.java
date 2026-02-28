@@ -40,5 +40,7 @@ public class Booking {
 
     public String getEventName() {
     return event != null ? event.getEventName() : null;
-}
+    }
+
+    
 }

@@ -17,58 +17,49 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+    const { name, value } = e.target;
+    setForm((prevForm) => ({
+        ...prevForm,
+        [name]: value,
+    }));
+};
 
     const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-        e.preventDefault();
+    try {
+        const url =
+            role === "ORGANIZER"
+                ? "http://localhost:8080/api/organizer/login"
+                : "http://localhost:8080/api/user/login";
 
-        setLoading(true);
+        const res = await axios.post(url, form, { withCredentials: true });
 
-        try {
+        if (res.data.message === "Login successful") {
 
-            const url =
-                role === "ORGANIZER"
-                    ? "http://localhost:8080/api/organizer/login"
-                    : "http://localhost:8080/api/user/login";
+            // Construct user object
+            const user = {
+                id: res.data.id,
+                name: res.data.name,
+                email: res.data.email,
+                role: role
+            };
 
+            localStorage.setItem("user", JSON.stringify(user));
+            localStorage.setItem("role", role);
+            localStorage.setItem("email", form.email);
 
-            const res = await axios.post(url, form);
-
-            if (res.data.message === "Login successful") {
-
-                localStorage.setItem("user", JSON.stringify(res.data));
-                localStorage.setItem("role", role);
-
-                // ✅ ADD THIS LINE
-                localStorage.setItem("email", form.email);
-
-                if (role === "ORGANIZER")
-                    navigate("/organizer");
-                else
-                    navigate("/user");
-
-            }
-
-            else {
-
-                setMessage(res.data.message);
-
-            }
-
+            navigate(role === "ORGANIZER" ? "/organizer" : "/user"); // navigate directly
+        } else {
+             setMessage(res.data.message);
         }
+    } catch (err) {
+        setMessage("Invalid Email or Password");
+    }
 
-        catch {
-
-            setMessage("Invalid Email or Password");
-
-        }
-
-        setLoading(false);
-
-    };
-
+    setLoading(false);
+};
 
     return (
 
@@ -107,9 +98,6 @@ export default function Login() {
                     </div>
 
                 </div>
-
-
-                {/* FORM */}
 
                 <form onSubmit={handleLogin}>
 

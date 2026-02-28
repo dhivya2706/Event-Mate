@@ -1,7 +1,3 @@
-/* ========================================
-   EVENTMATE CLEAN DASHBOARD UI
-======================================== */
-
 :root {
   --primary: #7c3aed;
   --secondary: #6366f1;
@@ -18,52 +14,91 @@
   --text-light: #6b7280;
 }
 
-/* ========================================
-   GLOBAL
-======================================== */
+* {
+  box-sizing: border-box;
+}
 
+html,body,#root{
+  height:100%;
+  width:100%;
+  margin:0;
+  padding:0;
+}
+
+/* GLOBAL TYPOGRAPHY SYSTEM */
+h2 {
+  font-weight: 600;
+  color: var(--text-dark);
+}
 body {
   margin: 0;
-  font-family: "Segoe UI", sans-serif;
+  font-family: 'Inter', sans-serif;
   background:
     radial-gradient(circle at 10% 20%, rgba(124,58,237,0.1), transparent 40%),
     radial-gradient(circle at 90% 80%, rgba(6,182,212,0.1), transparent 40%),
     linear-gradient(135deg,#f8f7ff,#eef2ff);
 }
 
+button {
+  font-family: 'Montserrat', sans-serif;
+}
+h1, h2, h3 {
+  font-family: 'Poppins', sans-serif;
+}
 /* ========================================
    LAYOUT
 ======================================== */
 
 .app-wrapper {
+  min-height: 100vh;
+  width: 100%;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
-
 .layout {
   display: flex;
   gap: 20px;
-  max-width: 1350px;
-  margin: auto;
+  width: 100%;
 }
 
 /* ========================================
    SIDEBAR
 ======================================== */
 
+.sidebar ul li {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+}
+
 .sidebar {
+   height: calc(100vh - 100px);
+  margin-top: 0;
   width: 240px;
   min-height: 92vh;
   padding: 25px 18px;
-  border-radius: 18px;
-  background: linear-gradient(180deg,#6366f1,#7c3aed,#9333ea);
+  border-radius: 22px;
+  background: linear-gradient(180deg,#5b5ce2,#7c3aed,#9333ea);
   color: white;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.15);
+}
+
+.sidebar h3 {
+  margin-bottom: 18px;
+  font-weight: 600;
+  opacity: .9;
 }
 
 .logo {
   font-size: 22px;
   font-weight: bold;
   margin-bottom: 25px;
+}
+
+.sidebar li.active {
+  background: rgba(255,255,255,0.25);
+  font-weight: 600;
+  backdrop-filter: blur(8px);
 }
 
 .sidebar ul {
@@ -78,6 +113,9 @@ body {
   cursor: pointer;
   transition: 0.3s;
   font-size: 14px;
+   display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .sidebar li:hover {
@@ -93,6 +131,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: 100%;
 }
 
 /* ========================================
@@ -100,16 +139,18 @@ body {
 ======================================== */
 
 .top-navbar {
-  height: 55px;
-  padding: 0 20px;
+  width: 100%;
+  margin-bottom: 20px;
+  height: 60px;
+  padding: 0 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-radius: 14px;
+  border-radius: 20px;
 
-  background: rgba(255,255,255,0.7);
-  backdrop-filter: blur(16px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.07);
 }
 
 .top-navbar h2 {
@@ -132,18 +173,20 @@ body {
   white-space: nowrap;
 }
 
-/* ========================================
-   CONTENT AREA
-======================================== */
-
+/* MAIN CONTENT AREA - NO CARD */
 .content-area {
-  background: rgba(255,255,255,0.65);
-  backdrop-filter: blur(18px);
-  border-radius: 16px;
   padding: 25px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+  background: transparent;
 }
 
+
+/* ONLY THIS SHOULD BE CARD */
+.content-card {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
 /* ========================================
    SUMMARY CARDS (SAME ROW)
 ======================================== */
@@ -550,3 +593,49 @@ body {
   border-left: 6px solid var(--primary);
   box-shadow: 0px 10px 30px rgba(0,0,0,0.08);
 }
+
+.app-title{
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(90deg,#6366f1,#9333ea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* PROFILE BUTTON LIKE SCREENSHOT */
+.top-profile{
+  padding: 8px 22px;
+  border-radius: 30px;
+  background: linear-gradient(90deg,#6366f1,#9333ea);
+  font-size: 14px;
+  box-shadow: 0 6px 18px rgba(124,58,237,0.3);
+  transition: 0.3s;
+}
+
+.top-profile:hover{
+  transform: scale(1.05);
+}
+
+/* SLIDER */
+.slider-container {
+  margin-top: 20px;
+  position: relative;
+}
+
+.slider-image {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+  border-radius: 18px;
+}
+
+.slider-overlay {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  background: rgba(0,0,0,0.5);
+  padding: 20px;
+  border-radius: 14px;
+  color: white;
+}
+

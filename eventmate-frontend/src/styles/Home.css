@@ -1,4 +1,3 @@
-/* Full page with colorful light theme */
 .home {
   height: 100vh;
   position: relative;
@@ -12,9 +11,6 @@
     #ffffff 100%
   );
 }
-
-
-/* Animated background circles */
 
 .home::before,
 .home::after {
@@ -43,8 +39,6 @@
 }
 
 
-/* Floating animation */
-
 @keyframes float {
   from {
     transform: translateY(0px) translateX(0px);
@@ -54,8 +48,6 @@
   }
 }
 
-
-/* Navbar */
 
 .navbar {
   display: flex;
@@ -67,9 +59,6 @@
   backdrop-filter: blur(10px);
 }
 
-
-/* Logo */
-
 .logo {
   font-size: 22px;
   font-weight: 700;
@@ -77,16 +66,11 @@
 }
 
 
-/* Right side */
-
 .nav-right {
   display: flex;
   gap: 25px;
   align-items: center;
 }
-
-
-/* Sign in button */
 
 .signin-btn {
   background: linear-gradient(
@@ -108,9 +92,6 @@
   box-shadow: 0 10px 20px rgba(124,58,237,0.3);
 }
 
-
-/* Hero section */
-
 .hero {
   display: flex;
   flex-direction: column;
@@ -122,9 +103,6 @@
 
   animation: fadeUp 1s ease;
 }
-
-
-/* Badge */
 
 .badge {
 
@@ -148,9 +126,6 @@
 
 }
 
-
-/* Title */
-
 .title {
 
   font-size: 78px;
@@ -169,9 +144,6 @@
 
 }
 
-
-/* Gradient text */
-
 .gradient {
 
   background: linear-gradient(
@@ -185,9 +157,6 @@
   color: transparent;
 
 }
-
-
-/* Subtitle */
 
 .subtitle {
 
@@ -204,9 +173,6 @@
   animation: fadeUp 1.6s ease;
 
 }
-
-
-/* Fade up animation */
 
 @keyframes fadeUp {
 

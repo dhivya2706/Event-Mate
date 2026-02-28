@@ -1,0 +1,109 @@
+
+.booking-container {
+  padding: 25px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.seats-grid {
+  display: grid;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+/* 🎟 Seat Base Style */
+.seat {
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.seat:hover {
+  transform: scale(1.08);
+}
+
+/* 🎟 Regular - Soft Blue */
+.regular {
+  background: #60a5fa;
+  color: white;
+}
+
+/* 🎟 Premium - Golden */
+.premium {
+  background: #facc15;
+  color: #1f2937;
+}
+
+/* 🎟 VIP - Luxury Purple */
+.vip {
+  background: linear-gradient(90deg,#7c3aed,#9333ea);
+  color: white;
+}
+
+/* ✅ Selected Seat */
+.selected {
+  background: linear-gradient(90deg,#06b6d4,#3b82f6) !important;
+  color: white;
+}
+
+/* 🎨 Legend */
+.legend {
+  margin: 15px 0;
+}
+
+.legend span {
+  margin-right: 15px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: white;
+  font-size: 12px;
+}
+
+.vip-box {
+  background: linear-gradient(90deg,#7c3aed,#9333ea);
+}
+
+.premium-box {
+  background: #facc15;
+  color: #1f2937;
+}
+
+.regular-box {
+  background: #60a5fa;
+}
+
+/* 🧾 Summary Box */
+.summary {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.7);
+}
+
+.summary button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(90deg,#6366f1,#9333ea);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.summary button:hover {
+  opacity: 0.9;
+}

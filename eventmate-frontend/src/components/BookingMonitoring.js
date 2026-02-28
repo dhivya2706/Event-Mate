@@ -125,49 +125,6 @@ function BookingMonitoring() {
           <p>{cancelled}</p>
         </div>
       </div>
-
-      <div className="charts-row">
-
-        <div className="chart-container">
-          <h3>Revenue per Event</h3>
-          <div className="chart-inner">
-            <Bar
-              data={{
-                labels: events,
-                datasets: [
-                  {
-                    label: "Revenue (₹)",
-                    data: revenueData,
-                    backgroundColor: "#4f46e5"
-                  }
-                ]
-              }}
-              options={chartOptions}
-            />
-          </div>
-        </div>
-
-        <div className="chart-container">
-          <h3>Seats Booked per Event</h3>
-          <div className="chart-inner">
-            <Bar
-              data={{
-                labels: events,
-                datasets: [
-                  {
-                    label: "Seats Booked",
-                    data: seatsData,
-                    backgroundColor: "#f97316"
-                  }
-                ]
-              }}
-              options={chartOptions}
-            />
-          </div>
-        </div>
-
-      </div>
-
       <h2>Booking Details</h2>
 
       <table className="booking-table">
@@ -188,11 +145,11 @@ function BookingMonitoring() {
           {bookings.map((booking) => (
             <tr key={booking.id}>
               <td>{booking.id}</td>
-              <td>{booking.userName}</td>
+              <td>{booking.userName || "User"}</td>
               <td>{booking.eventName}</td>
               <td>{booking.seatsBooked}</td>
-              <td>{booking.paymentMode}</td>
-              <td>{booking.paymentStatus}</td>
+              <td>{booking.paymentMode ?? "Pending"}</td>
+              <td>{booking.paymentStatus ?? "Pending"}</td>
               <td className={booking.bookingStatus.toLowerCase()}>
                 {booking.bookingStatus}
               </td>

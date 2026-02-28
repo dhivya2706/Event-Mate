@@ -114,4 +114,11 @@ public class EventController {
     public void deleteEvent(@PathVariable Long id){
         eventService.deleteEvent(id);
     }
+
+    @GetMapping("/all")
+public List<Event> getAllEvents() {
+
+    return eventService.getAllEvents();
+
+}
 }

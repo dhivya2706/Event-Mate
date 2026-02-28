@@ -39,7 +39,7 @@ function OrganizerProfile() {
         organizer
       );
 
-      setOrganizer(res.data);   // 🔥 reflect in layout also
+      setOrganizer(res.data);  
       alert("Profile Updated!");
 
     } catch {

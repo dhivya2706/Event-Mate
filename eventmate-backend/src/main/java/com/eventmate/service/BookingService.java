@@ -70,4 +70,8 @@ public class BookingService {
         return bookingRepository.countCancelledByOrganizer(email);
     }
 
+     public Booking saveBooking(Booking booking) {
+        return bookingRepository.save(booking);
+    }
+
 }
