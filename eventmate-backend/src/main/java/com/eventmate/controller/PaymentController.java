@@ -3,18 +3,22 @@ package com.eventmate.controller;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import com.eventmate.entity.Booking;
 import com.eventmate.entity.Payment;
+import com.eventmate.repository.BookingRepository;
 import com.eventmate.repository.PaymentRepository;
-import com.eventmate.service.QRCodeService;
+import com.razorpay.Order;
+import com.razorpay.RazorpayClient;
 
 @RestController
 @RequestMapping("/api/payment")
@@ -22,62 +26,126 @@ import com.eventmate.service.QRCodeService;
 public class PaymentController {
 
     @Autowired
+    private BookingRepository bookingRepository;
+
+    @Autowired
     private PaymentRepository paymentRepository;
 
-    @PostMapping("/process")
-    public Map<String, Object> processPayment(
-            @RequestBody Map<String, Object> request) {
+    @Value("${razorpay.key.id}")
+    private String razorpayKeyId;
 
-        System.out.println("REQUEST DATA = " + request);
+    @Value("${razorpay.key.secret}")
+    private String razorpayKeySecret;
 
-        if (!request.containsKey("amount")
-                || !request.containsKey("bookingId")
-                || !request.containsKey("paymentMethod")) {
-
-            throw new RuntimeException("Missing payment data");
-        }
-
-        double amount =
-                Double.parseDouble(request.get("amount").toString());
-
-        Integer bookingId =
-                Integer.parseInt(request.get("bookingId").toString());
-
-        String paymentMethod =
-                request.get("paymentMethod").toString();
-
-        String transactionId =
-                "TXN" + UUID.randomUUID().toString().substring(0, 8);
-
-        LocalDate date = LocalDate.now();
-        Payment payment = new Payment();
-        payment.setAmount(amount);
-        payment.setTransactionId(transactionId);
-        payment.setPaymentDate(date);
-        payment.setPaymentMethod(paymentMethod);
-
-        paymentRepository.save(payment);
-
-        String qrPath = "";
+    @PostMapping("/create-order")
+    public ResponseEntity<?> createOrder(@RequestBody Map<String, Object> request) {
 
         try {
-            String qrText =
-                    "Transaction ID: " + transactionId +
-                    "\nAmount: ₹" + amount +
-                    "\nBooking ID: " + bookingId +
-                    "\nDate: " + date;
 
-            qrPath = QRCodeService.generateQRCode(qrText, transactionId);
+            if (!request.containsKey("bookingId")) {
+                return ResponseEntity.badRequest().body("Booking ID is required");
+            }
+
+            Long bookingId = Long.parseLong(request.get("bookingId").toString());
+
+            Booking booking = bookingRepository.findById(bookingId)
+                    .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+            if ("PAID".equalsIgnoreCase(booking.getPaymentStatus())) {
+                return ResponseEntity.badRequest().body("Booking already paid");
+            }
+
+            RazorpayClient razorpay = new RazorpayClient(razorpayKeyId, razorpayKeySecret);
+
+            JSONObject orderRequest = new JSONObject();
+            orderRequest.put("amount", (int) (booking.getTotalAmount() * 100));
+            orderRequest.put("currency", "INR");
+            orderRequest.put("receipt", "receipt_" + bookingId);
+
+            Order order = razorpay.orders.create(orderRequest);
+
+            Payment payment = new Payment();
+            payment.setBooking(booking);
+            payment.setAmount(booking.getTotalAmount());
+            payment.setOrderId(order.get("id"));
+            payment.setPaymentStatus("PENDING");
+            payment.setPaymentMethod("RAZORPAY");
+
+            paymentRepository.save(payment);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("orderId", order.get("id"));
+            response.put("amount", order.get("amount"));
+            response.put("key", razorpayKeyId);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Order creation failed");
+        }
+    }
+
+    @PostMapping("/confirm")
+    public ResponseEntity<?> confirmPayment(@RequestBody Map<String, String> request) {
+
+        try {
+
+            String orderId = request.get("orderId");
+            String paymentId = request.get("paymentId");
+            String signature = request.get("signature");
+
+            System.out.println("OrderId: " + orderId);
+
+            Payment payment = paymentRepository.findByOrderId(orderId)
+                    .orElse(null);
+
+            if (payment == null) {
+                return ResponseEntity.badRequest()
+                        .body("Order not found in database");
+            }
+
+            String generatedSignature = generateSignature(orderId, paymentId);
+
+            if (!generatedSignature.equals(signature)) {
+                return ResponseEntity.badRequest()
+                        .body("Signature mismatch");
+            }
+
+            payment.setPaymentId(paymentId);
+            payment.setPaymentStatus("PAID");
+            payment.setPaymentDate(LocalDate.now());
+
+            Booking booking = payment.getBooking();
+            booking.setPaymentStatus("PAID");
+            booking.setBookingStatus("Confirmed");
+
+            paymentRepository.save(payment);
+            bookingRepository.save(booking);
+
+            return ResponseEntity.ok("Payment Successful");
 
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.internalServerError()
+                    .body("Server error: " + e.getMessage());
         }
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "SUCCESS");
-        response.put("transactionId", transactionId);
-        response.put("amount", amount);
-        response.put("qrCode", qrPath);
+    }
 
-        return response;
+    private String generateSignature(String orderId, String paymentId) throws Exception {
+
+        String data = orderId + "|" + paymentId;
+
+        Mac sha256Hmac = Mac.getInstance("HmacSHA256");
+        SecretKeySpec secretKey = new SecretKeySpec(razorpayKeySecret.getBytes(), "HmacSHA256");
+        sha256Hmac.init(secretKey);
+
+        byte[] hash = sha256Hmac.doFinal(data.getBytes());
+
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : hash) {
+            hexString.append(String.format("%02x", b));
+        }
+
+        return hexString.toString();
     }
 }

@@ -1,6 +1,5 @@
 import "../styles/Dashboard.css";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import {
@@ -11,12 +10,10 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 function BookingMonitoring() {
-  const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [totalBookings, setTotalBookings] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
@@ -24,10 +21,8 @@ function BookingMonitoring() {
   const [pending, setPending] = useState(0);
   const [cancelled, setCancelled] = useState(0);
 
-
   const fetchData = async () => {
     try {
-
       const email = localStorage.getItem("email");
 
       const bookingsRes = await axios.get(
@@ -70,40 +65,11 @@ function BookingMonitoring() {
     fetchData();
   }, []);
 
-  const grouped = bookings.reduce((acc, b) => {
-    const name = b.eventName ?? "Unknown Event";
-
-    if (!acc[name]) acc[name] = { revenue: 0, seats: 0 };
-
-    acc[name].revenue += b.totalAmount;
-    acc[name].seats += b.seatsBooked;
-
-    return acc;
-  }, {});
-
-  const events = Object.keys(grouped);
-  const revenueData = Object.values(grouped).map(g => g.revenue);
-  const seatsData = Object.values(grouped).map(g => g.seats);
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: { grid: { display: false } }
-    },
-    datasets: {
-      bar: {
-        barPercentage: 0.5,
-        categoryPercentage: 0.6
-      }
-    }
-  };
-
   return (
-    <div >
-
+    <div>
       <h1>Booking Monitoring</h1>
 
+      {/* SUMMARY CARDS */}
       <div className="summary-container">
         <div className="summary-card">
           <h3>Total Bookings</h3>
@@ -125,15 +91,18 @@ function BookingMonitoring() {
           <p>{cancelled}</p>
         </div>
       </div>
+
+      {/* BOOKING TABLE */}
       <h2>Booking Details</h2>
 
       <table className="booking-table">
-        <thead>
+        <thead className="table-header">
           <tr>
             <th>Booking ID</th>
             <th>User</th>
             <th>Event</th>
             <th>Seats</th>
+            <th>Seat Type</th>
             <th>Payment Mode</th>
             <th>Payment Status</th>
             <th>Booking Status</th>
@@ -148,9 +117,10 @@ function BookingMonitoring() {
               <td>{booking.userName || "User"}</td>
               <td>{booking.eventName}</td>
               <td>{booking.seatsBooked}</td>
+              <td>{booking.seatCategory || "N/A"}</td>
               <td>{booking.paymentMode ?? "Pending"}</td>
               <td>{booking.paymentStatus ?? "Pending"}</td>
-              <td className={booking.bookingStatus.toLowerCase()}>
+              <td className={booking.bookingStatus?.toLowerCase()}>
                 {booking.bookingStatus}
               </td>
               <td>
@@ -162,8 +132,7 @@ function BookingMonitoring() {
           ))}
         </tbody>
       </table>
-
-    </div >
+    </div>
   );
 }
 

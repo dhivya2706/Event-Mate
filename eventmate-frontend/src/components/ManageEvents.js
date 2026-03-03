@@ -47,7 +47,7 @@ function ManageEvents() {
         ) : (
           events.map((e) => (
             <div className="event-row" key={e.id}>
-              
+
               {/* LEFT SIDE */}
               <div className="event-left">
                 <div className="event-title">{e.eventName}</div>
@@ -58,7 +58,7 @@ function ManageEvents() {
 
               {/* RIGHT SIDE */}
               <div className="event-actions">
-                
+
                 <span className="status-badge">
                   Upcoming
                 </span>

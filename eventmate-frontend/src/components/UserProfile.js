@@ -45,7 +45,7 @@ function UserProfile({ closeModal, updateName }) {
       localStorage.setItem("username", res.data.name);
       localStorage.setItem("phone", res.data.phone);
 
-      updateName(res.data.name);  
+      updateName(res.data.name);
       alert("Profile updated!");
 
     } catch {
@@ -64,7 +64,7 @@ function UserProfile({ closeModal, updateName }) {
       <input
         className="profile-input"
         value={user.name || ""}
-        onChange={(e)=>setUser({...user,name:e.target.value})}
+        onChange={(e) => setUser({ ...user, name: e.target.value })}
         placeholder="Name"
       />
 
@@ -77,7 +77,7 @@ function UserProfile({ closeModal, updateName }) {
       <input
         className="profile-input"
         value={user.phone || ""}
-        onChange={(e)=>setUser({...user,phone:e.target.value})}
+        onChange={(e) => setUser({ ...user, phone: e.target.value })}
         placeholder="Phone"
       />
 

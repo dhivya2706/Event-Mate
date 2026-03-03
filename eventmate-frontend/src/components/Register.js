@@ -28,41 +28,41 @@ export default function Register() {
       [e.target.name]: e.target.value
     });
 
-  };const handleRegister = async (e) => {
-  e.preventDefault();
+  }; const handleRegister = async (e) => {
+    e.preventDefault();
 
-  const nameRegex = /^[A-Za-z ]{3,30}$/;
-  const phoneRegex = /^[6-9]\d{9}$/;
-  const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-  const passwordRegex =
-    /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+    const nameRegex = /^[A-Za-z ]{3,30}$/;
+    const phoneRegex = /^[6-9]\d{9}$/;
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    const passwordRegex =
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
 
-  if (!nameRegex.test(form.name)) {
-    setMessage("❌ Name must be 3-30 letters only");
-    return;
-  }
+    if (!nameRegex.test(form.name)) {
+      setMessage("❌ Name must be 3-30 letters only");
+      return;
+    }
 
-  if (!gmailRegex.test(form.email)) {
-    setMessage("❌ Email must be a valid Gmail address");
-    return;
-  }
+    if (!gmailRegex.test(form.email)) {
+      setMessage("❌ Email must be a valid Gmail address");
+      return;
+    }
 
-  if (!phoneRegex.test(form.phone)) {
-    setMessage("❌ Phone number must be 10 digits and start with 6-9");
-    return;
-  }
+    if (!phoneRegex.test(form.phone)) {
+      setMessage("❌ Phone number must be 10 digits and start with 6-9");
+      return;
+    }
 
-  if (!passwordRegex.test(form.password)) {
-    setMessage(
-      "❌ Password must contain 8+ characters, 1 uppercase, 1 lowercase, 1 number & 1 special character"
-    );
-    return;
-  }
+    if (!passwordRegex.test(form.password)) {
+      setMessage(
+        "❌ Password must contain 8+ characters, 1 uppercase, 1 lowercase, 1 number & 1 special character"
+      );
+      return;
+    }
 
-  if (form.password !== form.confirmPassword) {
-    setMessage("❌ Password and Confirm Password do not match");
-    return;
-  }
+    if (form.password !== form.confirmPassword) {
+      setMessage("❌ Password and Confirm Password do not match");
+      return;
+    }
 
 
     setLoading(true);

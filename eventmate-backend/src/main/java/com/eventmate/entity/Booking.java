@@ -1,20 +1,9 @@
 package com.eventmate.entity;
 
 import java.time.LocalDateTime;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
 
 @Entity
-@Getter
-@Setter
 @Table(name = "bookings")
 public class Booking {
 
@@ -22,25 +11,138 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer seatsBooked;
-    private Double totalAmount;
-    private LocalDateTime bookingDate;
-    private String userName;       
-    private String paymentMode;    
-    private String paymentStatus;   
-    private String bookingStatus;   
+    @Column(name = "seat_category", nullable = false)
+    private String seatCategory;
 
-    @ManyToOne
-    @JoinColumn(name = "event_id")
+    @Column(name = "seats_booked", nullable = false)
+    private Integer seatsBooked;
+
+    @Column(name = "total_amount", nullable = false)
+    private Double totalAmount;
+
+    @Column(name = "booking_date")
+    private LocalDateTime bookingDate;
+
+    @Column(name = "user_name", nullable = false)
+    private String userName;
+
+    @Column(name = "payment_mode")
+    private String paymentMode;
+
+    @Column(name = "payment_status")
+    private String paymentStatus;
+
+    @Column(name = "booking_status")
+    private String bookingStatus;
+
+    @Column(name = "user_email", nullable = false)
+    private String userEmail;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
+
+    @Column(columnDefinition = "TEXT")
+    private String seatNumbers;
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getSeatCategory() {
+        return seatCategory;
+    }
+
+    public void setSeatCategory(String seatCategory) {
+        this.seatCategory = seatCategory;
+    }
+
+    public Integer getSeatsBooked() {
+        return seatsBooked;
+    }
+
+    public void setSeatsBooked(Integer seatsBooked) {
+        this.seatsBooked = seatsBooked;
+    }
+
+    public Double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public LocalDateTime getBookingDate() {
+        return bookingDate;
+    }
+
+    public void setBookingDate(LocalDateTime bookingDate) {
+        this.bookingDate = bookingDate;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPaymentMode() {
+        return paymentMode;
+    }
+
+    public void setPaymentMode(String paymentMode) {
+        this.paymentMode = paymentMode;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public String getBookingStatus() {
+        return bookingStatus;
+    }
+
+    public void setBookingStatus(String bookingStatus) {
+        this.bookingStatus = bookingStatus;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
 
     public Long getEventId() {
         return event != null ? event.getId() : null;
     }
 
     public String getEventName() {
-    return event != null ? event.getEventName() : null;
+        return event != null ? event.getEventName() : null;
     }
 
+    public String getSeatNumbers() {
+    return seatNumbers; 
+    }
+    public void setSeatNumbers(String seatNumbers) {
+    this.seatNumbers = seatNumbers;
+}
     
 }

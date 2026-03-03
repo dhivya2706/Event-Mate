@@ -17,49 +17,53 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prevForm) => ({
-        ...prevForm,
-        [name]: value,
-    }));
-};
+        const { name, value } = e.target;
+        setForm((prevForm) => ({
+            ...prevForm,
+            [name]: value,
+        }));
+    };
 
     const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+        e.preventDefault();
+        setLoading(true);
 
-    try {
-        const url =
-            role === "ORGANIZER"
-                ? "http://localhost:8080/api/organizer/login"
-                : "http://localhost:8080/api/user/login";
+        try {
+            let url = "";
 
-        const res = await axios.post(url, form, { withCredentials: true });
+            if (role === "USER") {
+                url = "http://localhost:8080/api/user/login";
+            } else if (role === "ORGANIZER") {
+                url = "http://localhost:8080/api/organizer/login";
+            } else {
+                url = "http://localhost:8080/api/admin/login";
+            }
 
-        if (res.data.message === "Login successful") {
+            const res = await axios.post(url, form, { withCredentials: true });
 
-            // Construct user object
-            const user = {
-                id: res.data.id,
-                name: res.data.name,
-                email: res.data.email,
-                role: role
-            };
+            if (res.data.message === "Login successful") {
 
-            localStorage.setItem("user", JSON.stringify(user));
-            localStorage.setItem("role", role);
-            localStorage.setItem("email", form.email);
+                const user = {
+                    ...res.data.user,
+                    role: role
+                };
 
-            navigate(role === "ORGANIZER" ? "/organizer" : "/user"); // navigate directly
-        } else {
-             setMessage(res.data.message);
+                localStorage.setItem("user", JSON.stringify(user));
+                localStorage.setItem("role", role);
+                localStorage.setItem("email", user.email);
+
+                if (role === "USER") navigate("/user");
+                else if (role === "ORGANIZER") navigate("/organizer");
+                else navigate("/admin");
+            } else {
+                setMessage(res.data.message);
+            }
+        } catch (err) {
+            setMessage("Invalid Email or Password");
         }
-    } catch (err) {
-        setMessage("Invalid Email or Password");
-    }
 
-    setLoading(false);
-};
+        setLoading(false);
+    };
 
     return (
 
@@ -76,9 +80,15 @@ export default function Login() {
                 </p>
 
 
-                {/* ROLE SELECTION */}
-
                 <div className="role-container">
+
+                    <div
+                        className={`role-box ${role === "ADMIN" && "active"}`}
+                        onClick={() => setRole("ADMIN")}
+                    >
+                        <h3>Admin</h3>
+                        <p>Manage platform</p>
+                    </div>
 
                     <div
                         className={`role-box ${role === "USER" && "active"}`}

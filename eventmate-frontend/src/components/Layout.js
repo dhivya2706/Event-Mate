@@ -4,7 +4,7 @@ import axios from "axios";
 import "../styles/Dashboard.css";
 
 function Layout() {
-  const [events, setEvents] = useState([]); 
+  const [events, setEvents] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showProfile, setShowProfile] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -115,58 +115,73 @@ function Layout() {
           {organizer.name}
         </button>
       </div>
+      <div className="dashboard-wrapper">
+        <div className="layout">
+          {/* Sidebar */}
+          <div className="sidebar">
+            <div style={{ height: "10px" }}></div>
+            <ul>
+              <li onClick={() => navigate("/organizer")}>🏠 Home</li>
+              <li onClick={() => navigate("/organizer/add-event")}>➕ Add Events</li>
+              <li onClick={() => navigate("/organizer/booking-monitor")}>📊 Booking Monitor</li>
+              <li onClick={() => navigate("/organizer/manage-events")}>🎟 Manage Events</li>
+              <li onClick={() => navigate("/organizer/reviews")}>
+                ⭐ Reviews
+              </li>
+              <li onClick={handleLogout} style={{ color: "#ff4d4f" }}>🚪 Logout</li>
+            </ul>
+          </div>
 
-      <div className="layout">
-        {/* Sidebar */}
-        <div className="sidebar">
-          <div style={{ height: "10px" }}></div>
-          <ul>
-            <li onClick={() => navigate("/organizer")}>🏠 Home</li>
-            <li onClick={() => navigate("/organizer/add-event")}>➕ Add Events</li>
-            <li onClick={() => navigate("/organizer/booking-monitor")}>📊 Booking Monitor</li>
-            <li onClick={() => navigate("/organizer/manage-events")}>🎟 Manage Events</li>
-            <li onClick={handleLogout} style={{ color: "#ff4d4f" }}>🚪 Logout</li>
-          </ul>
-        </div>
+          <div className="main">
+            <div className="content-area">
+              {location.pathname === "/organizer" && events.length > 0 && (
+                <div className="content-card">
+                  <h2>Welcome {organizer.name}</h2>
 
-        <div className="main">
-          <div className="content-area">
-            {location.pathname === "/organizer" && events.length > 0 && (
-              <div className="content-card">
-                <h2>Welcome {organizer.name}</h2>
+                  <div className="slider-container">
+                    <img
+                      src={`http://localhost:8080/uploads/${events[currentIndex].imageName}`}
+                      alt={events[currentIndex].eventName}
+                      className="slider-image"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/path/to/fallback-image.jpg";
+                      }}
+                    />
 
-                <div className="slider-container">
-                  <img
-                    src={`http://localhost:8080/uploads/${events[currentIndex].imageName}`}
-                    alt={events[currentIndex].eventName}
-                    className="slider-image"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "/path/to/fallback-image.jpg";
-                    }}
-                  />
+                    <div className="slider-overlay">
+                      <h1>{events[currentIndex].eventName}</h1>
+                      <p>{events[currentIndex].venue}</p>
 
-                  <div className="slider-overlay">
-                    <h1>{events[currentIndex].eventName}</h1>
-                    <p>{events[currentIndex].venue}</p>
-                    <p>Seats: {events[currentIndex].totalSeats}</p>
-                    <p>Price: ₹{events[currentIndex].ticketPrice}</p>
-                    <button
-                      className="live-btn"
-                      onClick={() =>
-                        navigate(`/organizer/manage-events/edit/${events[currentIndex].id}`)
-                      }
-                    >
-                      Manage Event
-                    </button>
+                      <p>
+                        VIP: {events[currentIndex].vipSeats} seats | ₹{events[currentIndex].vipPrice}
+                      </p>
+
+                      <p>
+                        Premium: {events[currentIndex].premiumSeats} seats | ₹{events[currentIndex].premiumPrice}
+                      </p>
+
+                      <p>
+                        Regular: {events[currentIndex].regularSeats} seats | ₹{events[currentIndex].regularPrice}
+                      </p>
+
+                      <button
+                        className="live-btn"
+                        onClick={() =>
+                          navigate(`/organizer/manage-events/edit/${events[currentIndex].id}`)
+                        }
+                      >
+                        Manage Event
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {location.pathname !== "/organizer" && (
-              <Outlet context={{ organizer, setOrganizer }} />
-            )}
+              {location.pathname !== "/organizer" && (
+                <Outlet context={{ organizer, setOrganizer }} />
+              )}
+            </div>
           </div>
         </div>
       </div>

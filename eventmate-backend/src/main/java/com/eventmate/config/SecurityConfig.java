@@ -15,7 +15,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> {})
-            .formLogin(form -> form.disable())   // ✅ VERY IMPORTANT
+            .formLogin(form -> form.disable())   
             .httpBasic(basic -> basic.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/**").permitAll()

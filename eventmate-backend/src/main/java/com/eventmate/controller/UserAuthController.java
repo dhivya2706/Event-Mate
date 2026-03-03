@@ -1,8 +1,10 @@
 package com.eventmate.controller;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,48 +27,49 @@ public class UserAuthController {
     @Autowired
     private UserService userService;
 
-   @PostMapping("/register")
-public Map<String, String> register(@Valid @RequestBody User user) {
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody User user) {
 
-    String msg = userService.register(user);
+        try {
+            String msg = userService.register(user);
+            return ResponseEntity.ok(Map.of("message", msg));
 
-    Map<String, String> res = new HashMap<>();
-    res.put("message", msg);
-
-    return res;
-}
-
-@PostMapping("/login")
-public Map<String, Object> login(@RequestBody User user) {
-
-    User existing =
-        userService.login(user.getEmail(), user.getPassword());
-
-    Map<String, Object> res = new HashMap<>();
-
-    if (existing != null) {
-
-        res.put("message", "Login successful");
-
-
-        res.put("user", existing);
-
-    } else {
-
-        res.put("message", "Invalid credentials");
+        } catch (Exception e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("message", e.getMessage()));
+        }
     }
 
-    return res;
-}
+    @PostMapping("/login")
+    public Map<String, Object> login(@RequestBody User user) {
 
-@GetMapping("/profile")
-public User getProfile(@RequestParam String email){
-    return userService.getProfile(email);
-}
+        User existing
+                = userService.login(user.getEmail(), user.getPassword());
 
+        Map<String, Object> res = new HashMap<>();
 
-@PutMapping("/profile")
-public User updateProfile(@RequestBody User user){
-    return userService.updateProfile(user);
-}
+        if (existing != null) {
+
+            res.put("message", "Login successful");
+
+            res.put("user", existing);
+
+        } else {
+
+            res.put("message", "Invalid credentials");
+        }
+
+        return res;
+    }
+
+    @GetMapping("/profile")
+    public User getProfile(@RequestParam String email) {
+        return userService.getProfile(email);
+    }
+
+    @PutMapping("/profile")
+    public User updateProfile(@RequestBody User user) {
+        return userService.updateProfile(user);
+    }
 }

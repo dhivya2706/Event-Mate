@@ -10,7 +10,7 @@ import com.eventmate.entity.Booking;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-     List<Booking> findByEvent_Id(Long eventId);
+    List<Booking> findByEvent_Id(Long eventId);
 
     @Query("""
         SELECT b FROM Booking b
@@ -33,7 +33,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Double sumAllRevenue();
 
     @Query("SELECT COUNT(b) FROM Booking b WHERE b.bookingStatus = 'Confirmed'")
-     Long countConfirmed();
+    Long countConfirmed();
 
     @Query("SELECT COUNT(b) FROM Booking b WHERE b.bookingStatus = 'PENDING_PAYMENT'")
     Long countPending();
@@ -56,5 +56,20 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT COUNT(b) FROM Booking b WHERE b.event.organizer.email = :email AND b.bookingStatus = 'Cancelled'")
     Long countCancelledByOrganizer(@Param("email") String email);
 
-}
+    @Query("SELECT b FROM Booking b WHERE b.event.organizer.email = :email")
+    List<Booking> findByOrganizerEmail(@Param("email") String email);
 
+    List<Booking> findByUserEmailAndBookingStatusAndPaymentStatus(
+            String userEmail,
+            String bookingStatus,
+            String paymentStatus
+    );
+
+    @Query("""
+SELECT b FROM Booking b
+WHERE LOWER(b.userEmail) = LOWER(:email)
+AND LOWER(b.bookingStatus) = 'confirmed'
+AND LOWER(b.paymentStatus) = 'paid'
+""")
+    List<Booking> findCompletedBookings(@Param("email") String email);
+}

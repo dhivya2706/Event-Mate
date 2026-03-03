@@ -7,8 +7,12 @@ function AddEvent() {
     eventName: "",
     eventDate: "",
     venue: "",
-    ticketPrice: "",
-    totalSeats: "",
+    vipSeats: "",
+    vipPrice: "",
+    premiumSeats: "",
+    premiumPrice: "",
+    regularSeats: "",
+    regularPrice: "",
     image: null
   });
 
@@ -33,13 +37,12 @@ function AddEvent() {
     }
 
     const data = new FormData();
-    data.append("eventName", form.eventName);
-    data.append("eventDate", form.eventDate);
-    data.append("venue", form.venue);
-    data.append("ticketPrice", form.ticketPrice);
-    data.append("totalSeats", form.totalSeats);
+
+    Object.keys(form).forEach(key => {
+      data.append(key, form[key]);
+    });
+
     data.append("email", email);
-    data.append("image", form.image);
 
     try {
       await axios.post(
@@ -54,8 +57,12 @@ function AddEvent() {
         eventName: "",
         eventDate: "",
         venue: "",
-        ticketPrice: "",
-        totalSeats: "",
+        vipSeats: "",
+        vipPrice: "",
+        premiumSeats: "",
+        premiumPrice: "",
+        regularSeats: "",
+        regularPrice: "",
         image: null
       });
 
@@ -66,19 +73,69 @@ function AddEvent() {
   };
 
   return (
-    <>
-      <h2>Add Event</h2>
+    <div className="content-card">
+      <h2 className="form-title">Add Event</h2>
 
       <form onSubmit={handleSubmit} className="event-form">
-        <input name="eventName" placeholder="Event Title" onChange={handleChange} required />
-        <input name="eventDate" type="date" onChange={handleChange} required />
-        <input name="venue" placeholder="Venue" onChange={handleChange} />
-        <input name="ticketPrice" type="number" placeholder="Ticket Price" onChange={handleChange} />
-        <input name="totalSeats" type="number" placeholder="Total Seats" onChange={handleChange} />
-        <input type="file" name="image" onChange={handleChange} />
-        <button type="submit" className="save-btn">Save</button>
+
+        <div className="form-group">
+          <label>Event Title</label>
+          <input name="eventName" value={form.eventName} onChange={handleChange} required />
+        </div>
+
+        <div className="form-group">
+          <label>Event Date</label>
+          <input type="date" name="eventDate" value={form.eventDate} onChange={handleChange} required />
+        </div>
+
+        <div className="form-group">
+          <label>Venue</label>
+          <input name="venue" value={form.venue} onChange={handleChange} required />
+        </div>
+
+        <h3 className="section-title">Seat Distribution</h3>
+
+        <div className="seat-grid">
+          <div className="form-group">
+            <label>VIP Seats</label>
+            <input type="number" name="vipSeats" value={form.vipSeats} onChange={handleChange} required />
+          </div>
+
+          <div className="form-group">
+            <label>VIP Price</label>
+            <input type="number" name="vipPrice" value={form.vipPrice} onChange={handleChange} required />
+          </div>
+
+          <div className="form-group">
+            <label>Premium Seats</label>
+            <input type="number" name="premiumSeats" value={form.premiumSeats} onChange={handleChange} required />
+          </div>
+
+          <div className="form-group">
+            <label>Premium Price</label>
+            <input type="number" name="premiumPrice" value={form.premiumPrice} onChange={handleChange} required />
+          </div>
+
+          <div className="form-group">
+            <label>Regular Seats</label>
+            <input type="number" name="regularSeats" value={form.regularSeats} onChange={handleChange} required />
+          </div>
+
+          <div className="form-group">
+            <label>Regular Price</label>
+            <input type="number" name="regularPrice" value={form.regularPrice} onChange={handleChange} required />
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label>Event Image</label>
+          <input type="file" name="image" onChange={handleChange} required />
+        </div>
+
+        <button type="submit" className="save-btn">Save Event</button>
+
       </form>
-    </>
+    </div>
   );
 }
 

@@ -62,22 +62,20 @@ public Map<String, String> register(@Valid @RequestBody Organizer organizer) {
     }
 
     @PostMapping("/login")
-    public Map<String, String> login(@Valid @RequestBody Organizer organizer) {
-        Organizer existing =
-                organizerService.login(organizer.getEmail(), organizer.getPassword());
+public Map<String, Object> login(@Valid @RequestBody Organizer organizer) {
 
-        Map<String, String> response = new HashMap<>();
+    Organizer existing =
+            organizerService.login(organizer.getEmail(), organizer.getPassword());
 
-        if (existing != null) {
-            response.put("message", "Login successful");
-            response.put("id", String.valueOf(existing.getId()));
-            response.put("name", existing.getName());
-            response.put("email", existing.getEmail());
-            response.put("role", "ORGANISER");
-        } else {
-            response.put("message", "Invalid credentials");
-        }
+    Map<String, Object> response = new HashMap<>();
 
-        return response;
+    if (existing != null) {
+        response.put("message", "Login successful");
+        response.put("user", existing);   
+    } else {
+        response.put("message", "Invalid credentials");
     }
+
+    return response;
+}
 }

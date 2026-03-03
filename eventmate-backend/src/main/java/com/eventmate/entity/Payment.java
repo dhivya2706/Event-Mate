@@ -2,13 +2,7 @@ package com.eventmate.entity;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "payments")
@@ -18,48 +12,104 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "event_id")
+    private Long eventId;
+
+    @Column(name = "user_id")
+    private Long userId;
+
     private String paymentMethod;
     private double amount;
-    private String transactionId;
+
+    @Column(unique = true)
+    private String orderId;
+
+    @Column(unique = true)
+    private String paymentId;
+
     private String paymentStatus;
+    private String bank;
+    private String last4;
 
     private LocalDate paymentDate;
 
-    private String cardNumber;
-    private String expiry;
-    private String paypalEmail;
-
     @ManyToOne
-@JoinColumn(name = "booking_id")
-private Booking booking;
+    @JoinColumn(name = "booking_id", nullable = false)
+    private Booking booking;
 
+    public Long getId() {
+        return id;
+    }
 
-    public Long getId() { return id; }
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
 
-    public String getPaymentMethod() { return paymentMethod; }
-    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 
-    public double getAmount() { return amount; }
-    public void setAmount(double amount) { this.amount = amount; }
+    public double getAmount() {
+        return amount;
+    }
 
-    public String getTransactionId() { return transactionId; }
-    public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
 
-    public String getPaymentStatus() { return paymentStatus; }
-    public void setPaymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; }
+    public String getOrderId() {
+        return orderId;
+    }
 
-    public LocalDate getPaymentDate() { return paymentDate; }
-    public void setPaymentDate(LocalDate paymentDate) { this.paymentDate = paymentDate; }
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
 
-    public String getCardNumber() { return cardNumber; }
-    public void setCardNumber(String cardNumber) { this.cardNumber = cardNumber; }
+    public String getPaymentId() {
+        return paymentId;
+    }
 
-    public String getExpiry() { return expiry; }
-    public void setExpiry(String expiry) { this.expiry = expiry; }
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
+    }
 
-    public String getPaypalEmail() { return paypalEmail; }
-    public void setPaypalEmail(String paypalEmail) { this.paypalEmail = paypalEmail; }
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
 
-    public Booking getBooking() { return booking; }
-    public void setBooking(Booking booking) { this.booking = booking; }
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public String getBank() {
+        return bank;
+    }
+
+    public void setBank(String bank) {
+        this.bank = bank;
+    }
+
+    public String getLast4() {
+        return last4;
+    }
+
+    public void setLast4(String last4) {
+        this.last4 = last4;
+    }
+
+    public LocalDate getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(LocalDate paymentDate) {
+        this.paymentDate = paymentDate;
+    }
+
+    public Booking getBooking() {
+        return booking;
+    }
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
+    }
 }

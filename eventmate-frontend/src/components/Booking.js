@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../styles/Booking.css";
-import PaymentModal from "./PaymentModal"; 
+import PaymentModal from "./PaymentModal";
 
 const Booking = ({ selectedEventData }) => {
 
@@ -9,6 +9,7 @@ const Booking = ({ selectedEventData }) => {
   const email = localStorage.getItem("email");
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [event, setEvent] = useState(null);
+  const [bookedSeats, setBookedSeats] = useState([]);
 
   useEffect(() => {
     if (selectedEventData) {
@@ -17,35 +18,70 @@ const Booking = ({ selectedEventData }) => {
     }
   }, [selectedEventData]);
 
+  useEffect(() => {
+    if (!event) return;
+
+    const fetchBookedSeats = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/bookings/event/${event.id}`
+        );
+
+        const data = await response.json();
+        const seats = data
+          .filter(b => b.paymentStatus === "PAID")
+          .flatMap(b => b.seatNumbers?.split(",") || []);
+
+        setBookedSeats(seats);
+
+      } catch (err) {
+        console.error("Error fetching booked seats", err);
+      }
+    };
+
+    fetchBookedSeats();
+
+  }, [event]);
+
   if (!event) return <h3>No Event Selected</h3>;
 
-  const rows = Math.ceil(event.totalSeats / 10);
-  const cols = 10;
+  const totalSeats =
+    event.vipSeats +
+    event.premiumSeats +
+    event.regularSeats;
 
-  const getSeatCategory = (row) => {
-    if (row <= 2) return "VIP";
-    if (row <= 5) return "Premium";
+  const cols = 10;
+  const rows = Math.ceil(totalSeats / cols);
+  const getSeatCategory = (seatNumber) => {
+    if (seatNumber <= event.vipSeats) return "VIP";
+
+    if (
+      seatNumber <= event.vipSeats + event.premiumSeats
+    ) return "Premium";
+
     return "Regular";
   };
 
   const getSeatPrice = (category) => {
-    if (category === "VIP") return event.ticketPrice + 500;
-    if (category === "Premium") return event.ticketPrice + 200;
-    return event.ticketPrice;
+    if (category === "VIP") return event.vipPrice;
+    if (category === "Premium") return event.premiumPrice;
+    return event.regularPrice;
   };
 
   const toggleSeat = (seatId) => {
-    setSelectedSeats(prev =>
-      prev.includes(seatId)
+    setSelectedSeats(prev => {
+      const updated = prev.includes(seatId)
         ? prev.filter(s => s !== seatId)
-        : [...prev, seatId]
-    );
+        : [...prev, seatId];
+
+      console.log("Selected Seats:", updated);
+      return updated;
+    });
   };
 
   const totalPrice = selectedSeats.reduce((total, seatId) => {
     const seatNumber = parseInt(seatId.replace("S", ""));
-    const row = Math.ceil(seatNumber / cols);
-    const category = getSeatCategory(row);
+    const category = getSeatCategory(seatNumber);
     return total + getSeatPrice(category);
   }, 0);
 
@@ -58,16 +94,30 @@ const Booking = ({ selectedEventData }) => {
         return;
       }
 
+      const categories = selectedSeats.map(seatId => {
+        const seatNumber = parseInt(seatId.replace("S", ""));
+        return getSeatCategory(seatNumber);
+      });
+
+      const uniqueCategories = [...new Set(categories)];
+
+      const finalCategory =
+        uniqueCategories.length === 1
+          ? uniqueCategories[0]
+          : "Mixed";
+
       const bookingData = {
-        userId: loggedUser.id,
+        eventId: event.id,
+        seatCategory: finalCategory,
         seatsBooked: selectedSeats.length,
         totalAmount: totalPrice,
-        bookingStatus: "PENDING_PAYMENT",
-        seats: selectedSeats.join(",")
+        userName: loggedUser.name,
+        userEmail: loggedUser.email,
+        seatNumbers: selectedSeats
       };
 
       const response = await fetch(
-        `http://localhost:8080/api/bookings?eventId=${event.id}&email=${email}`,
+        "http://localhost:8080/api/bookings/create",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -89,9 +139,9 @@ const Booking = ({ selectedEventData }) => {
 
     } catch (error) {
       console.error("Booking error:", error);
+      alert("Booking failed!");
     }
   };
-
   const renderSeats = () => {
     const seats = [];
 
@@ -99,18 +149,23 @@ const Booking = ({ selectedEventData }) => {
       for (let c = 1; c <= cols; c++) {
 
         const seatNumber = (r - 1) * cols + c;
-        if (seatNumber > event.totalSeats) break;
+        if (seatNumber > totalSeats) break;
 
         const seatId = `S${seatNumber}`;
-        const category = getSeatCategory(r);
+        const category = getSeatCategory(seatNumber);
 
         seats.push(
           <div
             key={seatId}
-            className={`seat ${category.toLowerCase()} ${
-              selectedSeats.includes(seatId) ? "selected" : ""
-            }`}
-            onClick={() => toggleSeat(seatId)}
+            className={`seat ${category.toLowerCase()}
+  ${selectedSeats.includes(seatId) ? "selected" : ""}
+  ${bookedSeats.includes(seatId) ? "booked" : ""}
+`}
+            onClick={() => {
+              if (!bookedSeats.includes(seatId)) {
+                toggleSeat(seatId);
+              }
+            }}
           >
             {seatId}
           </div>
@@ -126,13 +181,17 @@ const Booking = ({ selectedEventData }) => {
 
       <div className="event-header">
         <h2>{event.eventName}</h2>
-        <p>Base Price: ₹{event.ticketPrice}</p>
-        <p>Total Seats: {event.totalSeats}</p>
+
+        <p>VIP Price: ₹{event.vipPrice}</p>
+        <p>Premium Price: ₹{event.premiumPrice}</p>
+        <p>Regular Price: ₹{event.regularPrice}</p>
+
+        <p>Total Seats: {totalSeats}</p>
       </div>
 
       <div className="legend">
-        <span className="vip-box">VIP (+₹500)</span>
-        <span className="premium-box">Premium (+₹200)</span>
+        <span className="vip-box">VIP</span>
+        <span className="premium-box">Premium</span>
         <span className="regular-box">Regular</span>
       </div>
 

@@ -14,7 +14,7 @@ public class UserService {
 
     public String register(User user) {
 
-        if(repo.findByEmail(user.getEmail()) != null) {
+        if (repo.findByEmail(user.getEmail()) != null) {
             return "Email already exists";
         }
 
@@ -27,21 +27,21 @@ public class UserService {
         return repo.findByEmailAndPassword(email, password);
     }
 
-    public User getProfile(String email){
-    return repo.findByEmail(email);
-}
-
-public User updateProfile(User user){
-
-    User existing = repo.findByEmail(user.getEmail());
-
-    if(existing == null){
-        return null;
+    public User getProfile(String email) {
+        return repo.findByEmail(email);
     }
 
-    existing.setName(user.getName());
-    existing.setPhone(user.getPhone());
+    public User updateProfile(User user) {
 
-    return repo.save(existing);
-}
+        User existing = repo.findByEmail(user.getEmail());
+
+        if (existing == null) {
+            return null;
+        }
+
+        existing.setName(user.getName());
+        existing.setPhone(user.getPhone());
+
+        return repo.save(existing);
+    }
 }
