@@ -11,14 +11,13 @@ export default function Register({ switchToLogin }) {
   });
 
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Handle input change
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Handle register
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -26,9 +25,9 @@ export default function Register({ switchToLogin }) {
 
     try {
       const res = await axios.post("http://localhost:8080/api/register", form);
-      setMessage(res.data.message);
+      setMessage(res.data.message || "Registration successful!");
+      setIsError(false);
 
-      // Clear form on success
       setForm({
         name: "",
         email: "",
@@ -36,18 +35,24 @@ export default function Register({ switchToLogin }) {
         role: "USER",
       });
     } catch (err) {
-      console.error(err.response || err);
-      setMessage(err.response?.data?.message || "Registration failed! Server error.");
+      setMessage(
+        err.response?.data?.message ||
+        "Registration failed! Server error."
+      );
+      setIsError(true);
     }
 
     setLoading(false);
   };
 
   return (
-    <div className="register-container">
+    <div className="register-body">
       <div className="register-card">
-        <h1>EventMate AI Scheduler</h1>
-        <p className="subtitle">Register your account</p>
+
+        <div className="register-logo">
+          <h2>EventMate AI Scheduler</h2>
+          <p>Register your account</p>
+        </div>
 
         <form onSubmit={handleRegister}>
           <input
@@ -57,40 +62,53 @@ export default function Register({ switchToLogin }) {
             onChange={handleChange}
             required
           />
+
           <input
             name="email"
-            placeholder="Email"
             type="email"
+            placeholder="Email"
             value={form.email}
             onChange={handleChange}
             required
           />
+
           <input
-            type="password"
             name="password"
+            type="password"
             placeholder="Password"
             value={form.password}
             onChange={handleChange}
             required
           />
 
-          <select name="role" value={form.role} onChange={handleChange}>
-            <option value="USER">USER</option>
-            <option value="ORGANISER">ORGANISER</option>
-            <option value="ADMIN">ADMIN</option>
-          </select>
+          <div className="select-wrapper">
+            <select name="role" value={form.role} onChange={handleChange}>
+              <option value="USER">USER</option>
+              <option value="ORGANISER">ORGANISER</option>
+              <option value="ADMIN">ADMIN</option>
+            </select>
+          </div>
 
-          <button type="submit" disabled={loading}>
+          <button
+            type="submit"
+            className="register-btn"
+            disabled={loading}
+          >
             {loading ? "Registering..." : "Register"}
           </button>
         </form>
 
-        {message && <p className="register-message">{message}</p>}
+        {message && (
+          <div className={isError ? "register-error" : "register-success"}>
+            {message}
+          </div>
+        )}
 
-        <p className="switch-text">
+        <div className="register-footer">
           Already have an account?{" "}
-          <span className="switch-link" onClick={switchToLogin}>Login</span>
-        </p>
+          <span onClick={switchToLogin}>Login</span>
+        </div>
+
       </div>
     </div>
   );

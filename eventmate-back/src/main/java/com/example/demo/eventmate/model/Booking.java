@@ -1,7 +1,6 @@
 package com.example.demo.eventmate.model;
 
 import jakarta.persistence.*;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,61 +11,55 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "user_id")
+    private Long userId;
+
     @Column(name = "event_id")
-    @JsonProperty("eventId")
     private String eventId;
 
     @Column(name = "seats_booked")
-    @JsonProperty("seatsBooked")
     private int seatsBooked;
 
+    @Column(name = "seats")
+    private String seats;
+
     @Column(name = "total_amount")
-    @JsonProperty("totalAmount")
     private double totalAmount;
 
     @Column(name = "booking_date")
-    @JsonProperty("bookingDate")
     private LocalDateTime bookingDate;
 
-    // 🔥 ADD ALL GETTERS & SETTERS
+    @Column(name = "booking_status")
+    private String bookingStatus;
 
-    public Long getId() {
-        return id;
-    }
+    @Column(name = "payment_status")
+    private String paymentStatus;
 
-    public String getEventId() {
-        return eventId;
-    }
+    // ===== Getters & Setters =====
 
-    public int getSeatsBooked() {
-        return seatsBooked;
-    }
+    public Long getId() { return id; }
 
-    public double getTotalAmount() {
-        return totalAmount;
-    }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 
-    public LocalDateTime getBookingDate() {
-        return bookingDate;
-    }
+    public String getEventId() { return eventId; }
+    public void setEventId(String eventId) { this.eventId = eventId; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public int getSeatsBooked() { return seatsBooked; }
+    public void setSeatsBooked(int seatsBooked) { this.seatsBooked = seatsBooked; }
 
-    public void setEventId(String eventId) {
-        this.eventId = eventId;
-    }
+    public String getSeats() { return seats; }
+    public void setSeats(String seats) { this.seats = seats; }
 
-    public void setSeatsBooked(int seatsBooked) {
-        this.seatsBooked = seatsBooked;
-    }
+    public double getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
 
-    public void setTotalAmount(double totalAmount) {
-        this.totalAmount = totalAmount;
-    }
+    public LocalDateTime getBookingDate() { return bookingDate; }
+    public void setBookingDate(LocalDateTime bookingDate) { this.bookingDate = bookingDate; }
 
-    public void setBookingDate(LocalDateTime bookingDate) {
-        this.bookingDate = bookingDate;
-    }
+    public String getBookingStatus() { return bookingStatus; }
+    public void setBookingStatus(String bookingStatus) { this.bookingStatus = bookingStatus; }
+
+    public String getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; }
 }

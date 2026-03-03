@@ -1,0 +1,115 @@
+/* 🌌 Page Background */
+.container {
+  min-height: 100vh;
+  padding: 40px;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+}
+
+/* 🏷 Title */
+.title {
+  font-size: 32px;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+/* 🧊 Glass Card */
+.tableWrapper {
+  width: 95%;
+  max-width: 1200px;
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  overflow-x: auto;
+  transition: 0.3s ease;
+}
+
+.tableWrapper:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 255, 255, 0.3);
+}
+
+/* 📊 Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: white;
+}
+
+.table th {
+  padding: 14px;
+  background: rgba(0, 0, 0, 0.4);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.table td {
+  padding: 14px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 🪄 Row Hover */
+.table tr:hover {
+  background: rgba(255, 255, 255, 0.07);
+  transition: 0.2s ease;
+}
+
+/* 🟢 Confirm Button */
+.confirmBtn {
+  background: linear-gradient(45deg, #00c853, #00e676);
+  border: none;
+  padding: 8px 16px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+.confirmBtn:hover {
+  box-shadow: 0 0 15px #00e676;
+  transform: scale(1.05);
+}
+
+/* 🔴 Decline Button */
+.declineBtn {
+  background: linear-gradient(45deg, #d50000, #ff1744);
+  border: none;
+  padding: 8px 16px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  font-weight: 500;
+}
+
+.declineBtn:hover {
+  box-shadow: 0 0 15px #ff1744;
+  transform: scale(1.05);
+}
+
+/* 🟡 Status Badge */
+.statusPending {
+  color: #ffca28;
+  font-weight: 600;
+}
+
+.statusConfirmed {
+  color: #00e676;
+  font-weight: 600;
+}
+
+.statusDeclined {
+  color: #ff5252;
+  font-weight: 600;
+}

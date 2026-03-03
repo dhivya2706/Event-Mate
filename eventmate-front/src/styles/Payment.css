@@ -1,0 +1,64 @@
+.payment-modal-overlay {
+  position: fixed;
+  top: 0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content:center;
+  align-items: center;
+  z-index: 200;
+}
+
+.success-card {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 20px;
+  width: 350px;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+.success-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+.success-card p {
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+.method-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.method-btn {
+  flex:1;
+  margin:0 5px;
+  padding: 8px 0;
+  border:none;
+  border-radius: 50px;
+  background:#f0f0f0;
+  cursor:pointer;
+  transition:0.3s;
+}
+.method-btn.active {
+  background:#4facfe;
+  color:white;
+}
+.method-btn:hover { transform: scale(1.05); }
+
+.pay-btn {
+  padding: 12px 20px;
+  border-radius: 50px;
+  border:none;
+  background:#1890ff;
+  color:white;
+  font-weight: bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+.pay-btn:hover { background:#096dd9; }
+
+.qr-image { margin-top: 15px; width:150px; height:150px; }

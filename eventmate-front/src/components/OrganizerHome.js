@@ -1,7 +1,14 @@
 import React from "react";
 import styles from "../styles/OrganizerHome.module.css";
 
-function OrganizerHome({ goToBooking, goToAddEvent, goToEventList, onLogout }) {
+function OrganizerHome({
+  goToAddEvent,
+  goToEventList,
+  goToBookingManagement,
+  goToBookingMonitoring,
+  goToQRCodeBooking, // <-- add this prop
+  onLogout
+}) {
   return (
     <div className={styles.dashboard}>
 
@@ -27,7 +34,7 @@ function OrganizerHome({ goToBooking, goToAddEvent, goToEventList, onLogout }) {
         {/* Image & Media Upload */}
         <div
           className={styles.card}
-          onClick={goToEventList} // ✅ Navigate to EventList
+          onClick={goToEventList}
           style={{ cursor: "pointer" }}
         >
           <h3>Image & Media Upload</h3>
@@ -35,8 +42,12 @@ function OrganizerHome({ goToBooking, goToAddEvent, goToEventList, onLogout }) {
           <p>Display event images</p>
         </div>
 
-        {/* Booking & Attendee */}
-        <div className={styles.card}>
+        {/* Booking & Attendee Management */}
+        <div
+          className={styles.card}
+          onClick={goToBookingManagement}
+          style={{ cursor: "pointer" }}
+        >
           <h3>Booking & Attendee Management</h3>
           <p>View bookings</p>
           <p>Track seats</p>
@@ -46,20 +57,30 @@ function OrganizerHome({ goToBooking, goToAddEvent, goToEventList, onLogout }) {
         {/* Booking Monitoring */}
         <div
           className={`${styles.card} ${styles.highlight}`}
-          onClick={goToBooking}
+          onClick={goToBookingMonitoring}
+          style={{ cursor: "pointer" }}
         >
           <h3>Booking Monitoring</h3>
           <p>Payment status</p>
           <p>Ticket sales tracking</p>
         </div>
 
-        <div className={styles.card}>
+        {/* QR Code Handling */}
+        <div
+          className={styles.card}
+          style={{ cursor: "pointer" }}
+          onClick={goToQRCodeBooking} // <-- add this to open QRCodeBooking page
+        >
           <h3>QR Code Ticket Handling</h3>
           <p>View QR codes</p>
           <p>Scan & verify tickets</p>
         </div>
 
-        <div className={styles.card}>
+        {/* Event Notifications */}
+        <div
+          className={styles.card}
+          style={{ cursor: "pointer" }}
+        >
           <h3>Event Notifications</h3>
           <p>Send reminders</p>
           <p>Notify attendees</p>

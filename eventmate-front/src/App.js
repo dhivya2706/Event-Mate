@@ -5,12 +5,16 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 
 // Dashboards
-import Dashboard from "./components/Dashboard";
+import UserDashboard from "./components/UserDashboard";
 import AdminDashboard from "./components/AdminDashboard";
 import OrganizerHome from "./components/OrganizerHome";
-import Organizer from "./components/Organizer";
+
+// Organizer Pages
+import Organizer from "./components/Organizer"; // Booking Monitoring page
+import BookingManagement from "./components/BookingManagement"; // Booking & Attendee Management
 import AddEvent from "./components/AddEvent";
-import EventList from "./components/EventList"; // ✅ NEW
+import EventList from "./components/EventList";
+import QRCodeBooking from "./components/QRCodeBooking"; // QR Code Ticket Handling page
 
 import "./App.css";
 
@@ -18,6 +22,7 @@ function App() {
   const [page, setPage] = useState("HOME");
   const [currentUser, setCurrentUser] = useState(null);
 
+  // ================= AUTO LOGIN CHECK =================
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
 
@@ -25,25 +30,28 @@ function App() {
       const savedRole = localStorage.getItem("adminRole");
       const savedEmail = localStorage.getItem("adminEmail");
       const savedName = localStorage.getItem("adminName");
+      const savedUser = JSON.parse(localStorage.getItem("user") || "null");
 
       if (savedRole && savedEmail) {
         const userData = {
+          id: savedUser?.id || null,
           role: savedRole,
           email: savedEmail,
-          name: savedName,
+          name: savedName || savedUser?.name || savedEmail.split("@")[0],
         };
 
         setCurrentUser(userData);
 
-        const role = savedRole.toUpperCase();
+        const role = savedRole.toUpperCase().trim();
+
         if (role === "ADMIN") setPage("ADMIN");
-        else if (role === "ORGANISER" || role === "ORGANIZER")
-          setPage("ORGANIZER_HOME");
-        else setPage("USER");
+        else if (role === "ORGANISER" || role === "ORGANIZER") setPage("ORGANIZER_HOME");
+        else setPage("USER_DASHBOARD");
       }
     }
   }, []);
 
+  // ================= LOGOUT =================
   const handleLogout = () => {
     localStorage.clear();
     setCurrentUser(null);
@@ -54,50 +62,51 @@ function App() {
   if (currentUser) {
     const role = currentUser.role?.toUpperCase().trim();
 
-    // ADMIN
+    // ===== ADMIN =====
     if (role === "ADMIN") {
       return <AdminDashboard user={currentUser} onLogout={handleLogout} />;
     }
 
-    // ORGANIZER FLOW
+    // ===== ORGANIZER =====
     if (role === "ORGANISER" || role === "ORGANIZER") {
-
-      // Organizer Home
       if (page === "ORGANIZER_HOME") {
         return (
           <OrganizerHome
             user={currentUser}
             onLogout={handleLogout}
             goToAddEvent={() => setPage("ADD_EVENT")}
-            goToBooking={() => setPage("BOOKING")}
-            goToEventList={() => setPage("EVENT_LIST")} // ✅ NEW
+            goToEventList={() => setPage("EVENT_LIST")}
+            goToBookingManagement={() => setPage("BOOKING_MANAGEMENT")}
+            goToBookingMonitoring={() => setPage("BOOKING_MONITORING")}
+            goToQRCodeBooking={() => setPage("QR_CODE_BOOKING")} // QR code page
           />
         );
       }
-
-      // Add Event
-      if (page === "ADD_EVENT") {
+      if (page === "ADD_EVENT")
         return <AddEvent user={currentUser} goBack={() => setPage("ORGANIZER_HOME")} />;
-      }
-
-      // Event List (Image & Media Upload + Edit/Delete)
-      if (page === "EVENT_LIST") {
+      if (page === "EVENT_LIST")
         return <EventList goBack={() => setPage("ORGANIZER_HOME")} />;
-      }
-
-      // Booking
-      if (page === "BOOKING") {
-        return <Organizer user={currentUser} onLogout={handleLogout} goBack={() => setPage("ORGANIZER_HOME")} />;
-      }
+      if (page === "BOOKING_MANAGEMENT")
+        return <BookingManagement goBack={() => setPage("ORGANIZER_HOME")} />;
+      if (page === "BOOKING_MONITORING")
+        return <Organizer goBack={() => setPage("ORGANIZER_HOME")} />;
+      if (page === "QR_CODE_BOOKING")
+        return <QRCodeBooking goBack={() => setPage("ORGANIZER_HOME")} />;
     }
 
-    // USER
+    // ===== USER =====
     if (role === "USER") {
-      return <Dashboard user={currentUser} onLogout={handleLogout} />;
+      return (
+        <UserDashboard
+          user={currentUser}
+          currentUser={currentUser}
+          onLogout={handleLogout}
+        />
+      );
     }
   }
 
-  // NOT LOGGED IN
+  // ===== NOT LOGGED IN =====
   return (
     <>
       <Navbar onLogin={() => setPage("LOGIN")} />
@@ -108,8 +117,14 @@ function App() {
           setCurrentUser={(user) => {
             setCurrentUser(user);
             localStorage.setItem("isLoggedIn", "true");
+            localStorage.setItem("adminRole", user.role);
+            localStorage.setItem("adminEmail", user.email);
+            localStorage.setItem("adminName", user.name || "");
+            const role = user.role?.toUpperCase().trim();
+            if (role === "ADMIN") setPage("ADMIN");
+            else if (role === "ORGANISER" || role === "ORGANIZER") setPage("ORGANIZER_HOME");
+            else setPage("USER_DASHBOARD");
           }}
-          setPage={setPage}
         />
       )}
       {page === "REGISTER" && <Register switchToLogin={() => setPage("LOGIN")} />}

@@ -47,18 +47,23 @@ public class UserController {
         Optional<User> opt = userRepository.findByEmail(data.getEmail());
 
         if (opt.isEmpty()) {
-            return ResponseEntity.status(401).body(Map.of("message","Email not found"));
+            return ResponseEntity.status(401).body(Map.of("message", "Email not found"));
         }
 
         User user = opt.get();
 
         if (!encoder.matches(data.getPassword(), user.getPassword())) {
-            return ResponseEntity.status(401).body(Map.of("message","Incorrect password"));
+            return ResponseEntity.status(401).body(Map.of("message", "Incorrect password"));
         }
 
+        // ✅ FIX: Added id and name to the response
+        // Frontend needs user.id to create bookings
         return ResponseEntity.ok(Map.of(
-                "role", user.getRole().name(),
-                "token", user.getEmail()   // email as token
+                "id",    user.getId(),           // ← ADDED: e.g. 31 for ma123@gmail.com
+                "name",  user.getName(),         // ← ADDED: e.g. "ma"
+                "email", user.getEmail(),        // ← ADDED: helpful to have
+                "role",  user.getRole().name(),
+                "token", user.getEmail()
         ));
     }
 
@@ -67,7 +72,7 @@ public class UserController {
     public ResponseEntity<?> getAdminProfile(
             @RequestHeader("Authorization") String header) {
 
-        String token = header.substring(7); // remove Bearer
+        String token = header.substring(7);
 
         Optional<User> opt = userRepository.findByEmail(token);
 
@@ -122,9 +127,9 @@ public class UserController {
                 .filter(u -> u.getRole() == Role.ADMIN).count();
 
         return ResponseEntity.ok(Map.of(
-                "users", users,
+                "users",      users,
                 "organisers", organisers,
-                "admins", admins
+                "admins",     admins
         ));
     }
 }

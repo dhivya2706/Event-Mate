@@ -2,13 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import "../styles/Login.css";
 
-export default function Login({ switchToRegister, setCurrentUser, setPage }) {
+export default function Login({ switchToRegister, setCurrentUser }) {
 
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
-
+  const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -20,25 +16,23 @@ export default function Login({ switchToRegister, setCurrentUser, setPage }) {
     e.preventDefault();
 
     try {
-      // Login request
       const res = await axios.post("http://localhost:8080/api/login", form);
 
-      const role = res.data.role?.toUpperCase().trim();
-
-      // Save token and role in localStorage for future API calls
-      localStorage.setItem("adminToken", res.data.token || "temp-token"); // token from backend
-      localStorage.setItem("adminRole", role);
-      localStorage.setItem("adminEmail", form.email);
-
-      setCurrentUser({
+      // ✅ Backend now returns: { id, name, email, role, token }
+      const userData = {
+        id:    res.data.id,                                    // e.g. 31
+        name:  res.data.name || form.email.split("@")[0],     // e.g. "ma"
         email: form.email,
-        role: role,
-      });
+        role:  res.data.role?.toUpperCase().trim(),
+      };
 
-      // Navigate based on role
-      if (role === "ADMIN") setPage("ADMIN");
-      else if (role === "ORGANISER" || role === "ORGANIZER") setPage("ORGANIZER_HOME");
-      else setPage("USER");
+      localStorage.setItem("user",       JSON.stringify(userData));
+      localStorage.setItem("adminToken", res.data.token || "temp-token");
+      localStorage.setItem("adminRole",  userData.role);
+      localStorage.setItem("adminEmail", form.email);
+      localStorage.setItem("adminName",  userData.name);
+
+      setCurrentUser(userData);
 
     } catch (err) {
       setMessage(err.response?.data?.message || "Login failed!");
@@ -48,12 +42,10 @@ export default function Login({ switchToRegister, setCurrentUser, setPage }) {
   return (
     <div className="login-container">
       <div className="login-card">
-
         <h1 className="login-title">EventMate AI Scheduler</h1>
         <p className="subtitle">Smart AI Event Planner</p>
 
         <form onSubmit={handleLogin}>
-
           <div className="input-group">
             <input
               type="email"
@@ -72,18 +64,12 @@ export default function Login({ switchToRegister, setCurrentUser, setPage }) {
               onChange={handleChange}
               required
             />
-            <span
-              className="toggle-password"
-              onClick={() => setShowPassword(!showPassword)}
-            >
+            <span className="toggle-password" onClick={() => setShowPassword(!showPassword)}>
               {showPassword ? "Hide" : "Show"}
             </span>
           </div>
 
-          <button className="login-btn" type="submit">
-            Login
-          </button>
-
+          <button className="login-btn" type="submit">Login</button>
         </form>
 
         <p className="switch-text">
@@ -92,7 +78,6 @@ export default function Login({ switchToRegister, setCurrentUser, setPage }) {
         </p>
 
         {message && <p className="error-msg">{message}</p>}
-
       </div>
     </div>
   );
