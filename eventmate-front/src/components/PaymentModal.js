@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { QRCodeCanvas } from "qrcode.react";
+import FeedbackForm from "./FeedbackForm";   // ✅ IMPORT THIS
 import "../styles/Payment.css";
 
 const PaymentModal = ({ bookingData, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [method, setMethod] = useState("CARD");
   const [paymentResult, setPaymentResult] = useState(null);
+  const [showFeedback, setShowFeedback] = useState(false);  // ✅ NEW
 
   const loggedUser = JSON.parse(localStorage.getItem("user"));
 
@@ -38,6 +40,7 @@ const PaymentModal = ({ bookingData, onClose }) => {
 
       const data = await res.json();
       setPaymentResult(data);
+
     } catch (err) {
       console.error("Payment error:", err);
       alert("Payment failed. Please try again.");
@@ -46,9 +49,25 @@ const PaymentModal = ({ bookingData, onClose }) => {
     }
   };
 
+  // 🔥 AFTER DONE CLICK → SHOW FEEDBACK
+  const handleDone = () => {
+    setShowFeedback(true);
+  };
+
+  // 🔥 IF FEEDBACK MODE → SHOW FEEDBACK FORM
+  if (showFeedback) {
+    return (
+      <FeedbackForm
+        bookingData={bookingData}
+        onClose={onClose}
+      />
+    );
+  }
+
   return (
     <div className="payment-modal-overlay">
       <div className="success-card">
+
         {!paymentResult ? (
           <>
             <h2>Complete Payment</h2>
@@ -116,7 +135,6 @@ const PaymentModal = ({ bookingData, onClose }) => {
               Amount Paid: ₹{bookingData.amount}
             </p>
 
-            {/* ✅ QR Code Generated Directly in Frontend */}
             {paymentResult.transactionId && (
               <div style={{ marginTop: "20px" }}>
                 <QRCodeCanvas
@@ -128,15 +146,17 @@ Amount: ₹${bookingData.amount}`}
               </div>
             )}
 
+            {/* 🔥 CHANGE HERE */}
             <button
               className="pay-btn"
-              onClick={onClose}
+              onClick={handleDone}
               style={{ marginTop: "20px" }}
             >
-              Done
+              Continue
             </button>
           </>
         )}
+
       </div>
     </div>
   );
