@@ -1,4 +1,8 @@
 package com.eventmate.controller;
+
+import com.eventmate.repository.BookingRepository;
+import com.eventmate.repository.EventRepository;
+import com.eventmate.service.EmailService;
 import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +11,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.eventmate.dto.ReminderDTO;
+import com.eventmate.entity.Booking;
 import com.eventmate.entity.Event;
 import com.eventmate.entity.Organizer;
 import com.eventmate.service.EventService;
@@ -30,8 +37,17 @@ public class AuthController {
     @Autowired
     private EventService eventService;
 
-   @PostMapping("/register")
-public Map<String, String> register(@Valid @RequestBody Organizer organizer) {
+    @Autowired
+    private BookingRepository bookingRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
+
+    @Autowired
+    private EmailService emailService;
+
+    @PostMapping("/register")
+    public Map<String, String> register(@Valid @RequestBody Organizer organizer) {
         String message = organizerService.register(organizer);
         Map<String, String> response = new HashMap<>();
         response.put("message", message);
@@ -46,7 +62,6 @@ public Map<String, String> register(@Valid @RequestBody Organizer organizer) {
         return organizerService.findByEmail(email);
     }
 
-   
     @PutMapping("/profile")
     public Organizer updateProfile(@RequestBody Organizer organizer) {
         return organizerService.updateOrganizer(organizer);
@@ -58,24 +73,45 @@ public Map<String, String> register(@Valid @RequestBody Organizer organizer) {
         if (organizer != null) {
             return eventService.findByOrganizer(organizer);
         }
-        return List.of(); 
+        return List.of();
     }
+
+    @GetMapping("/reminders")
+    public List<ReminderDTO> getReminders() {
+
+        return bookingRepository.getReminderUsers();
+
+    }
+
+   @PostMapping("/sendReminder/{bookingId}")
+public void sendReminder(@PathVariable Long bookingId) {
+
+    Booking booking = bookingRepository.findById(bookingId).get();
+
+    Event event = booking.getEvent();
+
+    emailService.sendReminder(
+            booking.getUserEmail(),
+            event.getEventName(),
+            event.getEventDate()
+    );
+}
 
     @PostMapping("/login")
-public Map<String, Object> login(@Valid @RequestBody Organizer organizer) {
+    public Map<String, Object> login(@Valid @RequestBody Organizer organizer) {
 
-    Organizer existing =
-            organizerService.login(organizer.getEmail(), organizer.getPassword());
+        Organizer existing
+                = organizerService.login(organizer.getEmail(), organizer.getPassword());
 
-    Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
 
-    if (existing != null) {
-        response.put("message", "Login successful");
-        response.put("user", existing);   
-    } else {
-        response.put("message", "Invalid credentials");
+        if (existing != null) {
+            response.put("message", "Login successful");
+            response.put("user", existing);
+        } else {
+            response.put("message", "Invalid credentials");
+        }
+
+        return response;
     }
-
-    return response;
-}
 }

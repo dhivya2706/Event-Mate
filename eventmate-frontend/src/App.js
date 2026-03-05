@@ -4,7 +4,7 @@ import Home from "./components/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import AdminDashboard from "./components/AdminDashboard";
-
+import OrganizerReminderPage from "./components/OrganizerReminderPage";
 import OrganizerHome from "./components/OrganizerHome";
 import AddEvent from "./components/AddEvent";
 import BookingMonitoring from "./components/BookingMonitoring";
@@ -40,6 +40,7 @@ function App() {
         <Route path="manage-events" element={<ManageEvents />} />
         <Route path="manage-events/edit/:id" element={<EditEvent />} />
         <Route path="/organizer/reviews" element={<OrganizerReview />} />
+         <Route path="reminders" element={<OrganizerReminderPage />} />
 
       </Route>
 

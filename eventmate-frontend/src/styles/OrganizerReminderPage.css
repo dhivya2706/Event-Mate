@@ -1,0 +1,36 @@
+.reminder-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit, 250px);
+gap:20px;
+margin-top:20px;
+justify-content:flex-start;
+}
+
+.reminder-card{
+width:250px;
+height:250px;
+background:white;
+padding:18px;
+border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+
+flex-shrink:0;   /* prevents stretching */
+}
+
+.reminder-card button{
+background:#7b2ff7;
+color:white;
+border:none;
+padding:8px 12px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.reminder-card:hover{
+transform:translateY(-5px);
+transition:0.2s;
+}

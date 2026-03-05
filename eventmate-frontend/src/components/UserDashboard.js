@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/UserDashboard.css";
+import ChatBot from "./ChatBot";
 import Booking from "./Booking";
 
 function UserDashboard() {
@@ -28,6 +29,8 @@ function UserDashboard() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [rating, setRating] = useState(5);
   const [description, setDescription] = useState("");
+
+  const [showChatBot, setShowChatBot] = useState(false);
 
   useEffect(() => {
     if (!storedEmail) {
@@ -216,6 +219,12 @@ function UserDashboard() {
             <button className={`nav-btn ${activePage === "events" ? "active" : ""}`} onClick={() => setActivePage("events")}>📅 Browse Events</button>
             <button className={`nav-btn ${activePage === "bookings" ? "active" : ""}`} onClick={() => setActivePage("bookings")}>🎫 My Bookings</button>
             <button className={`nav-btn ${activePage === "feedback" ? "active" : ""}`} onClick={() => setActivePage("feedback")}>⭐ Feedback</button>
+            <button
+              className="nav-btn"
+              onClick={() => setShowChatBot(!showChatBot)}
+            >
+              🤖 AI Assistant
+            </button>
             <button className="nav-btn logout-side" onClick={handleLogout}>🚪 Logout</button>
           </aside>
 
@@ -332,7 +341,12 @@ function UserDashboard() {
           <div className="modal-overlay">
             <div className="modal">
               <h3>{selectedEvent.event?.eventName}</h3>
-              <textarea placeholder="Write your feedback..." value={description} onChange={(e) => setDescription(e.target.value)} />
+              <textarea
+                placeholder="Write your feedback..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                style={{ width: "100%", height: "120px", resize: "none" }}
+              />
               <input type="number" min="1" max="5" value={rating} onChange={(e) => setRating(Number(e.target.value))} />
               <div className="modal-buttons">
                 <button className="save-btn" onClick={submitFeedback}>Submit</button>
@@ -341,7 +355,7 @@ function UserDashboard() {
             </div>
           </div>
         )}
-
+        {showChatBot && <ChatBot />}
       </div>
     </div>
   );

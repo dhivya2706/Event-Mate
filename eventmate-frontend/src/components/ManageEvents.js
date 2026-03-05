@@ -26,6 +26,19 @@ function ManageEvents() {
     fetchEvents();
   }, []);
 
+  const getEventStatus = (eventDate) => {
+
+    const today = new Date();
+    const event = new Date(eventDate);
+
+    if (event < today) {
+      return "Completed";
+    } else {
+      return "Upcoming";
+    }
+
+  };
+
   const deleteEvent = async (id) => {
     if (!window.confirm("Delete this event?")) return;
 
@@ -52,16 +65,14 @@ function ManageEvents() {
               <div className="event-left">
                 <div className="event-title">{e.eventName}</div>
                 <div className="event-sub">
-                  {e.eventDate || "Upcoming"} • {e.totalSeats} seats
+                  <span className={`status-badge ${getEventStatus(e.eventDate)}`}>
+                    {getEventStatus(e.eventDate)}
+                  </span>
                 </div>
               </div>
 
               {/* RIGHT SIDE */}
               <div className="event-actions">
-
-                <span className="status-badge">
-                  Upcoming
-                </span>
 
                 <button
                   className="action-btn edit-btn"

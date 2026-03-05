@@ -128,6 +128,9 @@ function Layout() {
               <li onClick={() => navigate("/organizer/reviews")}>
                 ⭐ Reviews
               </li>
+              <li onClick={() => navigate("/organizer/reminders")}>
+                📧 Send Reminder
+              </li>
               <li onClick={handleLogout} style={{ color: "#ff4d4f" }}>🚪 Logout</li>
             </ul>
           </div>

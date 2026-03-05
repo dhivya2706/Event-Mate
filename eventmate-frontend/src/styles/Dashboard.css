@@ -600,3 +600,46 @@ h3 {
   border-radius: 14px;
   color: white;
 }
+
+.review-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,250px);
+gap:20px;
+margin-top:20px;
+justify-content:center;
+}
+
+.review-card{
+background:white;
+width:250px;
+height:250px;
+padding:15px;
+border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+}
+
+.review-desc{
+font-size:14px;
+overflow:hidden;
+}
+
+.delete-btn{
+background:#ff4d4d;
+color:white;
+border:none;
+padding:8px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.delete-btn:hover{
+background:#e60000;
+}
+
+.review-card:hover{
+transform:translateY(-5px);
+transition:0.2s;
+}

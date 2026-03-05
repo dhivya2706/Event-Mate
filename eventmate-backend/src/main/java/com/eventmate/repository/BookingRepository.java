@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.eventmate.dto.ReminderDTO;
 import com.eventmate.entity.Booking;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -72,4 +73,16 @@ AND LOWER(b.bookingStatus) = 'confirmed'
 AND LOWER(b.paymentStatus) = 'paid'
 """)
     List<Booking> findCompletedBookings(@Param("email") String email);
+@Query("""
+SELECT new com.eventmate.dto.ReminderDTO(
+b.id,
+b.userName,
+b.userEmail,
+e.eventName,
+e.eventDate
+)
+FROM Booking b
+JOIN b.event e
+""")
+List<ReminderDTO> getReminderUsers();
 }
