@@ -3,10 +3,12 @@ import axios from "axios";
 import "../styles/Register.css";
 
 export default function Register({ switchToLogin }) {
+
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     role: "USER",
   });
 
@@ -18,13 +20,50 @@ export default function Register({ switchToLogin }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Password validation
+  const validatePassword = (password) => {
+
+    const regex =
+      /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+
+    return regex.test(password);
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
-    setLoading(true);
+
     setMessage("");
+    setIsError(false);
+
+    // Confirm password check
+    if (form.password !== form.confirmPassword) {
+      setMessage("❌ Password and Confirm Password must match");
+      setIsError(true);
+      return;
+    }
+
+    // Password strength check
+    if (!validatePassword(form.password)) {
+      setMessage(
+        "❌ Password must contain:\n• 8 characters\n• 1 uppercase letter\n• 1 number\n• 1 special character"
+      );
+      setIsError(true);
+      return;
+    }
+
+    setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:8080/api/register", form);
+
+      const payload = {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        role: form.role,
+      };
+
+      const res = await axios.post("http://localhost:8080/api/register", payload);
+
       setMessage(res.data.message || "Registration successful!");
       setIsError(false);
 
@@ -32,12 +71,14 @@ export default function Register({ switchToLogin }) {
         name: "",
         email: "",
         password: "",
+        confirmPassword: "",
         role: "USER",
       });
+
     } catch (err) {
+
       setMessage(
-        err.response?.data?.message ||
-        "Registration failed! Server error."
+        err.response?.data?.message || "Registration failed! Server error."
       );
       setIsError(true);
     }
@@ -50,38 +91,63 @@ export default function Register({ switchToLogin }) {
       <div className="register-card">
 
         <div className="register-logo">
-          <h2>EventMate AI Scheduler</h2>
-          <p>Register your account</p>
+          <div className="brand-icon">🎫</div>
+          <h2>EventMate <span>AI</span></h2>
+          <p>Create your account to get started</p>
         </div>
 
         <form onSubmit={handleRegister}>
-          <input
-            name="name"
-            placeholder="Name"
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
 
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
+          <div className="field-group">
+            <span className="field-icon">👤</span>
+            <input
+              name="name"
+              placeholder="Full Name"
+              value={form.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
+          <div className="field-group">
+            <span className="field-icon">✉️</span>
+            <input
+              name="email"
+              type="email"
+              placeholder="Email Address"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <div className="select-wrapper">
+          <div className="field-group">
+            <span className="field-icon">🔒</span>
+            <input
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* CONFIRM PASSWORD */}
+          <div className="field-group">
+            <span className="field-icon">🔐</span>
+            <input
+              name="confirmPassword"
+              type="password"
+              placeholder="Confirm Password"
+              value={form.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="field-group select-wrapper">
+            <span className="field-icon">🎭</span>
             <select name="role" value={form.role} onChange={handleChange}>
               <option value="USER">USER</option>
               <option value="ORGANISER">ORGANISER</option>
@@ -89,13 +155,10 @@ export default function Register({ switchToLogin }) {
             </select>
           </div>
 
-          <button
-            type="submit"
-            className="register-btn"
-            disabled={loading}
-          >
-            {loading ? "Registering..." : "Register"}
+          <button type="submit" className="register-btn" disabled={loading}>
+            {loading ? "Creating account…" : "Create Account →"}
           </button>
+
         </form>
 
         {message && (
@@ -106,7 +169,7 @@ export default function Register({ switchToLogin }) {
 
         <div className="register-footer">
           Already have an account?{" "}
-          <span onClick={switchToLogin}>Login</span>
+          <span onClick={switchToLogin}>Sign In</span>
         </div>
 
       </div>

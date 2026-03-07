@@ -10,6 +10,7 @@ import com.example.demo.eventmate.model.Feedback;
 import com.example.demo.eventmate.repository.FeedbackRepository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,33 +24,36 @@ public class FeedbackController {
     @Autowired
     private JavaMailSender mailSender;
 
+    // ── GET all feedback (used by FeedbackDetails page) ──────────────────────
+    @GetMapping
+    public ResponseEntity<List<Feedback>> getAllFeedback() {
+        List<Feedback> feedbacks = feedbackRepository.findAll();
+        return ResponseEntity.ok(feedbacks);
+    }
+
+    // ── POST submit new feedback ──────────────────────────────────────────────
     @PostMapping
     public ResponseEntity<?> submitFeedback(@RequestBody Feedback feedback) {
-
         try {
-
             Feedback saved = feedbackRepository.save(feedback);
 
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom("pandisathi812@gmail.com");
             message.setTo("pandisathi812@gmail.com");
             message.setSubject("🎉 New Feedback - EventMate");
-
             message.setText(
-                    "New Feedback Received\n\n" +
-                    "Booking ID : " + feedback.getBookingId() + "\n" +
-                    "User ID    : " + feedback.getUserId() + "\n" +
-                    "Event ID   : " + feedback.getEventId() + "\n" +
-                    "Rating     : ⭐ " + feedback.getRating() + "\n" +
-                    "Comment    : " + feedback.getComment()
+                "New Feedback Received\n\n" +
+                "Booking ID : " + feedback.getBookingId() + "\n" +
+                "User ID    : " + feedback.getUserId() + "\n" +
+                "Event ID   : " + feedback.getEventId() + "\n" +
+                "Rating     : ⭐ " + feedback.getRating() + "\n" +
+                "Comment    : " + feedback.getComment()
             );
-
             mailSender.send(message);
 
             Map<String, Object> response = new HashMap<>();
             response.put("status", "SUCCESS");
             response.put("feedbackId", saved.getId());
-
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {

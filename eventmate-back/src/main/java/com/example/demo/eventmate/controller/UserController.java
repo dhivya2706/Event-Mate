@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 @RestController
@@ -58,12 +59,17 @@ public class UserController {
                     .body(Map.of("message", "Incorrect password"));
         }
 
+        // ✅ Save last login time every time user logs in
+        user.setLastLogin(new Timestamp(System.currentTimeMillis()));
+        userRepository.save(user);
+
         return ResponseEntity.ok(Map.of(
-                "id", user.getId(),
-                "name", user.getName(),
-                "email", user.getEmail(),
-                "role", user.getRole().name(),
-                "token", user.getEmail()
+                "id",        user.getId(),
+                "name",      user.getName(),
+                "email",     user.getEmail(),
+                "role",      user.getRole().name(),
+                "token",     user.getEmail(),
+                "lastLogin", user.getLastLogin().toString()
         ));
     }
 }

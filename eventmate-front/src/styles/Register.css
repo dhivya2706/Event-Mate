@@ -1,139 +1,272 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap');
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-body {
-  margin: 0;
-  font-family: 'DM Sans', sans-serif;
+body { font-family: 'Outfit', sans-serif; }
+
+/* ============================================
+   FULL PAGE CENTER FIX
+============================================ */
+html, body, #root {
+  height: 100%;
+  width: 100%;
 }
 
 .register-body {
+  width: 100%;
   min-height: 100vh;
-  background: linear-gradient(135deg, #eef2f7, #e0e7ff);
+  height: 100%;
+  background: #0a0a1a;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Aurora blobs */
+.register-body::before,
+.register-body::after {
+  content: '';
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.3;
+  animation: drift 10s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.register-body::before {
+  width: 550px; height: 550px;
+  background: radial-gradient(circle, #6d28d9, #2563eb);
+  top: -180px; left: -180px;
+}
+
+.register-body::after {
+  width: 480px; height: 480px;
+  background: radial-gradient(circle, #0891b2, #7c3aed);
+  bottom: -120px; right: -120px;
+  animation-delay: -5s;
+}
+
+@keyframes drift {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(40px,30px) scale(1.08); }
+}
+
+/* ============================================
+   CARD — perfectly centered
+============================================ */
 .register-card {
-  background: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(30, 58, 138, 0.15);
-  padding: 40px;
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 420px;
+  margin: auto;
+  padding: 44px 40px;
+  border-radius: 28px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.05) inset, 0 30px 80px rgba(0,0,0,0.55);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
+  animation: slideUp 0.55s cubic-bezier(0.22,1,0.36,1) both;
 }
 
-.register-logo {
-  text-align: center;
+@keyframes slideUp {
+  from { opacity:0; transform: translateY(28px) scale(0.97); }
+  to   { opacity:1; transform: translateY(0) scale(1); }
+}
+
+/* shimmer top edge */
+.register-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(139,92,246,0.9), rgba(34,211,238,0.8), transparent);
+  border-radius: 999px;
+}
+
+/* ============================================
+   LOGO
+============================================ */
+.register-logo { text-align: center; margin-bottom: 4px; }
+
+.register-logo .brand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px; height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg,#7c3aed,#2563eb);
+  font-size: 22px;
+  margin-bottom: 14px;
+  box-shadow: 0 8px 24px rgba(124,58,237,0.45);
 }
 
 .register-logo h2 {
-  font-size: 24px;
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
   font-weight: 700;
-  color: #1e3a8a;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+
+.register-logo h2 span {
+  background: linear-gradient(90deg,#a78bfa,#38bdf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .register-logo p {
+  margin-top: 7px;
   font-size: 14px;
-  color: #6b7280;
-  margin-top: 6px;
+  color: rgba(255,255,255,0.4);
+  font-weight: 300;
+}
+
+/* ============================================
+   FORM
+============================================ */
+.register-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.field-group { position: relative; }
+
+.field-group .field-icon {
+  position: absolute;
+  left: 15px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  opacity: 0.45;
+  pointer-events: none;
 }
 
 .register-card input,
 .register-card select {
   width: 100%;
-  padding: 14px;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 10px;
+  padding: 14px 16px 14px 44px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
   font-size: 14px;
-  background: #f9fafb;
-  transition: 0.2s ease;
+  font-family: 'Outfit', sans-serif;
+  color: #f1f5f9;
   outline: none;
+  transition: all 0.25s ease;
+  -webkit-appearance: none;
 }
+
+.register-card input::placeholder { color: rgba(255,255,255,0.28); }
 
 .register-card input:focus,
 .register-card select:focus {
-  border-color: #2563eb;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-.select-wrapper {
-  position: relative;
+  border-color: rgba(139,92,246,0.75);
+  background: rgba(139,92,246,0.09);
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
 }
 
 .select-wrapper::after {
   content: "▾";
   position: absolute;
-  right: 14px;
-  top: 50%;
+  right: 16px; top: 50%;
   transform: translateY(-50%);
+  color: rgba(255,255,255,0.35);
   pointer-events: none;
-  color: #6b7280;
+  font-size: 12px;
 }
 
+.register-card select option { background: #1e1b4b; color: #f1f5f9; }
+
+/* ============================================
+   BUTTON
+============================================ */
 .register-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #4f46e5, #2563eb);
-  color: white;
+  margin-top: 4px;
+  background: linear-gradient(135deg,#7c3aed,#2563eb);
+  color: #fff;
   border: none;
-  border-radius: 10px;
-  font-size: 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: 'Outfit', sans-serif;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 24px rgba(124,58,237,0.38);
 }
 
-.register-btn:hover {
-  opacity: 0.92;
-  transform: translateY(-1px);
+.register-btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -75%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);
+  transform: skewX(-20deg);
+  transition: left 0.5s ease;
 }
 
-.register-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+.register-btn:hover::after { left: 130%; }
+.register-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(124,58,237,0.48); }
+.register-btn:active { transform: translateY(0); }
+.register-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
-.register-footer {
-  text-align: center;
-  font-size: 14px;
-  color: #6b7280;
-}
-
-.register-footer span {
-  color: #2563eb;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.register-footer span:hover {
-  text-decoration: underline;
-}
-
+/* ============================================
+   MESSAGES
+============================================ */
 .register-error {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
-  padding: 10px;
-  border-radius: 8px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  color: #fca5a5;
+  padding: 11px 16px;
+  border-radius: 10px;
   font-size: 13px;
   text-align: center;
+  animation: fadeIn 0.3s ease;
 }
 
 .register-success {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  color: #16a34a;
-  padding: 10px;
-  border-radius: 8px;
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.3);
+  color: #6ee7b7;
+  padding: 11px 16px;
+  border-radius: 10px;
   font-size: 13px;
   text-align: center;
+  animation: fadeIn 0.3s ease;
 }
+
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(-6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ============================================
+   FOOTER
+============================================ */
+.register-footer {
+  text-align: center;
+  font-size: 14px;
+  color: rgba(255,255,255,0.32);
+}
+
+.register-footer span {
+  color: #a78bfa;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.register-footer span:hover { color: #c4b5fd; text-decoration: underline; }

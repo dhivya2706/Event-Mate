@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "../styles/EventList.module.css";
 
-function EventList({ goBack }) {
+function EventList({ goBack, user }) {
   const [events, setEvents] = useState([]);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-
   const [title, setTitle] = useState("");
   const [venue, setVenue] = useState("");
   const [date, setDate] = useState("");
@@ -20,9 +19,11 @@ function EventList({ goBack }) {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8080/api/organizer/events"
-      );
+      const organizerId = user?.id;
+      const url = organizerId
+        ? `http://localhost:8080/api/organizer/events?organizerId=${organizerId}`
+        : `http://localhost:8080/api/organizer/events`;
+      const response = await axios.get(url);
       setEvents(response.data);
     } catch (err) {
       console.error("Error fetching events:", err);
@@ -44,7 +45,7 @@ function EventList({ goBack }) {
     setSelectedEvent(event);
     setTitle(event.title);
     setVenue(event.venue);
-    setDate(event.eventDate.split("T")[0]); // yyyy-mm-dd
+    setDate(event.eventDate.split("T")[0]);
     setCapacity(event.capacity);
     setPrice(event.price);
     setNewImage(null);
@@ -67,7 +68,6 @@ function EventList({ goBack }) {
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-
       fetchEvents();
       setEditModalOpen(false);
       setSelectedEvent(null);
@@ -78,46 +78,56 @@ function EventList({ goBack }) {
 
   return (
     <div className={styles.container}>
-      <button className={styles.backBtn} onClick={goBack}>
-        ← Back
-      </button>
+      <button className={styles.backBtn} onClick={goBack}>← Back</button>
+      <h2 className={styles.title}>My Events</h2>
 
-      <h2 className={styles.title}>All Events</h2>
+      {events.length === 0 && (
+        <p style={{ textAlign: "center", color: "#6b7280", marginTop: "40px" }}>
+          No events found. Create your first event!
+        </p>
+      )}
 
       <div className={styles.grid}>
         {events.map((event) => (
           <div key={event.eventId} className={styles.card}>
-            {/* Event Image */}
-            {event.image ? (
-              <img
-                src={`http://localhost:8080/api/organizer/event-image/${event.eventId}`}
-                alt="event"
-                className={styles.image}
-              />
-            ) : (
-              <div className={styles.imagePlaceholder}>No Image</div>
-            )}
 
-            {/* Event Details */}
+            {/* ✅ FIXED: Always use the image endpoint directly — never check event.image */}
+            <img
+              src={`http://localhost:8080/api/organizer/event-image/${event.eventId}`}
+              alt={event.title}
+              className={styles.image}
+              style={{
+                width: "100%",
+                height: "180px",
+                objectFit: "cover",
+                borderRadius: "8px",
+                display: "block"
+              }}
+              onError={(e) => {
+                // If image fails, show grey placeholder text
+                e.target.replaceWith(
+                  Object.assign(document.createElement("div"), {
+                    textContent: "No Image",
+                    style: "width:100%;height:180px;background:#e5e7eb;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#9ca3af;font-size:0.9rem;"
+                  })
+                );
+              }}
+            />
+
             <h3>{event.title}</h3>
-            <p>{event.venue}</p>
-            <p>{new Date(event.eventDate).toLocaleDateString()}</p>
-            <p>Seats: {event.capacity}</p>
-            <p>₹ {event.price}</p>
+            <p>📍 {event.venue}</p>
+            <p>📅 {new Date(event.eventDate).toLocaleDateString("en-IN", {
+              day: "2-digit", month: "short", year: "numeric"
+            })}</p>
+            <p>🪑 Seats: {event.capacity}</p>
+            <p>💰 ₹{event.price}</p>
 
-            {/* Buttons */}
             <div className={styles.buttonGroup}>
-              <button
-                className={styles.editBtn}
-                onClick={() => openEditModal(event)}
-              >
-                Edit
+              <button className={styles.editBtn} onClick={() => openEditModal(event)}>
+                ✏️ Edit
               </button>
-              <button
-                className={styles.deleteBtn}
-                onClick={() => handleDelete(event.eventId)}
-              >
-                Delete
+              <button className={styles.deleteBtn} onClick={() => handleDelete(event.eventId)}>
+                🗑️ Delete
               </button>
             </div>
           </div>
@@ -137,43 +147,36 @@ function EventList({ goBack }) {
             <input value={venue} onChange={(e) => setVenue(e.target.value)} />
 
             <label>Date</label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
 
             <label>Capacity</label>
-            <input
-              type="number"
-              value={capacity}
-              onChange={(e) => setCapacity(e.target.value)}
-            />
+            <input type="number" value={capacity} onChange={(e) => setCapacity(e.target.value)} />
 
             <label>Price</label>
-            <input
-              type="number"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
+            <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
 
-            <label>Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setNewImage(e.target.files[0])}
-            />
+            <label>New Image (optional)</label>
+            <input type="file" accept="image/*" onChange={(e) => setNewImage(e.target.files[0])} />
+
+            {/* Current image preview in modal */}
+            {selectedEvent && (
+              <img
+                src={`http://localhost:8080/api/organizer/event-image/${selectedEvent.eventId}`}
+                alt="current"
+                style={{
+                  width: "100%",
+                  height: "140px",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                  marginTop: "8px",
+                }}
+                onError={(e) => (e.target.style.display = "none")}
+              />
+            )}
 
             <div className={styles.modalButtons}>
-              <button onClick={handleUpdate} className={styles.saveBtn}>
-                Save
-              </button>
-              <button
-                onClick={() => setEditModalOpen(false)}
-                className={styles.cancelBtn}
-              >
-                Cancel
-              </button>
+              <button onClick={handleUpdate} className={styles.saveBtn}>Save</button>
+              <button onClick={() => setEditModalOpen(false)} className={styles.cancelBtn}>Cancel</button>
             </div>
           </div>
         </div>

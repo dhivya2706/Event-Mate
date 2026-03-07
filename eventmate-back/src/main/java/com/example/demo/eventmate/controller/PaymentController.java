@@ -24,34 +24,35 @@ public class PaymentController {
     @Autowired
     private BookingRepository bookingRepository;
 
-    // ===============================
-    // PROCESS PAYMENT (User Pays)
-    // ===============================
+    // ================= PROCESS PAYMENT =================
     @PostMapping("/process")
     public ResponseEntity<?> processPayment(@RequestBody Map<String, Object> request) {
 
         try {
+
             double amount = Double.parseDouble(request.get("amount").toString());
             Long bookingId = Long.valueOf(request.get("bookingId").toString());
             Long userId = Long.valueOf(request.get("userId").toString());
 
-            Booking booking = bookingRepository.findById(bookingId)
-                    .orElse(null);
+            Booking booking = bookingRepository.findById(bookingId).orElse(null);
 
             if (booking == null) {
                 return ResponseEntity.badRequest().body("Booking not found");
             }
 
             if ("Cancelled".equals(booking.getBookingStatus())) {
-                return ResponseEntity.badRequest().body("Cannot pay for cancelled booking");
+                return ResponseEntity.badRequest()
+                        .body("Cannot process payment for cancelled booking");
             }
 
             String transactionId = "TXN" + UUID.randomUUID()
-                    .toString().replace("-", "")
+                    .toString()
+                    .replace("-", "")
                     .substring(0, 8)
                     .toUpperCase();
 
             Payment payment = new Payment();
+
             payment.setAmount(amount);
             payment.setTransactionId(transactionId);
             payment.setPaymentMethod("CARD");
@@ -62,34 +63,28 @@ public class PaymentController {
 
             paymentRepository.save(payment);
 
-            // Only update paymentStatus
-            booking.setPaymentStatus("Pending");
-            bookingRepository.save(booking);
-
             return ResponseEntity.ok(Map.of(
                     "status", "PENDING",
                     "transactionId", transactionId,
-                    "message", "Payment received. Awaiting QR confirmation."
+                    "message", "Payment started. Await QR confirmation."
             ));
 
         } catch (Exception e) {
+
             return ResponseEntity.badRequest()
-                    .body("Payment processing failed: " + e.getMessage());
+                    .body("Payment failed: " + e.getMessage());
         }
     }
 
-    // ===============================
-    // QR CONFIRMS PAYMENT
-    // ===============================
+    // ================= QR CONFIRM PAYMENT =================
     @PutMapping("/confirm/{bookingId}")
     public ResponseEntity<?> confirmPayment(@PathVariable Long bookingId) {
 
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElse(null);
+        Booking booking = bookingRepository.findById(bookingId).orElse(null);
 
         if (booking == null) {
             return ResponseEntity.badRequest()
-                    .body("Booking not found with id: " + bookingId);
+                    .body("Booking not found");
         }
 
         if ("Cancelled".equals(booking.getBookingStatus())) {
@@ -98,18 +93,21 @@ public class PaymentController {
         }
 
         booking.setPaymentStatus("Confirmed");
+
         bookingRepository.save(booking);
 
         Payment payment = paymentRepository.findByBookingId(bookingId);
 
         if (payment != null) {
+
             payment.setPaymentStatus("Confirmed");
+
             paymentRepository.save(payment);
         }
 
         return ResponseEntity.ok(Map.of(
                 "status", "CONFIRMED",
-                "message", "Payment confirmed successfully."
+                "message", "Payment confirmed via QR"
         ));
     }
 }

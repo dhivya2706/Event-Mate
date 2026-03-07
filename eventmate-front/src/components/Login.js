@@ -14,14 +14,12 @@ export default function Login({ switchToRegister, setCurrentUser }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
       const res = await axios.post("http://localhost:8080/api/login", form);
 
-      // ✅ Backend now returns: { id, name, email, role, token }
       const userData = {
-        id:    res.data.id,                                    // e.g. 31
-        name:  res.data.name || form.email.split("@")[0],     // e.g. "ma"
+        id:    res.data.id,
+        name:  res.data.name || form.email.split("@")[0],
         email: form.email,
         role:  res.data.role?.toUpperCase().trim(),
       };
@@ -31,6 +29,8 @@ export default function Login({ switchToRegister, setCurrentUser }) {
       localStorage.setItem("adminRole",  userData.role);
       localStorage.setItem("adminEmail", form.email);
       localStorage.setItem("adminName",  userData.name);
+      localStorage.setItem("adminId",    userData.id);
+      localStorage.setItem("isLoggedIn", "true");
 
       setCurrentUser(userData);
 
@@ -42,11 +42,17 @@ export default function Login({ switchToRegister, setCurrentUser }) {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h1 className="login-title">EventMate AI Scheduler</h1>
-        <p className="subtitle">Smart AI Event Planner</p>
 
+        {/* LOGO */}
+        <div className="brand-icon-login">🎟️</div>
+        <h1 className="login-title">EventMate <span>AI</span></h1>
+        <p className="subtitle">Smart AI Event Scheduler</p>
+
+        {/* FORM */}
         <form onSubmit={handleLogin}>
+
           <div className="input-group">
+            <span className="field-icon">✉️</span>
             <input
               type="email"
               name="email"
@@ -57,6 +63,7 @@ export default function Login({ switchToRegister, setCurrentUser }) {
           </div>
 
           <div className="input-group password-group">
+            <span className="field-icon">🔒</span>
             <input
               type={showPassword ? "text" : "password"}
               name="password"
@@ -69,15 +76,19 @@ export default function Login({ switchToRegister, setCurrentUser }) {
             </span>
           </div>
 
-          <button className="login-btn" type="submit">Login</button>
+          <button className="login-btn" type="submit">
+            Sign In →
+          </button>
+
         </form>
+
+        {message && <p className="error-msg">{message}</p>}
 
         <p className="switch-text">
           Don't have an account?{" "}
           <span onClick={switchToRegister}>Register</span>
         </p>
 
-        {message && <p className="error-msg">{message}</p>}
       </div>
     </div>
   );

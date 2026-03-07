@@ -6,7 +6,7 @@ import styles from "../styles/Organizer.module.css";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-function OrganizerDashboard() {
+function OrganizerDashboard({ goBack }) {
 
   const [bookings, setBookings] = useState([]);
   const [totalBookings, setTotalBookings] = useState(0);
@@ -57,6 +57,23 @@ function OrganizerDashboard() {
     <div className={styles.organizerWrapper}>
       <div className={styles.dashboardContainer}>
         <div className={styles.dashboardHeader}>
+          <button
+            onClick={goBack}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "1.5rem",
+              color: "#4f46e5",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              marginBottom: "8px",
+              padding: "0"
+            }}
+          >
+            &#8592; Back
+          </button>
           <h1>Booking Monitoring</h1>
         </div>
 

@@ -18,42 +18,35 @@ public class BookingController {
     @Autowired
     private BookingRepository bookingRepository;
 
-    // ===============================
-    // GET ALL BOOKINGS
-    // ===============================
+    // ================= GET ALL BOOKINGS =================
     @GetMapping
     public ResponseEntity<List<Booking>> getAllBookings() {
         return ResponseEntity.ok(bookingRepository.findAll());
     }
 
-    // ===============================
-    // GET BOOKINGS BY USER
-    // ===============================
+    // ================= GET BOOKINGS BY USER =================
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Booking>> getBookingsByUser(@PathVariable Long userId) {
         return ResponseEntity.ok(bookingRepository.findByUserId(userId));
     }
 
-    // ===============================
-    // GET BOOKING BY ID
-    // ===============================
+    // ================= GET BOOKING BY ID =================
     @GetMapping("/{id}")
     public ResponseEntity<?> getBookingById(@PathVariable Long id) {
+
         return bookingRepository.findById(id)
                 .<ResponseEntity<?>>map(ResponseEntity::ok)
                 .orElse(ResponseEntity.badRequest()
-                        .body("Booking not found with id: " + id));
+                        .body("Booking not found"));
     }
 
-    // ===============================
-    // CREATE BOOKING
-    // ===============================
+    // ================= CREATE BOOKING =================
     @PostMapping
     public ResponseEntity<?> createBooking(@RequestBody Booking booking) {
 
         if (booking.getUserId() == null || booking.getEventId() == null) {
             return ResponseEntity.badRequest()
-                    .body("UserId and EventId are required!");
+                    .body("UserId and EventId are required");
         }
 
         booking.setBookingDate(LocalDateTime.now());
@@ -67,53 +60,52 @@ public class BookingController {
         return ResponseEntity.ok(savedBooking);
     }
 
-    // ===============================
-    // CONFIRM BOOKING (ONLY bookingStatus)
-    // ===============================
+    // ================= CONFIRM BOOKING =================
     @PutMapping("/confirm/{id}")
     public ResponseEntity<?> confirmBooking(@PathVariable Long id) {
 
         return bookingRepository.findById(id)
                 .<ResponseEntity<?>>map(booking -> {
 
-                    booking.setBookingStatus("Confirmed");   // Only bookingStatus
+                    if ("Cancelled".equals(booking.getBookingStatus())) {
+                        return ResponseEntity.badRequest()
+                                .body("Cannot confirm cancelled booking");
+                    }
+
+                    booking.setBookingStatus("Confirmed");
 
                     bookingRepository.save(booking);
 
                     return ResponseEntity.ok("Booking Confirmed Successfully");
                 })
                 .orElse(ResponseEntity.badRequest()
-                        .body("Booking not found with id: " + id));
+                        .body("Booking not found"));
     }
 
-    // ===============================
-    // CANCEL BOOKING
-    // ===============================
+    // ================= DECLINE BOOKING =================
     @PutMapping("/decline/{id}")
     public ResponseEntity<?> cancelBooking(@PathVariable Long id) {
 
         return bookingRepository.findById(id)
                 .<ResponseEntity<?>>map(booking -> {
 
-                    booking.setBookingStatus("Cancelled");   // Only bookingStatus
+                    booking.setBookingStatus("Cancelled");
 
                     bookingRepository.save(booking);
 
                     return ResponseEntity.ok("Booking Cancelled Successfully");
                 })
                 .orElse(ResponseEntity.badRequest()
-                        .body("Booking not found with id: " + id));
+                        .body("Booking not found"));
     }
 
-    // ===============================
-    // DELETE BOOKING (HARD DELETE)
-    // ===============================
+    // ================= DELETE BOOKING =================
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBooking(@PathVariable Long id) {
 
         if (!bookingRepository.existsById(id)) {
             return ResponseEntity.badRequest()
-                    .body("Booking not found with id: " + id);
+                    .body("Booking not found");
         }
 
         bookingRepository.deleteById(id);

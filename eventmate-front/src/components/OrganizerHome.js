@@ -6,17 +6,36 @@ function OrganizerHome({
   goToEventList,
   goToBookingManagement,
   goToBookingMonitoring,
-  goToQRCodeBooking, // <-- add this prop
-  onLogout
+  goToQRCodeBooking,
+  goToNotifications,
+  goToProfile,
+  onLogout,
 }) {
+
+  const organizerName = localStorage.getItem("username") || "Organizer";
+
   return (
     <div className={styles.dashboard}>
 
+      {/* Top Bar */}
       <div className={styles.topBar}>
-        <h1>Organizer Dashboard</h1>
-        <button onClick={onLogout}>Logout</button>
+
+        <div>
+          <h1>Organizer Dashboard</h1>
+          <p style={{margin:0,color:"#555"}}>
+            Welcome, <strong>{organizerName}</strong>
+          </p>
+        </div>
+
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button onClick={goToProfile}>Profile</button>
+          <button onClick={onLogout}>Logout</button>
+        </div>
+
       </div>
 
+
+      {/* Dashboard Cards */}
       <div className={styles.grid}>
 
         {/* Event Creation */}
@@ -26,23 +45,26 @@ function OrganizerHome({
           style={{ cursor: "pointer" }}
         >
           <h3>Event Creation & Management</h3>
-          <p>Create, update, cancel events</p>
-          <p>Title, Date, Venue, Category</p>
-          <p>Capacity & Pricing</p>
+          <p>Create new events</p>
+          <p>Update or delete events</p>
+          <p>Set venue, date & capacity</p>
         </div>
 
-        {/* Image & Media Upload */}
+
+        {/* Event List */}
         <div
           className={styles.card}
           onClick={goToEventList}
           style={{ cursor: "pointer" }}
         >
           <h3>Image & Media Upload</h3>
-          <p>Upload banners & posters</p>
-          <p>Display event images</p>
+          <p>Upload event posters</p>
+          <p>Manage event images</p>
+          <p>Preview event banners</p>
         </div>
 
-        {/* Booking & Attendee Management */}
+
+        {/* Booking Management */}
         <div
           className={styles.card}
           onClick={goToBookingManagement}
@@ -50,9 +72,10 @@ function OrganizerHome({
         >
           <h3>Booking & Attendee Management</h3>
           <p>View bookings</p>
-          <p>Track seats</p>
-          <p>Attendee details</p>
+          <p>Confirm or cancel bookings</p>
+          <p>Manage attendees</p>
         </div>
+
 
         {/* Booking Monitoring */}
         <div
@@ -61,29 +84,35 @@ function OrganizerHome({
           style={{ cursor: "pointer" }}
         >
           <h3>Booking Monitoring</h3>
-          <p>Payment status</p>
-          <p>Ticket sales tracking</p>
+          <p>Track ticket sales</p>
+          <p>View revenue analytics</p>
+          <p>Monitor seat bookings</p>
         </div>
 
-        {/* QR Code Handling */}
+
+        {/* QR Code Ticket */}
         <div
           className={styles.card}
+          onClick={goToQRCodeBooking}
           style={{ cursor: "pointer" }}
-          onClick={goToQRCodeBooking} // <-- add this to open QRCodeBooking page
         >
           <h3>QR Code Ticket Handling</h3>
-          <p>View QR codes</p>
-          <p>Scan & verify tickets</p>
+          <p>Scan tickets</p>
+          <p>Verify entry</p>
+          <p>Confirm payments</p>
         </div>
 
-        {/* Event Notifications */}
+
+        {/* Notifications */}
         <div
           className={styles.card}
+          onClick={goToNotifications}
           style={{ cursor: "pointer" }}
         >
           <h3>Event Notifications</h3>
           <p>Send reminders</p>
           <p>Notify attendees</p>
+          <p>View feedback</p>
         </div>
 
       </div>

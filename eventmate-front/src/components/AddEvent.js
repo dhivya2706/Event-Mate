@@ -31,6 +31,7 @@ function AddEvent({ user, goBack }) {
     data.append("capacity", formData.capacity);
     data.append("price", formData.price);
     data.append("image", formData.image);
+    data.append("organizerId", user?.id); // ✅ links event to logged-in organizer
 
     try {
       await axios.post(
@@ -38,7 +39,7 @@ function AddEvent({ user, goBack }) {
         data
       );
       alert("Event Added Successfully");
-      goBack(); // ✅ back to OrganizerHome after save
+      goBack();
     } catch (error) {
       console.error(error);
       alert("Error adding event");
@@ -48,11 +49,7 @@ function AddEvent({ user, goBack }) {
   return (
     <div className={styles.pageContainer}>
 
-      {/* ✅ Back Button */}
-      <button
-        className={styles.backBtn}
-        onClick={goBack}
-      >
+      <button className={styles.backBtn} onClick={goBack}>
         ← Back
       </button>
 
