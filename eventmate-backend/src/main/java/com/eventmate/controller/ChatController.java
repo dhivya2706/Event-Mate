@@ -3,6 +3,7 @@ package com.eventmate.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.eventmate.dto.ChatRequest;
 import com.eventmate.service.ChatService;
 
 @RestController
@@ -14,7 +15,12 @@ public class ChatController {
     private ChatService chatService;
 
     @PostMapping
-    public String chat(@RequestBody String message) {
-        return chatService.getBotResponse(message);
+    public String chat(@RequestBody ChatRequest request) {
+
+        if(request.getMessage() == null || request.getMessage().trim().isEmpty()){
+            return "Message cannot be empty";
+        }
+
+        return chatService.getBotResponse(request.getMessage());
     }
 }

@@ -73,7 +73,8 @@ AND LOWER(b.bookingStatus) = 'confirmed'
 AND LOWER(b.paymentStatus) = 'paid'
 """)
     List<Booking> findCompletedBookings(@Param("email") String email);
-@Query("""
+
+    @Query("""
 SELECT new com.eventmate.dto.ReminderDTO(
 b.id,
 b.userName,
@@ -84,5 +85,5 @@ e.eventDate
 FROM Booking b
 JOIN b.event e
 """)
-List<ReminderDTO> getReminderUsers();
+    List<ReminderDTO> getReminderUsers();
 }

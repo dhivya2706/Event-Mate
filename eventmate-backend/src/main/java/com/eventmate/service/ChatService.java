@@ -17,7 +17,6 @@ public class ChatService {
 
         message = message.toLowerCase();
 
-        // EVENT SUGGESTIONS
         if(message.contains("event") || message.contains("show events") || message.contains("upcoming")) {
 
             List<Event> events = eventRepository.findTop5ByOrderByEventDateAsc();
@@ -41,16 +40,16 @@ public class ChatService {
             return response;
         }
 
-        // BOOKING HELP
         if(message.contains("book")) {
             return "To book tickets:\n1️⃣ Open Browse Events page\n2️⃣ Search and Select event\n3️⃣ Choose seat type\n4️⃣ Complete payment.";
         }
 
-        // PAYMENT HELP
         if(message.contains("payment") || message.contains("pay")) {
             return "EventMate supports:\n💳 UPI\n💳 Debit/Credit Card\n💳 Net Banking.";
         }
 
         return "I can help you with:\n• Event suggestions\n• Booking help\n• Payment help\nTry asking: 'Show upcoming events'";
     }
+
+    
 }
