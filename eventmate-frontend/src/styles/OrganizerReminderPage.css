@@ -18,7 +18,7 @@ display:flex;
 flex-direction:column;
 justify-content:space-between;
 
-flex-shrink:0;   /* prevents stretching */
+flex-shrink:0;  
 }
 
 .reminder-card button{

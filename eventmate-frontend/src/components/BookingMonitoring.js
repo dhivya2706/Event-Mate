@@ -68,8 +68,6 @@ function BookingMonitoring() {
   return (
     <div>
       <h1>Booking Monitoring</h1>
-
-      {/* SUMMARY CARDS */}
       <div className="summary-container">
         <div className="summary-card">
           <h3>Total Bookings</h3>
@@ -91,8 +89,6 @@ function BookingMonitoring() {
           <p>{cancelled}</p>
         </div>
       </div>
-
-      {/* BOOKING TABLE */}
       <h2>Booking Details</h2>
 
       <table className="booking-table">

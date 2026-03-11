@@ -61,7 +61,6 @@ function ManageEvents() {
           events.map((e) => (
             <div className="event-row" key={e.id}>
 
-              {/* LEFT SIDE */}
               <div className="event-left">
                 <div className="event-title">{e.eventName}</div>
                 <div className="event-sub">
@@ -71,7 +70,6 @@ function ManageEvents() {
                 </div>
               </div>
 
-              {/* RIGHT SIDE */}
               <div className="event-actions">
 
                 <button

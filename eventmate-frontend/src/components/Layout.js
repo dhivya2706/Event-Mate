@@ -3,14 +3,18 @@ import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import axios from "axios";
 import "../styles/Dashboard.css";
 
+import { FaEnvelope } from "react-icons/fa";
+
 function Layout() {
   const [events, setEvents] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showProfile, setShowProfile] = useState(false);
   const [loading, setLoading] = useState(true);
-
+  const [openChat, setOpenChat] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+
 
   let storedUser = null;
   try {
@@ -32,6 +36,11 @@ function Layout() {
     phone: "",
     companyName: "",
   });
+
+  const senderId = organizer.id;   // organizer sending message
+
+  const [messageText, setMessageText] = useState("");
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     if (!email) return;
@@ -70,6 +79,17 @@ function Layout() {
   }, [email]);
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      if (senderId) {
+        loadMessages();
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [senderId]);
+
+
+  useEffect(() => {
     if (events.length === 0) return;
 
     const interval = setInterval(() => {
@@ -100,6 +120,46 @@ function Layout() {
     }
   };
 
+  const loadMessages = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8080/api/messages/chat`,
+        {
+          params: {
+            user1: senderId,
+            user2: 1   // admin id
+          }
+        }
+      );
+
+      setMessages(res.data);
+
+    } catch (err) {
+      console.error("Error loading messages:", err);
+    }
+  };
+
+  const sendMessage = async () => {
+
+    if (!senderId || !messageText.trim()) return;
+
+    try {
+
+      await axios.post("http://localhost:8080/api/messages/send", {
+        senderId: senderId,
+        receiverId: 1,
+        message: messageText
+      });
+
+      setMessageText("");
+
+
+      loadMessages();
+
+    } catch (err) {
+      console.error("Error sending message:", err);
+    }
+  };
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
@@ -111,6 +171,13 @@ function Layout() {
     <div className="app-wrapper">
       <div className="top-navbar">
         <h2 className="app-title">EVENTMATE AI</h2>
+        <FaEnvelope
+          className="message-icon"
+          onClick={() => {
+            setOpenChat(true);
+            loadMessages();
+          }}
+        />
         <button className="profile-btn top-profile" onClick={() => setShowProfile(true)}>
           {organizer.name}
         </button>
@@ -222,6 +289,49 @@ function Layout() {
               </div>
             </form>
           </div>
+        </div>
+      )}
+
+      {openChat && (
+        <div className="chat-popup">
+
+          <div className="chat-header">
+            <span>Chat with Admin</span>
+            <button onClick={() => setOpenChat(false)}>X</button>
+          </div>
+
+          <div className="chat-body">
+
+            {messages.length === 0 ? (
+              <p>No messages yet</p>
+            ) : (
+              messages
+                .filter(msg => msg.message)
+                .map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={msg.senderId == senderId ? "my-message" : "other-message"}
+                  >
+                    {msg.message}
+                  </div>
+                ))
+            )}
+
+          </div>
+
+          <div className="chat-input">
+
+            <input
+              type="text"
+              placeholder="Type message..."
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+            />
+
+            <button onClick={sendMessage}>Send</button>
+
+          </div>
+
         </div>
       )}
     </div>

@@ -137,20 +137,22 @@ export default function Login() {
                 </form>
 
 
-                <p className="switch-text">
+                {role !== "ADMIN" && (
+                    <p className="switch-text">
 
-                    Don't have an account?
-                    <span
-                        onClick={() =>
-                            role === "ORGANIZER"
-                                ? navigate("/register")
-                                : navigate("/user-register")
-                        }
-                    >
-                        Register
-                    </span>
+                        Don't have an account?
+                        <span
+                            onClick={() =>
+                                role === "ORGANIZER"
+                                    ? navigate("/register")
+                                    : navigate("/user-register")
+                            }
+                        >
+                            Register
+                        </span>
 
-                </p>
+                    </p>
+                )}
 
 
                 <p className="message">{message}</p>

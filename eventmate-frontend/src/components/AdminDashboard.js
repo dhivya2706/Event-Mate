@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/AdminDashboard.css";
+import "../styles/Chat.css";
+import { FaEnvelope } from "react-icons/fa";
 
 export default function AdminDashboard() {
+
+  const [openChat, setOpenChat] = useState(false);
 
   const [active, setActive] = useState("dashboard");
   const [counts, setCounts] = useState({
@@ -11,6 +15,14 @@ export default function AdminDashboard() {
     events: 0,
     bookings: 0
   });
+
+  const [messageText, setMessageText] = useState("");
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [organizers, setOrganizers] = useState([]);
+  const [messages, setMessages] = useState([]);
+
+  const senderId =1;
+  const role = localStorage.getItem("role");
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -53,11 +65,76 @@ export default function AdminDashboard() {
     window.location.href = "/login";
   };
 
+  useEffect(() => {
+    if (openChat && selectedUser) {
+      loadMessages(selectedUser);
+    }
+  }, [openChat, selectedUser]);
+
+  const loadOrganizers = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/api/messages/organizers");
+      setOrganizers(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const sendMessage = async () => {
+
+   if (!messageText.trim() || !selectedUser || !senderId) {
+  console.log("Invalid message data");
+  return;
+}
+
+    try {
+
+      await axios.post("http://localhost:8080/api/messages/send", {
+        senderId: senderId,
+        receiverId: selectedUser,
+         senderRole: "ADMIN",
+  receiverRole: "ORGANIZER",
+        message: messageText
+      });
+
+      setMessageText("");
+
+      loadMessages(selectedUser);
+
+    } catch (err) {
+      console.log(err);
+    }
+
+  }
+
+  const loadMessages = async (receiverId) => {
+
+    try {
+
+      const res = await axios.get(
+        `http://localhost:8080/api/messages/chat?user1=${senderId}&user2=${receiverId}`
+      );
+
+      setMessages(res.data);
+
+    } catch (err) {
+      console.log(err);
+    }
+
+  }
+
   return (
     <div className="admin-wrapper">
 
       <div className="admin-header">
         <h2 className="logo">EVENTMATE AI</h2>
+        <FaEnvelope
+          className="message-icon"
+          onClick={() => {
+            setOpenChat(true);
+            loadOrganizers();
+          }}
+        />
         <div className="profile-pill">Admin</div>
       </div>
 
@@ -207,6 +284,63 @@ export default function AdminDashboard() {
         </div>
 
       </div>
+      {openChat && (
+        <div className="chat-popup">
+
+          <div className="chat-header">
+            <span>Organizer Messages</span>
+            <button onClick={() => setOpenChat(false)}>X</button>
+          </div>
+
+          <div className="chat-users">
+
+            {organizers.map(org => (
+              <div
+                key={org.id}
+                className="chat-user"
+                onClick={() => {
+                  setSelectedUser(org.id);
+                  loadMessages(org.id);
+                }}
+              >
+                {org.name}
+              </div>
+            ))}
+
+          </div>
+
+          <div className="chat-body">
+
+            {messages
+              .filter(msg => msg.message)   // ignore empty rows
+              .map((msg, index) => (
+                <div
+                 key={msg.id}
+                  className={msg.senderId == senderId ? "my-message" : "other-message"}
+                >
+                  {msg.message}
+                </div>
+              ))}
+
+          </div>
+
+          {selectedUser && (
+            <div className="chat-input">
+
+              <input
+                type="text"
+                placeholder="Type message..."
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+              />
+
+              <button onClick={sendMessage}>Send</button>
+
+            </div>
+          )}
+
+        </div>
+      )}
     </div>
   );
 }
