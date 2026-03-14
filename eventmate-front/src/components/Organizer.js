@@ -1,148 +1,190 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Doughnut } from "react-chartjs-2";
 import styles from "../styles/Organizer.module.css";
 
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
-function OrganizerDashboard({ goBack }) {
+const COLORS = [
+  "#7c3aed","#6366f1","#06b6d4","#a78bfa","#34d399",
+  "#f59e0b","#fb7185","#60a5fa","#f472b6","#4ade80",
+];
+
+function BookingMonitor() {
 
   const [bookings, setBookings] = useState([]);
-  const [totalBookings, setTotalBookings] = useState(0);
-  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  // 🔥 FETCH DATA FROM BACKEND
   useEffect(() => {
-    fetchBookings();
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    axios
+      .get(`http://localhost:8080/api/organizer/bookings?organizerId=${user.id}`)
+      .then((res) => {
+        setBookings(Array.isArray(res.data) ? res.data : []);
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
+
   }, []);
 
-  const fetchBookings = async () => {
-    try {
-      const res = await axios.get("http://localhost:8080/api/organizer/bookings");
-      setBookings(res.data);
+  /* ===== Derived data ===== */
 
-      // calculate totals
-      setTotalBookings(res.data.length);
+  const totalBookings = bookings.length;
 
-      const revenue = res.data.reduce((sum, b) => sum + Number(b.totalAmount), 0);
-      setTotalRevenue(revenue);
+  const totalRevenue = bookings.reduce(
+    (s, b) => s + Number(b.totalAmount || 0),
+    0
+  );
 
-    } catch (err) {
-      console.error("Error fetching bookings:", err);
-    }
-  };
+  const totalSeats = bookings.reduce(
+    (s, b) => s + Number(b.seatsBooked || 0),
+    0
+  );
 
-  // Grouping logic
   const grouped = bookings.reduce((acc, b) => {
+
     const id = b.eventId ?? "N/A";
-    if (!acc[id]) acc[id] = { revenue: 0, seats: 0 };
-    acc[id].revenue += Number(b.totalAmount);
-    acc[id].seats += Number(b.seatsBooked);
+
+    if (!acc[id]) {
+      acc[id] = { revenue: 0, seats: 0 };
+    }
+
+    acc[id].revenue += Number(b.totalAmount || 0);
+    acc[id].seats += Number(b.seatsBooked || 0);
+
     return acc;
+
   }, {});
 
-  const events = Object.keys(grouped);
-  const revenueData = Object.values(grouped).map(g => g.revenue);
-  const seatsData = Object.values(grouped).map(g => g.seats);
+  const eventIds = Object.keys(grouped);
 
-  const chartOptions = {
+  const revenueValues = eventIds.map((k) => grouped[k].revenue);
+
+  const seatsValues = eventIds.map((k) => grouped[k].seats);
+
+  const donutOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { position: "top" } },
-    scales: { y: { beginAtZero: true } }
+    cutout: "65%",
+    plugins: {
+      legend: {
+        position: "bottom",
+      },
+    },
   };
 
+  const revenueChart = {
+    labels: eventIds.map((id) => `Event ${id}`),
+    datasets: [
+      {
+        data: revenueValues,
+        backgroundColor: COLORS,
+      },
+    ],
+  };
+
+  const seatsChart = {
+    labels: eventIds.map((id) => `Event ${id}`),
+    datasets: [
+      {
+        data: seatsValues,
+        backgroundColor: COLORS,
+      },
+    ],
+  };
+
+  if (loading) return <div>Loading...</div>;
+
   return (
-    <div className={styles.organizerWrapper}>
-      <div className={styles.dashboardContainer}>
-        <div className={styles.dashboardHeader}>
-          <button
-            onClick={goBack}
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              fontSize: "1.5rem",
-              color: "#4f46e5",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              marginBottom: "8px",
-              padding: "0"
-            }}
-          >
-            &#8592; Back
-          </button>
-          <h1>Booking Monitoring</h1>
+    <div className={styles.page}>
+
+      <h2>Booking Monitoring</h2>
+
+      <div className={styles.statsRow}>
+
+        <div className={styles.stat}>
+          <h3>{totalBookings}</h3>
+          <p>Total Bookings</p>
         </div>
 
-        <div className={styles.summaryContainer}>
-          <div className={styles.summaryCard}>
-            <h3>Total Bookings</h3>
-            <p>{totalBookings}</p>
-          </div>
-          <div className={styles.summaryCard}>
-            <h3>Total Revenue</h3>
-            <p>₹{totalRevenue}</p>
-          </div>
+        <div className={styles.stat}>
+          <h3>₹{totalRevenue}</h3>
+          <p>Total Revenue</p>
         </div>
 
-        <div className={styles.chartsRow}>
-          <div className={styles.chartContainer}>
-            <h3>Revenue per Event</h3>
-            <div className={styles.chartInner}>
-              <Bar
-                data={{
-                  labels: events,
-                  datasets: [{ label: "Revenue (₹)", data: revenueData, backgroundColor: "#4f46e5" }]
-                }}
-                options={chartOptions}
-              />
-            </div>
-          </div>
-
-          <div className={styles.chartContainer}>
-            <h3>Seats Booked per Event</h3>
-            <div className={styles.chartInner}>
-              <Bar
-                data={{
-                  labels: events,
-                  datasets: [{ label: "Seats Booked", data: seatsData, backgroundColor: "#f97316" }]
-                }}
-                options={chartOptions}
-              />
-            </div>
-          </div>
+        <div className={styles.stat}>
+          <h3>{totalSeats}</h3>
+          <p>Seats Booked</p>
         </div>
 
-        <h2 className={styles.tableTitle}>Booking Details</h2>
-        <table className={styles.bookingTable}>
-          <thead>
-            <tr>
-              <th>Booking ID</th>
-              <th>Event ID</th>
-              <th>Seats</th>
-              <th>Total Amount</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bookings.map((booking) => (
-              <tr key={booking.id}>
-                <td>{booking.id}</td>
-                <td>{booking.eventId ?? "N/A"}</td>
-                <td>{booking.seatsBooked}</td>
-                <td>₹{booking.totalAmount}</td>
-                <td>{new Date(booking.bookingDate).toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className={styles.stat}>
+          <h3>{eventIds.length}</h3>
+          <p>Events</p>
+        </div>
 
       </div>
+
+      <div className={styles.splitRow}>
+
+        <div className={styles.chartsCol}>
+
+          <div className={styles.chartCard}>
+            <h4>Revenue per Event</h4>
+            <Doughnut data={revenueChart} options={donutOptions} />
+          </div>
+
+          <div className={styles.chartCard}>
+            <h4>Seats per Event</h4>
+            <Doughnut data={seatsChart} options={donutOptions} />
+          </div>
+
+        </div>
+
+        <div className={styles.tableCol}>
+
+          <h4>Booking Details</h4>
+
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Event</th>
+                <th>Seats</th>
+                <th>Amount</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {bookings.map((b) => (
+                <tr key={b.id}>
+                  <td>{b.id}</td>
+                  <td>{b.eventId}</td>
+                  <td>{b.seatsBooked}</td>
+                  <td>₹{b.totalAmount}</td>
+                  <td>
+                    {new Date(b.bookingDate).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
     </div>
   );
 }
 
-export default OrganizerDashboard;
+export default BookingMonitor;

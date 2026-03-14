@@ -92,7 +92,7 @@ export default function Home({ onLogin }) {
 
       {/* FOOTER */}
       <footer className="home-footer">
-        <p>📧 Email: contact@eventmate.com | 📞 Phone: +91 98765 43210</p>
+        <p>📧 Email: pandisathi812@gmail.com | 📞 Phone: +91 8122923627</p>
         <p>© 2026 EventMate. All Rights Reserved.</p>
       </footer>
     </div>

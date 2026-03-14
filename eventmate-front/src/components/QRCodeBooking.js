@@ -2,130 +2,164 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "../styles/QRCodeBooking.module.css";
 
-function QRCodeBooking({ goBack }) {
+function QRCodeBooking() {
 
   const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("All");
 
   useEffect(() => {
-    fetchBookings();
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    axios
+      .get(`http://localhost:8080/api/organizer/bookings?organizerId=${user.id}`)
+      .then((res) => setBookings(Array.isArray(res.data) ? res.data : []))
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
+
   }, []);
 
-  const fetchBookings = async () => {
-    try {
-
-      const res = await axios.get("http://localhost:8080/api/bookings");
-
-      setBookings(res.data);
-
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // ✅ QR CONFIRM PAYMENT
   const confirmPayment = async (id) => {
 
-    if (!window.confirm("Confirm payment via QR?")) return;
+    if (!window.confirm("Confirm payment via QR scan?")) return;
 
     try {
 
-      await axios.put(`http://localhost:8080/api/payment/confirm/${id}`);
+      await axios.put(`http://localhost:8080/api/organizer/payment/confirm/${id}`);
 
       setBookings((prev) =>
         prev.map((b) =>
-          b.id === id
-            ? { ...b, paymentStatus: "Confirmed" }
-            : b
+          b.id === id ? { ...b, paymentStatus: "Confirmed" } : b
         )
       );
 
-    } catch (err) {
+    } catch {
       alert("Payment confirmation failed");
     }
+
   };
 
-  const statusColor = (val) =>
-    val === "Confirmed"
-      ? "green"
-      : val === "Cancelled"
-      ? "red"
-      : "orange";
+  const counts = {
+    All: bookings.length,
+    Pending: bookings.filter((b) => b.paymentStatus !== "Confirmed").length,
+    Confirmed: bookings.filter((b) => b.paymentStatus === "Confirmed").length,
+  };
+
+  const filtered =
+    filter === "All"
+      ? bookings
+      : filter === "Confirmed"
+      ? bookings.filter((b) => b.paymentStatus === "Confirmed")
+      : bookings.filter((b) => b.paymentStatus !== "Confirmed");
+
+  const badgeClass = (val) => {
+
+    const v = (val || "").toLowerCase();
+
+    if (v === "confirmed" || v === "paid") return styles.badgeGreen;
+    if (v === "cancelled") return styles.badgeRed;
+
+    return styles.badgeYellow;
+  };
+
+  if (loading) {
+    return <div>Loading tickets...</div>;
+  }
 
   return (
+    <div className={styles.page}>
 
-    <div className={styles.container}>
+      <h2>QR Code Ticket Handling</h2>
 
-      <h1>QR Code Ticket Handling</h1>
+      <div className={styles.statsRow}>
 
-      <button className={styles.backBtn} onClick={goBack}>
-        ← Back
-      </button>
+        <button onClick={() => setFilter("All")}>
+          All ({counts.All})
+        </button>
 
-      <div className={styles.tableWrapper}>
+        <button onClick={() => setFilter("Pending")}>
+          Pending ({counts.Pending})
+        </button>
 
-        <table className={styles.table}>
+        <button onClick={() => setFilter("Confirmed")}>
+          Verified ({counts.Confirmed})
+        </button>
 
-          <thead>
+      </div>
 
-            <tr>
-              <th>ID</th>
-              <th>User</th>
-              <th>Event</th>
-              <th>Seats</th>
-              <th>Total</th>
-              <th>Date</th>
-              <th>Booking Status</th>
-              <th>Payment Status</th>
-              <th>QR Action</th>
-            </tr>
+      <div className={styles.card}>
 
-          </thead>
+        {filtered.length === 0 ? (
+          <p>No tickets found</p>
+        ) : (
+          <table className={styles.table}>
 
-          <tbody>
-
-            {bookings.map((b) => (
-
-              <tr key={b.id}>
-
-                <td>{b.id}</td>
-                <td>{b.userId}</td>
-                <td>{b.eventId || "N/A"}</td>
-                <td>{b.seats}</td>
-                <td>₹{b.totalAmount}</td>
-                <td>{new Date(b.bookingDate).toLocaleString()}</td>
-
-                <td style={{ color: statusColor(b.bookingStatus), fontWeight: "bold" }}>
-                  {b.bookingStatus}
-                </td>
-
-                <td style={{ color: statusColor(b.paymentStatus), fontWeight: "bold" }}>
-                  {b.paymentStatus}
-                </td>
-
-                <td>
-
-                  <button
-                    className={styles.confirmBtn}
-                    onClick={() => confirmPayment(b.id)}
-                    disabled={b.paymentStatus === "Confirmed"}
-                  >
-                    Scan QR
-                  </button>
-
-                </td>
-
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>User</th>
+                <th>Event</th>
+                <th>Seats</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Booking</th>
+                <th>Payment</th>
+                <th>QR Action</th>
               </tr>
+            </thead>
 
-            ))}
+            <tbody>
 
-          </tbody>
+              {filtered.map((b) => (
 
-        </table>
+                <tr key={b.id}>
+
+                  <td>{b.id}</td>
+                  <td>{b.userId}</td>
+                  <td>{b.eventId}</td>
+                  <td>{b.seatsBooked}</td>
+                  <td>₹{b.totalAmount}</td>
+                  <td>
+                    {new Date(b.bookingDate).toLocaleDateString()}
+                  </td>
+
+                  <td>
+                    <span className={badgeClass(b.bookingStatus)}>
+                      {b.bookingStatus}
+                    </span>
+                  </td>
+
+                  <td>
+                    <span className={badgeClass(b.paymentStatus)}>
+                      {b.paymentStatus}
+                    </span>
+                  </td>
+
+                  <td>
+
+                    {b.paymentStatus === "Confirmed" ? (
+                      <span>✓ Verified</span>
+                    ) : (
+                      <button onClick={() => confirmPayment(b.id)}>
+                        Scan QR
+                      </button>
+                    )}
+
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+        )}
 
       </div>
 
     </div>
-
   );
 }
 

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import styles from "../styles/EventList.module.css";
 
-function EventList({ goBack, user }) {
+function EventList() {
+  const navigate = useNavigate();
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [title, setTitle] = useState("");
@@ -12,6 +15,7 @@ function EventList({ goBack, user }) {
   const [capacity, setCapacity] = useState("");
   const [price, setPrice] = useState("");
   const [newImage, setNewImage] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetchEvents();
@@ -19,25 +23,27 @@ function EventList({ goBack, user }) {
 
   const fetchEvents = async () => {
     try {
-      const organizerId = user?.id;
+      const organizerId =
+        JSON.parse(localStorage.getItem("user") || "{}")?.id;
       const url = organizerId
         ? `http://localhost:8080/api/organizer/events?organizerId=${organizerId}`
         : `http://localhost:8080/api/organizer/events`;
-      const response = await axios.get(url);
-      setEvents(response.data);
+      const res = await axios.get(url);
+      setEvents(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error fetching events:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this event?")) {
-      try {
-        await axios.delete(`http://localhost:8080/api/organizer/events/${id}`);
-        fetchEvents();
-      } catch (err) {
-        console.error("Error deleting event:", err);
-      }
+    if (!window.confirm("Delete this event? This cannot be undone.")) return;
+    try {
+      await axios.delete(`http://localhost:8080/api/organizer/events/${id}`);
+      fetchEvents();
+    } catch (err) {
+      alert("Failed to delete event.");
     }
   };
 
@@ -45,7 +51,7 @@ function EventList({ goBack, user }) {
     setSelectedEvent(event);
     setTitle(event.title);
     setVenue(event.venue);
-    setDate(event.eventDate.split("T")[0]);
+    setDate((event.eventDate || "").split("T")[0]);
     setCapacity(event.capacity);
     setPrice(event.price);
     setNewImage(null);
@@ -54,6 +60,7 @@ function EventList({ goBack, user }) {
 
   const handleUpdate = async () => {
     if (!selectedEvent) return;
+    setSaving(true);
     try {
       const formData = new FormData();
       formData.append("title", title);
@@ -72,115 +79,187 @@ function EventList({ goBack, user }) {
       setEditModalOpen(false);
       setSelectedEvent(null);
     } catch (err) {
-      console.error("Error updating event:", err);
+      alert("Failed to update event.");
+    } finally {
+      setSaving(false);
     }
   };
 
-  return (
-    <div className={styles.container}>
-      <button className={styles.backBtn} onClick={goBack}>← Back</button>
-      <h2 className={styles.title}>My Events</h2>
+  if (loading)
+    return (
+      <div className={styles.loadWrap}>
+        <div className={styles.spinner} />
+        <p>Loading events…</p>
+      </div>
+    );
 
+  return (
+    <div className={styles.page}>
+
+      {/* ── Header ── */}
+      <div className={styles.header}>
+        <div>
+          <h2 className={styles.title}>Manage Events</h2>
+          <p className={styles.sub}>{events.length} event{events.length !== 1 ? "s" : ""} found</p>
+        </div>
+        <button
+          className={styles.addBtn}
+          onClick={() => navigate("/organizer/add-event")}
+        >
+          + Add New Event
+        </button>
+      </div>
+
+      {/* ── Empty state ── */}
       {events.length === 0 && (
-        <p style={{ textAlign: "center", color: "#6b7280", marginTop: "40px" }}>
-          No events found. Create your first event!
-        </p>
+        <div className={styles.emptyState}>
+          <span>🎪</span>
+          <p>No events yet. Create your first one!</p>
+          <button
+            className={styles.addBtn}
+            onClick={() => navigate("/organizer/add-event")}
+          >
+            + Create Event
+          </button>
+        </div>
       )}
 
+      {/* ── Grid ── */}
       <div className={styles.grid}>
         {events.map((event) => (
           <div key={event.eventId} className={styles.card}>
 
-            {/* ✅ FIXED: Always use the image endpoint directly — never check event.image */}
-            <img
-              src={`http://localhost:8080/api/organizer/event-image/${event.eventId}`}
-              alt={event.title}
-              className={styles.image}
-              style={{
-                width: "100%",
-                height: "180px",
-                objectFit: "cover",
-                borderRadius: "8px",
-                display: "block"
-              }}
-              onError={(e) => {
-                // If image fails, show grey placeholder text
-                e.target.replaceWith(
-                  Object.assign(document.createElement("div"), {
-                    textContent: "No Image",
-                    style: "width:100%;height:180px;background:#e5e7eb;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#9ca3af;font-size:0.9rem;"
-                  })
-                );
-              }}
-            />
+            {/* Image */}
+            <div className={styles.imgWrap}>
+              <img
+                src={`http://localhost:8080/api/organizer/event-image/${event.eventId}`}
+                alt={event.title}
+                className={styles.img}
+                onError={(e) => {
+                  e.target.style.display = "none";
+                  e.target.nextSibling.style.display = "flex";
+                }}
+              />
+              <div className={styles.imgFallback}>🖼 No Image</div>
+            </div>
 
-            <h3>{event.title}</h3>
-            <p>📍 {event.venue}</p>
-            <p>📅 {new Date(event.eventDate).toLocaleDateString("en-IN", {
-              day: "2-digit", month: "short", year: "numeric"
-            })}</p>
-            <p>🪑 Seats: {event.capacity}</p>
-            <p>💰 ₹{event.price}</p>
+            {/* Info */}
+            <div className={styles.cardBody}>
+              <h3 className={styles.eventName}>{event.title}</h3>
+              <p className={styles.meta}>📍 {event.venue}</p>
+              <p className={styles.meta}>
+                📅 {new Date(event.eventDate).toLocaleDateString("en-IN", {
+                  day: "2-digit", month: "short", year: "numeric",
+                })}
+              </p>
+              <div className={styles.pills}>
+                <span className={styles.pillSeats}>🪑 {event.capacity} seats</span>
+                <span className={styles.pillPrice}>💰 ₹{Number(event.price).toLocaleString()}</span>
+              </div>
+            </div>
 
-            <div className={styles.buttonGroup}>
-              <button className={styles.editBtn} onClick={() => openEditModal(event)}>
+            {/* Actions */}
+            <div className={styles.cardFooter}>
+              <button
+                className={styles.editBtn}
+                onClick={() => openEditModal(event)}
+              >
                 ✏️ Edit
               </button>
-              <button className={styles.deleteBtn} onClick={() => handleDelete(event.eventId)}>
+              <button
+                className={styles.deleteBtn}
+                onClick={() => handleDelete(event.eventId)}
+              >
                 🗑️ Delete
               </button>
             </div>
+
           </div>
         ))}
       </div>
 
-      {/* Edit Modal */}
+      {/* ── Edit Modal ── */}
       {editModalOpen && (
-        <div className={styles.modalOverlay}>
+        <div className={styles.overlay}>
           <div className={styles.modal}>
-            <h2>Edit Event</h2>
 
-            <label>Title</label>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} />
+            {/* Modal header */}
+            <div className={styles.modalHeader}>
+              <h3 className={styles.modalTitle}>Edit Event</h3>
+              <button
+                className={styles.closeBtn}
+                onClick={() => setEditModalOpen(false)}
+              >✕</button>
+            </div>
 
-            <label>Venue</label>
-            <input value={venue} onChange={(e) => setVenue(e.target.value)} />
-
-            <label>Date</label>
-            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-
-            <label>Capacity</label>
-            <input type="number" value={capacity} onChange={(e) => setCapacity(e.target.value)} />
-
-            <label>Price</label>
-            <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
-
-            <label>New Image (optional)</label>
-            <input type="file" accept="image/*" onChange={(e) => setNewImage(e.target.files[0])} />
-
-            {/* Current image preview in modal */}
+            {/* Current image */}
             {selectedEvent && (
-              <img
-                src={`http://localhost:8080/api/organizer/event-image/${selectedEvent.eventId}`}
-                alt="current"
-                style={{
-                  width: "100%",
-                  height: "140px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                  marginTop: "8px",
-                }}
-                onError={(e) => (e.target.style.display = "none")}
-              />
+              <div className={styles.modalImgWrap}>
+                <img
+                  src={`http://localhost:8080/api/organizer/event-image/${selectedEvent.eventId}`}
+                  alt="current"
+                  className={styles.modalImg}
+                  onError={(e) => (e.target.style.display = "none")}
+                />
+              </div>
             )}
 
-            <div className={styles.modalButtons}>
-              <button onClick={handleUpdate} className={styles.saveBtn}>Save</button>
-              <button onClick={() => setEditModalOpen(false)} className={styles.cancelBtn}>Cancel</button>
+            <div className={styles.modalForm}>
+              {[
+                { label: "Event Title", value: title, set: setTitle, type: "text" },
+                { label: "Venue",       value: venue, set: setVenue, type: "text" },
+                { label: "Date",        value: date,  set: setDate,  type: "date" },
+                { label: "Capacity",    value: capacity, set: setCapacity, type: "number" },
+                { label: "Price (₹)",   value: price, set: setPrice, type: "number" },
+              ].map(({ label, value, set, type }) => (
+                <div key={label} className={styles.fieldGroup}>
+                  <label className={styles.label}>{label}</label>
+                  <input
+                    type={type}
+                    value={value}
+                    onChange={(e) => set(e.target.value)}
+                    className={styles.input}
+                  />
+                </div>
+              ))}
+
+              <div className={styles.fieldGroup}>
+                <label className={styles.label}>New Image (optional)</label>
+                <label className={styles.fileLabel}>
+                  <span>📁 Choose Image</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setNewImage(e.target.files[0])}
+                    style={{ display: "none" }}
+                  />
+                </label>
+                {newImage && (
+                  <p className={styles.fileName}>✅ {newImage.name}</p>
+                )}
+              </div>
             </div>
+
+            <div className={styles.modalFooter}>
+              <button
+                className={styles.saveBtn}
+                onClick={handleUpdate}
+                disabled={saving}
+              >
+                {saving ? "Saving…" : "💾 Save Changes"}
+              </button>
+              <button
+                className={styles.cancelBtn}
+                onClick={() => setEditModalOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
+
           </div>
         </div>
       )}
+
     </div>
   );
 }

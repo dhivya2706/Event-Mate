@@ -1,115 +1,293 @@
-/* 🌌 Page Background */
-.container {
-  min-height: 100vh;
-  padding: 40px;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ─── Page ──────────────────────────────────────────────────────── */
+.page {
+  padding: 4px 4px 24px;
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
   display: flex;
   flex-direction: column;
+  gap: 18px;
+  animation: fadeUp 0.4s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Header ────────────────────────────────────────────────────── */
+.header {
+  display: flex;
   align-items: center;
-  color: white;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-/* 🏷 Title */
 .title {
-  font-size: 32px;
-  margin-bottom: 30px;
-  letter-spacing: 1px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 2px;
+}
+
+.sub {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ─── Stat Pills ────────────────────────────────────────────────── */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.statPill {
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(14px);
+  border-radius: 14px;
+  padding: 16px 20px;
+  border: 1.5px solid transparent;
+  border-left: 4px solid var(--pill-color, #7c3aed);
+  box-shadow: 0 4px 14px rgba(124,58,237,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+.statPill:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(124,58,237,0.14);
+}
+.statActive {
+  border-color: var(--pill-color, #7c3aed);
+  background: rgba(255,255,255,0.92);
+  box-shadow: 0 6px 20px rgba(124,58,237,0.18);
+  transform: translateY(-2px);
+}
+
+.statNum {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--pill-color, #7c3aed);
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: 12px;
   font-weight: 600;
+  color: #6b7280;
+  letter-spacing: 0.3px;
 }
 
-/* 🧊 Glass Card */
-.tableWrapper {
-  width: 95%;
-  max-width: 1200px;
-  backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+/* ─── Card ──────────────────────────────────────────────────────── */
+.card {
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(16px);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 6px 24px rgba(124,58,237,0.08), 0 0 0 1px rgba(124,58,237,0.07);
+  overflow: hidden;
+}
+
+/* ─── Table ─────────────────────────────────────────────────────── */
+.tableWrap {
   overflow-x: auto;
-  transition: 0.3s ease;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124,58,237,0.2) transparent;
+}
+.tableWrap::-webkit-scrollbar { height: 5px; }
+.tableWrap::-webkit-scrollbar-thumb {
+  background: rgba(124,58,237,0.2);
+  border-radius: 5px;
 }
 
-.tableWrapper:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 255, 255, 0.3);
-}
-
-/* 📊 Table */
 .table {
   width: 100%;
   border-collapse: collapse;
-  color: white;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.table thead tr {
+  background: linear-gradient(135deg, #7c3aed, #6366f1);
 }
 
 .table th {
-  padding: 14px;
-  background: rgba(0, 0, 0, 0.4);
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 13px;
-  letter-spacing: 1px;
+  padding: 13px 16px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-align: left;
+  white-space: nowrap;
 }
+.table th:first-child { border-radius: 10px 0 0 10px; }
+.table th:last-child  { border-radius: 0 10px 10px 0; }
 
 .table td {
-  padding: 14px;
-  text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 13px 16px;
+  border-bottom: 1px solid #f0eeff;
+  color: #374151;
+  font-weight: 500;
+  vertical-align: middle;
 }
 
-/* 🪄 Row Hover */
-.table tr:hover {
-  background: rgba(255, 255, 255, 0.07);
-  transition: 0.2s ease;
+.table tbody tr:last-child td { border-bottom: none; }
+
+.table tbody tr {
+  transition: background 0.2s ease;
+}
+.table tbody tr:hover { background: #faf5ff; }
+
+/* ─── Cell types ─────────────────────────────────────────────────── */
+.idCell {
+  color: #9ca3af;
+  font-size: 12px;
+  font-weight: 600;
 }
 
-/* 🟢 Confirm Button */
+.eventTag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #ede9fe;
+  color: #7c3aed;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.amountCell {
+  font-weight: 800;
+  color: #7c3aed;
+}
+
+/* ─── Status Badges ─────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.pending {
+  background: #fffbeb;
+  color: #d97706;
+  border: 1px solid #fcd34d;
+}
+
+.confirmed {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.cancelled {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+/* ─── Action Buttons ────────────────────────────────────────────── */
+.actionRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.confirmBtn,
+.cancelBtn {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: none;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+}
+
 .confirmBtn {
-  background: linear-gradient(45deg, #00c853, #00e676);
-  border: none;
-  padding: 8px 16px;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s ease;
-  font-weight: 500;
-  margin-right: 8px;
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1.5px solid #bbf7d0;
+}
+.confirmBtn:hover:not(:disabled) {
+  background: #16a34a;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(22,163,74,0.3);
 }
 
-.confirmBtn:hover {
-  box-shadow: 0 0 15px #00e676;
-  transform: scale(1.05);
+.cancelBtn {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1.5px solid #fecaca;
+}
+.cancelBtn:hover:not(:disabled) {
+  background: #dc2626;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220,38,38,0.3);
 }
 
-/* 🔴 Decline Button */
-.declineBtn {
-  background: linear-gradient(45deg, #d50000, #ff1744);
-  border: none;
-  padding: 8px 16px;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s ease;
-  font-weight: 500;
+.confirmBtn:disabled,
+.cancelBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
 }
 
-.declineBtn:hover {
-  box-shadow: 0 0 15px #ff1744;
-  transform: scale(1.05);
+/* ─── Empty / Error ─────────────────────────────────────────────── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 48px 20px;
+  color: #9ca3af;
 }
+.emptyState span { font-size: 48px; }
+.emptyState p { font-size: 15px; font-weight: 600; margin: 0; }
 
-/* 🟡 Status Badge */
-.statusPending {
-  color: #ffca28;
+.loadWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 60px;
+  color: #7c3aed;
   font-weight: 600;
 }
 
-.statusConfirmed {
-  color: #00e676;
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #ede9fe;
+  border-top-color: #7c3aed;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.errorMsg {
+  color: #dc2626;
   font-weight: 600;
+  font-size: 15px;
 }
 
-.statusDeclined {
-  color: #ff5252;
-  font-weight: 600;
+/* ─── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .statsRow { grid-template-columns: repeat(2, 1fr); }
+  .actionRow { flex-direction: column; }
+  .table th, .table td { padding: 10px 10px; font-size: 12px; }
 }

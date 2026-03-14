@@ -6,10 +6,7 @@ import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, String> {
 
-    // events created by organizer
     List<Event> findByOrganizerId(Long organizerId);
 
-    // only approved events
     List<Event> findByStatus(String status);
-
 }

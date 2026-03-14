@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from "react";
 
+/* ─── Star Rating ────────────────────────────────────────────────── */
 function StarRating({ rating }) {
   const r = Math.min(Math.max(Number(rating) || 0, 0), 5);
   return (
-    <span style={{ color: "#f59e0b", fontSize: "1rem" }}>
+    <span style={{ color: "#f59e0b", fontSize: "15px", letterSpacing: "1px" }}>
       {"★".repeat(r)}{"☆".repeat(5 - r)}
     </span>
   );
 }
 
-function FeedbackDetails({ goBack, user }) {
-  const [feedbacks, setFeedbacks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterRating, setFilterRating] = useState("all");
+/* ─── Main Component ─────────────────────────────────────────────── */
+function FeedbackDetails() {
+  const [feedbacks, setFeedbacks]         = useState([]);
+  const [loading, setLoading]             = useState(true);
+  const [error, setError]                 = useState(null);
+  const [searchTerm, setSearchTerm]       = useState("");
+  const [filterRating, setFilterRating]   = useState("all");
 
   useEffect(() => {
-    // ✅ Only fetch feedback for this organizer's events
-    const organizerId = user?.id;
+    const organizerId =
+      JSON.parse(localStorage.getItem("user") || "{}")?.id;
+
     const url = organizerId
       ? `http://localhost:8080/api/organizer/feedback?organizerId=${organizerId}`
       : `http://localhost:8080/api/organizer/feedback`;
@@ -28,21 +31,16 @@ function FeedbackDetails({ goBack, user }) {
         if (!res.ok) throw new Error("Failed to fetch feedback");
         return res.json();
       })
-      .then((data) => {
-        setFeedbacks(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
-  }, [user]);
+      .then((data) => setFeedbacks(Array.isArray(data) ? data : []))
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
 
   const filtered = feedbacks.filter((fb) => {
     const matchesSearch =
       String(fb.bookingId || "").includes(searchTerm) ||
-      String(fb.userId || "").includes(searchTerm) ||
-      String(fb.eventId || "").includes(searchTerm) ||
+      String(fb.userId    || "").includes(searchTerm) ||
+      String(fb.eventId   || "").includes(searchTerm) ||
       (fb.comment && fb.comment.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesRating =
       filterRating === "all" || String(fb.rating) === filterRating;
@@ -51,171 +49,357 @@ function FeedbackDetails({ goBack, user }) {
 
   const avgRating =
     feedbacks.length > 0
-      ? (
-          feedbacks.reduce((sum, fb) => sum + (Number(fb.rating) || 0), 0) /
-          feedbacks.length
-        ).toFixed(1)
+      ? (feedbacks.reduce((s, fb) => s + (Number(fb.rating) || 0), 0) / feedbacks.length).toFixed(1)
       : "—";
 
-  return (
-    <div style={styles.page}>
+  const positiveCount = feedbacks.filter((fb) => Number(fb.rating) >= 4).length;
+  const lowCount      = feedbacks.filter((fb) => Number(fb.rating) <= 2).length;
 
+  /* ── stat card generator ── */
+  const statCard = (accent) => ({
+    background: "rgba(255,255,255,0.72)",
+    backdropFilter: "blur(14px)",
+    borderRadius: "14px",
+    padding: "18px 20px",
+    borderLeft: `4px solid ${accent}`,
+    boxShadow: "0 4px 14px rgba(124,58,237,0.07)",
+    display: "flex",
+    flexDirection: "column",
+    gap: "4px",
+  });
+
+  return (
+    <div style={S.page}>
+
+      {/* ── keyframes ── */}
       <style>{`
-        @keyframes spin {
-          0%   { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(14px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .fb-row:hover  { background: #faf5ff !important; }
+        .fb-input:focus {
+          border-color: #7c3aed !important;
+          box-shadow: 0 0 0 3px rgba(124,58,237,0.12) !important;
         }
       `}</style>
 
-      {/* Header */}
-      <div style={styles.header}>
-        <button onClick={goBack} style={styles.backBtn}>← Back</button>
-        <h2 style={styles.title}>📋 My Event Feedback</h2>
-        <span style={styles.badge}>{feedbacks.length} Total</span>
+      {/* ── Header ── */}
+      <div style={S.header}>
+        <div>
+          <h2 style={S.title}>⭐ Reviews & Feedback</h2>
+          <p style={S.sub}>What attendees say about your events</p>
+        </div>
+        <span style={S.totalBadge}>{feedbacks.length} total</span>
       </div>
 
-      {/* Summary Cards */}
-      <div style={styles.summaryRow}>
-        <div style={styles.summaryCard}>
-          <div style={styles.summaryValue}>{feedbacks.length}</div>
-          <div style={styles.summaryLabel}>Total Feedbacks</div>
+      {/* ── Stat cards ── */}
+      <div style={S.statsRow}>
+        <div style={statCard("#7c3aed")}>
+          <span style={{ ...S.statNum, color: "#7c3aed" }}>{feedbacks.length}</span>
+          <span style={S.statLabel}>Total Reviews</span>
         </div>
-        <div style={styles.summaryCard}>
-          <div style={{ ...styles.summaryValue, color: "#f59e0b" }}>⭐ {avgRating}</div>
-          <div style={styles.summaryLabel}>Average Rating</div>
+        <div style={statCard("#f59e0b")}>
+          <span style={{ ...S.statNum, color: "#f59e0b" }}>⭐ {avgRating}</span>
+          <span style={S.statLabel}>Average Rating</span>
         </div>
-        <div style={styles.summaryCard}>
-          <div style={{ ...styles.summaryValue, color: "#10b981" }}>
-            {feedbacks.filter((fb) => Number(fb.rating) >= 4).length}
-          </div>
-          <div style={styles.summaryLabel}>Positive (4–5★)</div>
+        <div style={statCard("#16a34a")}>
+          <span style={{ ...S.statNum, color: "#16a34a" }}>{positiveCount}</span>
+          <span style={S.statLabel}>Positive (4–5 ★)</span>
         </div>
-        <div style={styles.summaryCard}>
-          <div style={{ ...styles.summaryValue, color: "#ef4444" }}>
-            {feedbacks.filter((fb) => Number(fb.rating) <= 2).length}
-          </div>
-          <div style={styles.summaryLabel}>Needs Attention (1–2★)</div>
+        <div style={statCard("#dc2626")}>
+          <span style={{ ...S.statNum, color: "#dc2626" }}>{lowCount}</span>
+          <span style={S.statLabel}>Needs Attention (1–2 ★)</span>
         </div>
       </div>
 
-      {/* Filters */}
-      <div style={styles.filterRow}>
+      {/* ── Filters ── */}
+      <div style={S.filterRow}>
         <input
-          style={styles.searchInput}
-          placeholder="🔍 Search by Booking ID, User ID, Event ID, or Comment..."
+          className="fb-input"
+          style={S.searchInput}
+          placeholder="🔍  Search by Booking ID, User, Event or Comment…"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <select
-          style={styles.select}
+          className="fb-input"
+          style={S.select}
           value={filterRating}
           onChange={(e) => setFilterRating(e.target.value)}
         >
           <option value="all">All Ratings</option>
-          <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
-          <option value="4">⭐⭐⭐⭐ 4 Stars</option>
-          <option value="3">⭐⭐⭐ 3 Stars</option>
-          <option value="2">⭐⭐ 2 Stars</option>
-          <option value="1">⭐ 1 Star</option>
+          <option value="5">★★★★★  5 Stars</option>
+          <option value="4">★★★★☆  4 Stars</option>
+          <option value="3">★★★☆☆  3 Stars</option>
+          <option value="2">★★☆☆☆  2 Stars</option>
+          <option value="1">★☆☆☆☆  1 Star</option>
         </select>
       </div>
 
+      {/* ── Loading ── */}
       {loading && (
-        <div style={styles.center}>
-          <div style={styles.spinner} />
-          <p style={{ color: "#6b7280", marginTop: "12px" }}>Loading feedback...</p>
+        <div style={S.center}>
+          <div style={S.spinner} />
+          <p style={{ color: "#7c3aed", fontWeight: 600, marginTop: "12px" }}>
+            Loading feedback…
+          </p>
         </div>
       )}
 
+      {/* ── Error ── */}
       {error && (
-        <div style={styles.errorBox}>
-          ⚠️ {error}. Make sure the backend is running at <strong>localhost:8080</strong>.
-        </div>
+        <div style={S.errorBox}>⚠️ {error}</div>
       )}
 
+      {/* ── Empty ── */}
       {!loading && !error && filtered.length === 0 && (
-        <div style={styles.center}>
-          <p style={{ color: "#9ca3af", fontSize: "1.1rem" }}>No feedback found for your events.</p>
+        <div style={S.center}>
+          <span style={{ fontSize: "52px" }}>💬</span>
+          <p style={{ color: "#9ca3af", fontWeight: 600, fontSize: "15px", margin: 0 }}>
+            No feedback found for your events.
+          </p>
         </div>
       )}
 
+      {/* ── Table ── */}
       {!loading && !error && filtered.length > 0 && (
-        <div style={styles.tableWrapper}>
-          <table style={styles.table}>
-            <thead>
-              <tr style={styles.thead}>
-                <th style={styles.th}>#</th>
-                <th style={styles.th}>Booking ID</th>
-                <th style={styles.th}>User ID</th>
-                <th style={styles.th}>Event ID</th>
-                <th style={styles.th}>Rating</th>
-                <th style={styles.th}>Comment</th>
-                <th style={styles.th}>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((fb, index) => (
-                <tr
-                  key={fb.id || index}
-                  style={{
-                    ...styles.tr,
-                    backgroundColor: index % 2 === 0 ? "#f9fafb" : "#ffffff",
-                  }}
-                >
-                  <td style={styles.td}>{index + 1}</td>
-                  <td style={{ ...styles.td, fontWeight: 600 }}>{fb.bookingId}</td>
-                  <td style={styles.td}>{fb.userId}</td>
-                  <td style={{ ...styles.td, fontSize: "0.78rem", color: "#6b7280", wordBreak: "break-all", maxWidth: "160px" }}>
-                    {fb.eventId}
-                  </td>
-                  <td style={styles.td}>
-                    <StarRating rating={fb.rating} />
-                    <span style={{ marginLeft: "6px", color: "#374151", fontWeight: 600 }}>
-                      ({fb.rating})
-                    </span>
-                  </td>
-                  <td style={{ ...styles.td, maxWidth: "220px", color: "#4b5563" }}>
-                    {fb.comment || <span style={{ color: "#d1d5db" }}>No comment</span>}
-                  </td>
-                  <td style={{ ...styles.td, whiteSpace: "nowrap", color: "#6b7280", fontSize: "0.85rem" }}>
-                    {fb.createdAt
-                      ? new Date(fb.createdAt).toLocaleDateString("en-IN", {
-                          day: "2-digit", month: "short", year: "numeric",
-                        })
-                      : "—"}
-                  </td>
+        <div style={S.card}>
+          <div style={S.tableWrap}>
+            <table style={S.table}>
+              <thead>
+                <tr style={{ background: "linear-gradient(135deg,#7c3aed,#6366f1)" }}>
+                  {["#","Booking ID","User ID","Event ID","Rating","Comment","Date"].map((h, i, arr) => (
+                    <th key={i} style={{
+                      ...S.th,
+                      borderRadius:
+                        i === 0             ? "10px 0 0 10px"
+                        : i === arr.length - 1 ? "0 10px 10px 0"
+                        : undefined,
+                    }}>
+                      {h}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filtered.map((fb, i) => (
+                  <tr
+                    key={fb.id || i}
+                    className="fb-row"
+                    style={{
+                      borderBottom: i < filtered.length - 1 ? "1px solid #f0eeff" : "none",
+                      transition: "background 0.2s ease",
+                    }}
+                  >
+                    {/* # */}
+                    <td style={{ ...S.td, color: "#9ca3af", fontSize: "12px", fontWeight: 600 }}>
+                      {i + 1}
+                    </td>
+
+                    {/* Booking ID */}
+                    <td style={{ ...S.td, fontWeight: 700, color: "#111827" }}>
+                      {fb.bookingId}
+                    </td>
+
+                    {/* User ID */}
+                    <td style={S.td}>{fb.userId}</td>
+
+                    {/* Event ID */}
+                    <td style={{ ...S.td, fontSize: "11px", color: "#6b7280",
+                                 wordBreak: "break-all", maxWidth: "140px" }}>
+                      <span style={{
+                        display: "inline-block",
+                        padding: "3px 10px",
+                        borderRadius: "999px",
+                        background: "#ede9fe",
+                        color: "#7c3aed",
+                        fontSize: "11px",
+                        fontWeight: 700,
+                      }}>
+                        {fb.eventId}
+                      </span>
+                    </td>
+
+                    {/* Rating */}
+                    <td style={S.td}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                        <StarRating rating={fb.rating} />
+                        <span style={{ color: "#374151", fontWeight: 700, fontSize: "12px" }}>
+                          ({fb.rating})
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Comment */}
+                    <td style={{ ...S.td, maxWidth: "220px", color: "#4b5563", lineHeight: 1.5 }}>
+                      {fb.comment || (
+                        <span style={{ color: "#d1d5db", fontStyle: "italic" }}>No comment</span>
+                      )}
+                    </td>
+
+                    {/* Date */}
+                    <td style={{ ...S.td, whiteSpace: "nowrap", color: "#6b7280", fontSize: "12px" }}>
+                      {fb.createdAt
+                        ? new Date(fb.createdAt).toLocaleDateString("en-IN", {
+                            day: "2-digit", month: "short", year: "numeric",
+                          })
+                        : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-const styles = {
-  page: { minHeight: "100vh", backgroundColor: "#f3f4f6", padding: "28px 32px", fontFamily: "'Segoe UI', sans-serif" },
-  header: { display: "flex", alignItems: "center", gap: "16px", marginBottom: "24px" },
-  backBtn: { padding: "8px 16px", backgroundColor: "#ffffff", border: "1px solid #d1d5db", borderRadius: "8px", cursor: "pointer", fontSize: "0.9rem", fontWeight: 500, color: "#374151" },
-  title: { margin: 0, fontSize: "1.5rem", fontWeight: 700, color: "#111827", flex: 1 },
-  badge: { backgroundColor: "#6366f1", color: "#fff", borderRadius: "20px", padding: "4px 14px", fontSize: "0.85rem", fontWeight: 600 },
-  summaryRow: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "24px" },
-  summaryCard: { backgroundColor: "#ffffff", borderRadius: "12px", padding: "20px", textAlign: "center", boxShadow: "0 1px 4px rgba(0,0,0,0.08)" },
-  summaryValue: { fontSize: "1.8rem", fontWeight: 700, color: "#1f2937" },
-  summaryLabel: { fontSize: "0.8rem", color: "#6b7280", marginTop: "4px" },
-  filterRow: { display: "flex", gap: "12px", marginBottom: "20px" },
-  searchInput: { flex: 1, padding: "10px 16px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "0.9rem", outline: "none", backgroundColor: "#fff" },
-  select: { padding: "10px 14px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "0.9rem", backgroundColor: "#fff", cursor: "pointer" },
-  tableWrapper: { backgroundColor: "#ffffff", borderRadius: "12px", boxShadow: "0 1px 6px rgba(0,0,0,0.08)", overflowX: "auto" },
-  table: { width: "100%", borderCollapse: "collapse", fontSize: "0.9rem" },
-  thead: { backgroundColor: "#6366f1", color: "#ffffff" },
-  th: { padding: "14px 16px", textAlign: "left", fontWeight: 600, whiteSpace: "nowrap" },
-  tr: { borderBottom: "1px solid #f3f4f6" },
-  td: { padding: "13px 16px", color: "#1f2937", verticalAlign: "top" },
-  center: { textAlign: "center", padding: "60px 0" },
-  errorBox: { backgroundColor: "#fee2e2", color: "#991b1b", border: "1px solid #fca5a5", borderRadius: "10px", padding: "16px 20px", fontSize: "0.9rem" },
-  spinner: { width: "36px", height: "36px", border: "4px solid #e5e7eb", borderTop: "4px solid #6366f1", borderRadius: "50%", animation: "spin 0.8s linear infinite", margin: "0 auto" },
+/* ─── Styles ─────────────────────────────────────────────────────── */
+const S = {
+  page: {
+    padding: "4px 4px 32px",
+    fontFamily: "'Plus Jakarta Sans','Segoe UI',sans-serif",
+    display: "flex",
+    flexDirection: "column",
+    gap: "18px",
+    animation: "fadeUp 0.4s ease both",
+  },
+  header: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "16px",
+  },
+  title: {
+    fontSize: "22px",
+    fontWeight: 800,
+    color: "#111827",
+    margin: "0 0 2px",
+  },
+  sub: {
+    fontSize: "13px",
+    color: "#6b7280",
+    margin: 0,
+    fontWeight: 500,
+  },
+  totalBadge: {
+    padding: "6px 18px",
+    borderRadius: "999px",
+    background: "linear-gradient(135deg,#7c3aed,#6366f1)",
+    color: "#fff",
+    fontSize: "13px",
+    fontWeight: 700,
+    whiteSpace: "nowrap",
+    boxShadow: "0 4px 12px rgba(124,58,237,0.25)",
+  },
+  statsRow: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4,1fr)",
+    gap: "14px",
+  },
+  statNum: {
+    fontSize: "24px",
+    fontWeight: 800,
+    lineHeight: 1,
+  },
+  statLabel: {
+    fontSize: "12px",
+    fontWeight: 600,
+    color: "#6b7280",
+    letterSpacing: "0.3px",
+  },
+  filterRow: {
+    display: "flex",
+    gap: "12px",
+  },
+  searchInput: {
+    flex: 1,
+    padding: "12px 16px",
+    borderRadius: "12px",
+    border: "1.5px solid #e5e7eb",
+    background: "rgba(255,255,255,0.8)",
+    color: "#111827",
+    fontFamily: "inherit",
+    fontSize: "13px",
+    outline: "none",
+    transition: "all 0.25s ease",
+  },
+  select: {
+    padding: "12px 16px",
+    borderRadius: "12px",
+    border: "1.5px solid #e5e7eb",
+    background: "rgba(255,255,255,0.8)",
+    color: "#374151",
+    fontFamily: "inherit",
+    fontSize: "13px",
+    fontWeight: 600,
+    outline: "none",
+    cursor: "pointer",
+    transition: "all 0.25s ease",
+  },
+  card: {
+    background: "rgba(255,255,255,0.72)",
+    backdropFilter: "blur(16px)",
+    borderRadius: "18px",
+    padding: "20px",
+    boxShadow: "0 6px 24px rgba(124,58,237,0.08), 0 0 0 1px rgba(124,58,237,0.07)",
+    overflow: "hidden",
+  },
+  tableWrap: {
+    overflowX: "auto",
+  },
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+    fontSize: "13px",
+    fontFamily: "inherit",
+  },
+  th: {
+    padding: "13px 16px",
+    color: "#fff",
+    fontWeight: 700,
+    fontSize: "12px",
+    letterSpacing: "0.5px",
+    textAlign: "left",
+    whiteSpace: "nowrap",
+  },
+  td: {
+    padding: "13px 16px",
+    color: "#374151",
+    fontWeight: 500,
+    verticalAlign: "top",
+  },
+  center: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "12px",
+    padding: "56px 20px",
+    color: "#9ca3af",
+    fontWeight: 600,
+    fontSize: "14px",
+  },
+  spinner: {
+    width: "36px",
+    height: "36px",
+    border: "3px solid #ede9fe",
+    borderTop: "3px solid #7c3aed",
+    borderRadius: "50%",
+    animation: "spin 0.8s linear infinite",
+  },
+  errorBox: {
+    background: "#fef2f2",
+    color: "#991b1b",
+    border: "1px solid #fecaca",
+    borderRadius: "12px",
+    padding: "16px 20px",
+    fontSize: "13px",
+    fontWeight: 600,
+  },
 };
 
 export default FeedbackDetails;

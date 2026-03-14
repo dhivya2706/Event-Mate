@@ -1,118 +1,138 @@
-import React from "react";
-import styles from "../styles/OrganizerHome.module.css";
+import React, { useState } from "react";
+import "../styles/UserDashboard.css";
 
-function OrganizerHome({
-  goToAddEvent,
-  goToEventList,
-  goToBookingManagement,
-  goToBookingMonitoring,
-  goToQRCodeBooking,
-  goToNotifications,
-  goToProfile,
-  onLogout,
-}) {
+import Dashboard from "./Dashboard";
+import AddEvent from "./AddEvent";
+import BookingManagement from "./BookingManagement";
+import QRCodeBooking from "./QRCodeBooking";
+import EventList from "./EventList";
+import FeedbackDetails from "./FeedbackDetails";
+import Organizer from "./Organizer";
+import OrganizerProfile from "./OrganizerProfile";
 
-  const organizerName = localStorage.getItem("username") || "Organizer";
+function OrganizerHome() {
+
+  const [activePage, setActivePage] = useState("dashboard");
+
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+
+  const organizerName =
+    localStorage.getItem("username") || "Organizer";
+
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.reload();
+  };
 
   return (
-    <div className={styles.dashboard}>
+    <div className="user-dashboard">
 
-      {/* Top Bar */}
-      <div className={styles.topBar}>
+      <div className="app-shell">
 
-        <div>
-          <h1>Organizer Dashboard</h1>
-          <p style={{margin:0,color:"#555"}}>
-            Welcome, <strong>{organizerName}</strong>
-          </p>
-        </div>
+        {/* HEADER */}
+        <header className="app-header">
 
-        <div style={{ display: "flex", gap: "10px" }}>
-          <button onClick={goToProfile}>Profile</button>
-          <button onClick={onLogout}>Logout</button>
-        </div>
+          <div className="brand">
+            EVENTMATE ORGANIZER
+          </div>
 
-      </div>
+          <button
+            className="profile-pill"
+            onClick={() => setActivePage("profile")}
+          >
+            👤 {organizerName}
+          </button>
 
-
-      {/* Dashboard Cards */}
-      <div className={styles.grid}>
-
-        {/* Event Creation */}
-        <div
-          className={styles.card}
-          onClick={goToAddEvent}
-          style={{ cursor: "pointer" }}
-        >
-          <h3>Event Creation & Management</h3>
-          <p>Create new events</p>
-          <p>Update or delete events</p>
-          <p>Set venue, date & capacity</p>
-        </div>
+        </header>
 
 
-        {/* Event List */}
-        <div
-          className={styles.card}
-          onClick={goToEventList}
-          style={{ cursor: "pointer" }}
-        >
-          <h3>Image & Media Upload</h3>
-          <p>Upload event posters</p>
-          <p>Manage event images</p>
-          <p>Preview event banners</p>
-        </div>
+        <div className="app-main">
+
+          {/* SIDEBAR */}
+          <aside className="sidebar">
+
+            <h3>Organizer Menu</h3>
+
+            <button
+              className={`nav-btn ${activePage === "dashboard" ? "active" : ""}`}
+              onClick={() => setActivePage("dashboard")}
+            >
+              🏠 Dashboard
+            </button>
+
+            <button
+              className={`nav-btn ${activePage === "addEvent" ? "active" : ""}`}
+              onClick={() => setActivePage("addEvent")}
+            >
+              ➕ Add Event
+            </button>
+
+            <button
+              className={`nav-btn ${activePage === "eventList" ? "active" : ""}`}
+              onClick={() => setActivePage("eventList")}
+            >
+              🖼 Event Media
+            </button>
+
+            <button
+              className={`nav-btn ${activePage === "bookingManagement" ? "active" : ""}`}
+              onClick={() => setActivePage("bookingManagement")}
+            >
+              🎫 Booking Management
+            </button>
+
+            <button
+              className={`nav-btn ${activePage === "monitoring" ? "active" : ""}`}
+              onClick={() => setActivePage("monitoring")}
+            >
+              📊 Booking Monitoring
+            </button>
+
+            <button
+              className={`nav-btn ${activePage === "qr" ? "active" : ""}`}
+              onClick={() => setActivePage("qr")}
+            >
+              📱 QR Ticket
+            </button>
+
+            <button
+              className={`nav-btn ${activePage === "notification" ? "active" : ""}`}
+              onClick={() => setActivePage("notification")}
+            >
+              🔔 Notifications
+            </button>
+
+            <button
+              className="nav-btn logout-side"
+              onClick={handleLogout}
+            >
+              🚪 Logout
+            </button>
+
+          </aside>
 
 
-        {/* Booking Management */}
-        <div
-          className={styles.card}
-          onClick={goToBookingManagement}
-          style={{ cursor: "pointer" }}
-        >
-          <h3>Booking & Attendee Management</h3>
-          <p>View bookings</p>
-          <p>Confirm or cancel bookings</p>
-          <p>Manage attendees</p>
-        </div>
+          {/* MAIN CONTENT */}
+          <section className="main-content">
 
+            {activePage === "dashboard" && <Dashboard />}
 
-        {/* Booking Monitoring */}
-        <div
-          className={`${styles.card} ${styles.highlight}`}
-          onClick={goToBookingMonitoring}
-          style={{ cursor: "pointer" }}
-        >
-          <h3>Booking Monitoring</h3>
-          <p>Track ticket sales</p>
-          <p>View revenue analytics</p>
-          <p>Monitor seat bookings</p>
-        </div>
+            {activePage === "addEvent" && <AddEvent />}
 
+            {activePage === "eventList" && <EventList />}
 
-        {/* QR Code Ticket */}
-        <div
-          className={styles.card}
-          onClick={goToQRCodeBooking}
-          style={{ cursor: "pointer" }}
-        >
-          <h3>QR Code Ticket Handling</h3>
-          <p>Scan tickets</p>
-          <p>Verify entry</p>
-          <p>Confirm payments</p>
-        </div>
+            {activePage === "bookingManagement" && <BookingManagement user={user} />}
 
+            {activePage === "monitoring" && <Organizer user={user} />}
 
-        {/* Notifications */}
-        <div
-          className={styles.card}
-          onClick={goToNotifications}
-          style={{ cursor: "pointer" }}
-        >
-          <h3>Event Notifications</h3>
-          <p>Send reminders</p>
-          <p>Notify attendees</p>
-          <p>View feedback</p>
+            {activePage === "qr" && <QRCodeBooking />}
+
+            {activePage === "notification" && <FeedbackDetails />}
+
+            {activePage === "profile" && <OrganizerProfile />}
+
+          </section>
+
         </div>
 
       </div>

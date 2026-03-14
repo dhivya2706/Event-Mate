@@ -10,6 +10,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByEventId(String eventId);
 
-    // ⭐ organizer events bookings fetch panna
     List<Booking> findByEventIdIn(List<String> eventIds);
 }

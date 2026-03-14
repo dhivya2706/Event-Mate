@@ -49,10 +49,17 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- 📧 MAIL (🔥 THIS WAS MISSING) -->
+        <!-- 📧 MAIL -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <!-- ✅ RAZORPAY -->
+        <dependency>
+            <groupId>com.razorpay</groupId>
+            <artifactId>razorpay-java</artifactId>
+            <version>1.4.3</version>
         </dependency>
 
         <!-- 🧪 Test -->
