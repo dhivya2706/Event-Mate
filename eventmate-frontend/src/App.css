@@ -1,0 +1,9 @@
+/* Global reset - dark theme */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #070b17;
+  color: #f0ece0;
+  -webkit-font-smoothing: antialiased;
+}

@@ -1,0 +1,136 @@
+.message-icon{
+  font-size:18px;
+  color:var(--gold);
+  cursor:pointer;
+  margin-right:20px;
+  transition:0.2s;
+}
+
+.message-icon:hover{
+  transform:scale(1.1);
+  color:var(--gold-light);
+}
+
+/* POPUP */
+
+.chat-popup{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:320px;
+  height:420px;
+  background:var(--navy-card);
+  border:1px solid var(--border);
+  border-radius:8px;
+  display:flex;
+  flex-direction:column;
+  z-index:9999;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+}
+
+/* HEADER */
+
+.chat-header{
+  padding:10px 14px;
+  background:var(--navy-sidebar);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:13px;
+  font-weight:600;
+  color:var(--gold);
+}
+
+.chat-header button{
+  background:none;
+  border:none;
+  color:var(--text-muted);
+  font-size:14px;
+  cursor:pointer;
+}
+
+/* USER LIST */
+
+.chat-users{
+  border-bottom:1px solid var(--border);
+  max-height:80px;
+  overflow-y:auto;
+}
+
+.chat-user{
+  padding:8px 12px;
+  font-size:12px;
+  cursor:pointer;
+  color:var(--text-primary);
+}
+
+.chat-user:hover{
+  background:rgba(201,168,76,0.1);
+}
+
+/* CHAT BODY */
+
+.chat-body{
+  flex:1;
+  padding:10px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+/* MESSAGES */
+
+.my-message{
+  align-self:flex-end;
+  background:var(--gold);
+  color:var(--navy);
+  padding:6px 10px;
+  border-radius:12px;
+  font-size:12px;
+  max-width:70%;
+}
+
+.other-message{
+  align-self:flex-start;
+  background:rgba(255,255,255,0.08);
+  padding:6px 10px;
+  border-radius:12px;
+  font-size:12px;
+  max-width:70%;
+}
+
+/* INPUT */
+
+.chat-input{
+  display:flex;
+  border-top:1px solid var(--border);
+}
+
+.chat-input input{
+  flex:1;
+  border:none;
+  padding:8px;
+  font-size:12px;
+  background:var(--navy-input);
+  color:var(--text-primary);
+}
+
+.chat-input button{
+  border:none;
+  background:var(--gold);
+  color:var(--navy);
+  padding:8px 12px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.chat-input button:hover{
+  background:var(--gold-light);
+}
+
+.chat-user.active {
+  background: #c9a84c;
+  color: white;
+}
