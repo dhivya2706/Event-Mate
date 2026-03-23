@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function UserRegister() {
 
@@ -17,6 +18,8 @@ export default function UserRegister() {
     });
 
     const [message, setMessage] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleChange = (e) => {
 
@@ -90,9 +93,43 @@ export default function UserRegister() {
 
                     <input name="phone" placeholder="Phone" onChange={handleChange} required />
 
-                    <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
+                    <div className="pass-container">
 
-                    <input name="confirmPassword" type="password" placeholder="Confirm Password" onChange={handleChange} required />
+                        <input
+                            name="password"
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            onChange={handleChange}
+                            required
+                        />
+
+                        <span
+                            className="eyes-icon"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? <FaEye /> : <FaEyeSlash />}
+                        </span>
+
+                    </div>
+
+                    <div className="pass-container">
+
+                        <input
+                            name="confirmPassword"
+                            type={showConfirmPassword ? "text" : "password"}
+                            placeholder="Confirm Password"
+                            onChange={handleChange}
+                            required
+                        />
+
+                        <span
+                            className="eyes-icon"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        >
+                            {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
+                        </span>
+
+                    </div>
 
                     <button>Register</button>
 

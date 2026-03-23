@@ -197,3 +197,28 @@
   from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.pass-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.pass-container input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.eyes-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #555;
+}
+
+.eyes-icon:hover {
+  color: black;
+}

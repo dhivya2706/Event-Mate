@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 export default function Login() {
 
     const navigate = useNavigate();
@@ -15,6 +16,7 @@ export default function Login() {
 
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -120,14 +122,24 @@ export default function Login() {
                         required
                     />
 
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        onChange={handleChange}
-                        required
-                    />
+                    <div className="password-container">
 
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            placeholder="Password"
+                            onChange={handleChange}
+                            required
+                        />
+
+                        <span
+                            className="eye-icon"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? <FaEye /> : <FaEyeSlash />}
+                        </span>
+
+                    </div>
 
                     <button>
 
@@ -137,22 +149,22 @@ export default function Login() {
 
                 </form>
 
-            {role !== "ADMIN" && (
-                <p className="switch-text">
+                {role !== "ADMIN" && (
+                    <p className="switch-text">
 
-                    Don't have an account?
-                    <span
-                        onClick={() =>
-                            role === "ORGANIZER"
-                                ? navigate("/register")
-                                : navigate("/user-register")
-                        }
-                    >
-                        Register
-                    </span>
+                        Don't have an account?
+                        <span
+                            onClick={() =>
+                                role === "ORGANIZER"
+                                    ? navigate("/register")
+                                    : navigate("/user-register")
+                            }
+                        >
+                            Register
+                        </span>
 
-                </p>
-            )}
+                    </p>
+                )}
 
 
                 <p className="message">{message}</p>
