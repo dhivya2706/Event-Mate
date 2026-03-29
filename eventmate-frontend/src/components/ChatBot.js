@@ -107,7 +107,7 @@ function ChatBot({ onBookEvent }) {
 
                                         <button
                                             className="book-btn"
-                                            onClick={() => onBookEvent({ name: ev.eventName })}
+                                            onClick={() => onBookEvent(ev )}
                                         >
                                             Book Now
                                         </button>
